@@ -191,7 +191,7 @@ class threadCamera(ThreadWithStop):
         config = self.camera.create_preview_configuration(
             buffer_count=1,
             queue=False,
-            main={"format": "XBGR8888", "size": (2048, 1080)},
+            main={"format": "XBGR8888", "size": (1024, 540)},
             lores={"size": (480, 360)},
             encode="lores",
         )
