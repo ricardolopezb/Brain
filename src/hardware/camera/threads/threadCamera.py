@@ -41,7 +41,7 @@ from src.utils.messages.allMessages import (
 )
 from src.templates.threadwithstop import ThreadWithStop
 
-
+camera_resolution = (512, 270)
 class threadCamera(ThreadWithStop):
     """Thread which will handle camera functionalities.\n
     Args:
@@ -143,7 +143,7 @@ class threadCamera(ThreadWithStop):
                             "output_video" + str(time.time()) + ".avi",
                             fourcc,
                             self.frame_rate,
-                            (2048, 1080),
+                            (camera_resolution[0], camera_resolution[1]),
                         )
             except Exception as e:
                 print(e)
@@ -191,7 +191,7 @@ class threadCamera(ThreadWithStop):
         config = self.camera.create_preview_configuration(
             buffer_count=1,
             queue=False,
-            main={"format": "XBGR8888", "size": (1024, 540)},
+            main={"format": "XBGR8888", "size": (camera_resolution[0], camera_resolution[1])},
             lores={"size": (480, 360)},
             encode="lores",
         )
