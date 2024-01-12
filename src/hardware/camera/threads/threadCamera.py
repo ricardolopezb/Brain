@@ -192,7 +192,7 @@ class threadCamera(ThreadWithStop):
             buffer_count=1,
             queue=False,
             main={"format": "XBGR8888", "size": (camera_resolution[0], camera_resolution[1])},
-            lores={"size": (camera_resolution[0]/1.5, camera_resolution[1]/1.5)},
+            lores={"size": (camera_resolution[0]/2, camera_resolution[1]/2)},
             encode="lores",
         )
         self.camera.configure(config)
