@@ -62,7 +62,7 @@ logging = logging.getLogger()
 
 TrafficCommunication = True
 Camera = True
-PCCommunicationDemo = True
+PCCommunicationDemo = False
 CarsAndSemaphores = True
 SerialHandler = True
 # ===================================== SETUP PROCESSES ==================================
