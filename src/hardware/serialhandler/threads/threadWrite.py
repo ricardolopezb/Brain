@@ -163,6 +163,7 @@ class threadWrite(ThreadWithStop):
                         self.serialCom.write(command_msg.encode("ascii"))
                         self.logFile.write(command_msg)
                 if self.running:
+                    print("SENDING DATA TO SERIAL")
                     if self.pipeRecvBreak.poll():
                         message = self.pipeRecvBreak.recv()
                         command = {"action": "1", "speed": float(message["value"])}

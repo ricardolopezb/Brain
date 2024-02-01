@@ -132,7 +132,8 @@ class SingleConnection(protocol.Protocol):
                     }
                 )
             elif dataJSON["action"] == "STS":
-                self.factory.queues[Record.Queue.value].put(
+                print("received sts data", dataJSON["value"])
+                self.factory.queues[Control.Queue.value].put(
                     {
                         "Owner": Control.Owner.value,
                         "msgID": Control.msgID.value,
