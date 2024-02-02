@@ -164,6 +164,7 @@ from src.utils.messages.allMessages import (
     SignalRunning,
     Recording,
     Location,
+    ImuData
 )
 
 
@@ -212,6 +213,11 @@ class FactoryDealer(protocol.Factory):
                 Location.Owner.value,
                 Location.msgID.value,
             ): 8,
+            (
+                ImuData.msgType.value,
+                ImuData.Owner.value,
+                ImuData.msgID.value,
+            ): 9,
         }
 
     def send_data_to_client(self, messageValue, messageType, messageOwner, messageId):
