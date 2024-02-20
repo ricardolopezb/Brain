@@ -114,7 +114,7 @@ class threadRead(ThreadWithStop):
             )
         elif buff[1] == "6":
             print("in INSTANTCOMSUMPTION SENDQ with buff", buff)
-            self.queuesList[InstantConsumption.Queue].put(
+            self.queuesList['General'].put(
                 {
                     "Owner": InstantConsumption.Owner,
                     "msgID": InstantConsumption.msgID,
