@@ -90,6 +90,7 @@ class threadRead(ThreadWithStop):
         threading.Timer(1, self.Queue_Sending).start()
 
     def sendqueue(self, buff):
+        print("in sendqueue with buff", buff)
         """This function select which type of message we receive from NUCLEO and send the data further."""
         if buff[1] == 1:
             print(buff[2:-2])
@@ -120,6 +121,8 @@ class threadRead(ThreadWithStop):
                 }
             )
         elif buff[1] == 7:
+            print("in IMU SENDQ with buff", buff)
+
             buff = buff[3:-2]
             splitedBuffer = buff.split(";")
             data = {
