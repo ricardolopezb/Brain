@@ -91,21 +91,18 @@ class threadRead(ThreadWithStop):
 
     def sendqueue(self, buff):
         print("in sendqueue with buff", buff)
-        print("BUFF EN 1 ES: ", buff[1])
-        print("BUFF EN 1 (INT) ES: ", buff[1] == 5)
-        print("BUFF EN 1 (STRING) ES: ", buff[1] == "5")
         """This function select which type of message we receive from NUCLEO and send the data further."""
-        if buff[1] == 1:
+        if buff[1] == "1":
             print(buff[2:-2])
-        elif buff[1] == 2:
+        elif buff[1] == "2":
             print(buff[2:-2])
-        elif buff[1] == 3:
+        elif buff[1] == "3":
             print(buff[2:-2])
-        elif buff[1] == 4:
+        elif buff[1] == "4":
             print(buff[2:-2])
-        elif buff[1] == 9:
+        elif buff[1] == "9":
             print(buff[2:-2])
-        elif buff[1] == 5:
+        elif buff[1] == "5":
             print("in BATTERY_LEVEL SENDQ with buff", buff)
             self.queuesList[BatteryLvl.Queue].put(
                 {
@@ -115,7 +112,7 @@ class threadRead(ThreadWithStop):
                     "msgValue": int(buff[3:-2]),
                 }
             )
-        elif buff[1] == 6:
+        elif buff[1] == "6":
             print("in INSTANTCOMSUMPTION SENDQ with buff", buff)
             self.queuesList[InstantConsumption.Queue].put(
                 {
@@ -125,7 +122,7 @@ class threadRead(ThreadWithStop):
                     "msgValue": int(buff[3:-2]),
                 }
             )
-        elif buff[1] == 7:
+        elif buff[1] == "7":
             print("in IMU SENDQ with buff", buff)
 
             buff = buff[3:-2]
