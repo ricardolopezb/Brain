@@ -36,7 +36,8 @@ from src.utils.messages.allMessages import (
     SignalRunning,
     Recording,
     Location,
-    ImuData
+    ImuData,
+    BatteryLvl
 )
 from twisted.internet import reactor
 
@@ -132,6 +133,14 @@ class threadRemoteHandler(ThreadWithStop):
                 "Subscribe/Unsubscribe": "subscribe",
                 "Owner": ImuData.Owner.value,
                 "msgID": ImuData.msgID.value,
+                "To": {"receiver": "threadRemoteHandler", "pipe": pipeSend},
+            }
+        )
+        self.queues["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": BatteryLvl.Owner.value,
+                "msgID": BatteryLvl.msgID.value,
                 "To": {"receiver": "threadRemoteHandler", "pipe": pipeSend},
             }
         )
