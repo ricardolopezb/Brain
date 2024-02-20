@@ -105,7 +105,8 @@ class threadRead(ThreadWithStop):
             print(buff[2:-2])
         elif buff[1] == "5":
             print("in BATTERY_LEVEL SENDQ with buff", buff)
-            self.queuesList[BatteryLvl.Queue].put(
+            #BatteryLvl.Queue
+            self.queuesList['General'].put(
                 {
                     "Owner": BatteryLvl.Owner,
                     "msgID": BatteryLvl.msgID,
@@ -115,7 +116,8 @@ class threadRead(ThreadWithStop):
             )
         elif buff[1] == "6":
             print("in INSTANTCOMSUMPTION SENDQ with buff", buff)
-            self.queuesList[InstantConsumption.Queue].put(
+            #InstantConsumption.Queue
+            self.queuesList['General'].put(
                 {
                     "Owner": InstantConsumption.Owner,
                     "msgID": InstantConsumption.msgID,
