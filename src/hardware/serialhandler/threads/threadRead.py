@@ -111,7 +111,7 @@ class threadRead(ThreadWithStop):
                     "Owner": BatteryLvl.Owner,
                     "msgID": BatteryLvl.msgID,
                     "msgType": BatteryLvl.msgType,
-                    "msgValue": int(buff[3:-2]),
+                    "msgValue": float(buff[3:-2]),
                 }
             )
         elif buff[1] == "6":
@@ -122,7 +122,7 @@ class threadRead(ThreadWithStop):
                     "Owner": InstantConsumption.Owner,
                     "msgID": InstantConsumption.msgID,
                     "msgType": InstantConsumption.msgType,
-                    "msgValue": int(buff[3:-2]),
+                    "msgValue": float(buff[3:-2]),
                 }
             )
         elif buff[1] == "7":
