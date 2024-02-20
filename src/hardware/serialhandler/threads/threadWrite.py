@@ -37,6 +37,7 @@ from src.utils.messages.allMessages import (
     SpeedMotor,
     Brake,
 )
+import time
 
 
 class threadWrite(ThreadWithStop):
@@ -150,6 +151,7 @@ class threadWrite(ThreadWithStop):
         while self._running:
             try:
                 if first_time:
+                    time.sleep(4)
                     self.serialCom.write("#7:1;;".encode("ascii"))
                     print("******** SENT ACTIVATE IMU *********")
                     first_time = False
