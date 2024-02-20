@@ -91,6 +91,7 @@ class threadRead(ThreadWithStop):
 
     def sendqueue(self, buff):
         print("in sendqueue with buff", buff)
+        print("BUFF EN 1 ES: ", buff[1])
         """This function select which type of message we receive from NUCLEO and send the data further."""
         if buff[1] == 1:
             print(buff[2:-2])
