@@ -91,6 +91,7 @@ class threadRead(ThreadWithStop):
 
     def sendqueue(self, buff):
         print("in sendqueue with buff", buff)
+        print("*************** QUEUESS *****", self.queuesList)
         """This function select which type of message we receive from NUCLEO and send the data further."""
         if buff[1] == "1":
             print(buff[2:-2])
@@ -114,7 +115,7 @@ class threadRead(ThreadWithStop):
             )
         elif buff[1] == "6":
             print("in INSTANTCOMSUMPTION SENDQ with buff", buff)
-            self.queuesList['General'].put(
+            self.queuesList[InstantConsumption.Queue].put(
                 {
                     "Owner": InstantConsumption.Owner,
                     "msgID": InstantConsumption.msgID,
