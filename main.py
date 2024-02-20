@@ -98,7 +98,7 @@ if TrafficCommunication:
 
 # Initializing serial connection NUCLEO - > PI
 if SerialHandler:
-    processSerialHandler = processSerialHandler(queueList, logging)
+    processSerialHandler = processSerialHandler(queueList, logging, debugging=True)
     allProcesses.append(processSerialHandler)
 
 # ===================================== START PROCESSES ==================================
