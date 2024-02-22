@@ -131,6 +131,7 @@ class threadGateway(ThreadWithStop):
                 message = self.queuesList["Warning"].get()
             elif not self.queuesList["General"].empty():
                 message = self.queuesList["General"].get()
+                print("****MESSAGE RECEIVED", message)
             if message is not None:
                 self.send(message)
             if not self.queuesList["Config"].empty():
