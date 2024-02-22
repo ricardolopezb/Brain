@@ -130,8 +130,10 @@ class threadGateway(ThreadWithStop):
             elif not self.queuesList["Warning"].empty():
                 message = self.queuesList["Warning"].get()
             elif not self.queuesList["General"].empty():
+
                 message = self.queuesList["General"].get()
-                print("****MESSAGE RECEIVED", message)
+                if message['Owner'] != "threadCamera":
+                    print("****MESSAGE RECEIVED", message)
             if message is not None:
                 self.send(message)
             if not self.queuesList["Config"].empty():
