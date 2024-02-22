@@ -45,6 +45,7 @@ class threadMock(ThreadWithStop):
 
     # ===================================== INIT =========================================
     def __init__(self, queueList):
+        print("**** STARTING MOCK THREAD ****")
         super(threadMock, self).__init__()
         self.queuesList = queueList
         self.sent_steering = 10
@@ -70,6 +71,7 @@ class threadMock(ThreadWithStop):
         threading.Timer(1, self.Queue_Sending).start()
 
     def sendqueue(self):
+        print("**** MOCK THREAD SENDING ****", self.sent_steering)
         self.queuesList['General'].put({
             {
                 "Owner": SteerMotor.Owner,
