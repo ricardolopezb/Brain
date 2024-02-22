@@ -99,6 +99,12 @@ class SteerMotor(Enum):
     msgID = 3
     msgType = "dictionary"
 
+class SteerMotorMockThread(Enum):
+    Queue = "General"
+    Owner = "threadMock"
+    msgID = 4
+    msgType = "dictionary"
+
 
 # {"action": "steer", "value": val}
 

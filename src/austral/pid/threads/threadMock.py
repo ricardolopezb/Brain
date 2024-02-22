@@ -30,7 +30,7 @@ import time
 
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
-    SteerMotor, EnableButton
+    SteerMotorMockThread, EnableButton
 )
 
 
@@ -74,10 +74,10 @@ class threadMock(ThreadWithStop):
 
     def sendqueue(self):
         print("**** MOCK THREAD SENDING ****", self.sent_steering)
-        self.queuesList[SteerMotor.Queue.value].put({
-            "Owner": SteerMotor.Owner.value,
-            "msgID": SteerMotor.msgID.value,
-            "msgType": SteerMotor.msgType.value,
+        self.queuesList[SteerMotorMockThread.Queue.value].put({
+            "Owner": SteerMotorMockThread.Owner.value,
+            "msgID": SteerMotorMockThread.msgID.value,
+            "msgType": SteerMotorMockThread.msgType.value,
             "msgValue": self.sent_steering,
         })
         self.sent_steering = self.sent_steering*(-1)

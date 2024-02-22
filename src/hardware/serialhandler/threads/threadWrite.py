@@ -34,6 +34,7 @@ from src.utils.messages.allMessages import (
     EngineRun,
     Control,
     SteerMotor,
+    SteerMotorMockThread,
     SpeedMotor,
     Brake,
 )
@@ -114,6 +115,15 @@ class threadWrite(ThreadWithStop):
                 "To": {"receiver": "threadWrite", "pipe": self.pipeSendSteer},
             }
         )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": SteerMotorMockThread.Owner.value,
+                "msgID": SteerMotorMockThread.msgID.value,
+                "To": {"receiver": "threadWrite", "pipe": self.pipeSendSteer},
+            }
+        )
+
         self.queuesList["Config"].put(
             {
                 "Subscribe/Unsubscribe": "subscribe",
