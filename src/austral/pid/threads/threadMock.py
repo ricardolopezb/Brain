@@ -53,8 +53,10 @@ class threadMock(ThreadWithStop):
 
     # ====================================== RUN ==========================================
     def run(self):
-        time.sleep(3)
-        self.sendqueue()
+        while True:
+            time.sleep(3)
+            self.sendqueue()
+
 
 
     # ==================================== SENDING =======================================
