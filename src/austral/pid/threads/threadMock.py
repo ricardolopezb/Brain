@@ -74,7 +74,7 @@ class threadMock(ThreadWithStop):
 
     def sendqueue(self):
         print("**** MOCK THREAD SENDING ****", self.sent_steering)
-        self.queuesList['General'].put({
+        self.queuesList[SteerMotor.Queue.value].put({
             "Owner": SteerMotor.Owner,
             "msgID": SteerMotor.msgID,
             "msgType": SteerMotor.msgType,
