@@ -91,6 +91,5 @@ if __name__ == "__main__":
     process.start()
 
     time.sleep(3)
-    print(queueList["General"].get())
 
     process.stop()

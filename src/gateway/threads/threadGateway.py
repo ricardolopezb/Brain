@@ -49,7 +49,6 @@ class threadGateway(ThreadWithStop):
     # =================================== SUBSCRIBE ======================================
 
     def subscribe(self, message):
-        print("SUBSCRIBE")
         """This functin will add the pipe into the approved messages list and it will be added into the dictionary of sending
         Args:
             message(dictionary): Dictionary received from the multiprocessing queues ( the config one).
@@ -130,10 +129,7 @@ class threadGateway(ThreadWithStop):
             elif not self.queuesList["Warning"].empty():
                 message = self.queuesList["Warning"].get()
             elif not self.queuesList["General"].empty():
-
                 message = self.queuesList["General"].get()
-                if message['Owner'] != "threadCamera":
-                    print("****MESSAGE RECEIVED", message)
             if message is not None:
                 self.send(message)
             if not self.queuesList["Config"].empty():

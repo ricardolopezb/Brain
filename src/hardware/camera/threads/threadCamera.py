@@ -157,6 +157,8 @@ class threadCamera(ThreadWithStop):
                 request2 = self.camera.capture_array(
                     "lores"
                 )  # Will capture an array that can be used by OpenCV library
+                print("REQUEST TYPE", type(request))
+                print("REQUEST2 TYPE", type(request2))
                 request2 = request2[:360, :]
                 _, encoded_img = cv2.imencode(".jpg", request2)
                 _, encoded_big_img = cv2.imencode(".jpg", request)
