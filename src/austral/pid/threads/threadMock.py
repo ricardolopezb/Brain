@@ -48,7 +48,8 @@ class threadMock(ThreadWithStop):
         print("**** STARTING MOCK THREAD ****")
         super(threadMock, self).__init__()
         self.queuesList = queueList
-        self.sent_steering = 10
+        self.steer_state_tracker = SteerValueState()
+        self.sent_steering = self.steer_state_tracker.get_steer_value()
         self.Queue_Sending()
 
     # ====================================== RUN ==========================================
@@ -88,4 +89,19 @@ class threadMock(ThreadWithStop):
             "msgType": SteerMotorMockThread.msgType.value,
             "msgValue": self.sent_steering,
         })
-        self.sent_steering = self.sent_steering*(-1)
+        self.sent_steering = self.steer_state_tracker.get_steer_value()
+
+class SteerValueState:
+    def __init__(self):
+        self.state = 1
+
+    def get_steer_value(self):
+        if self.state == 1:
+            self.state = 2
+            return 10
+        if self.state == 2:
+            self.state = 3
+            return 10
+        if self.state == 3:
+            self.state = 1
+            return -40
