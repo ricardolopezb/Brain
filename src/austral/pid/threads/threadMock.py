@@ -91,6 +91,7 @@ class threadMock(ThreadWithStop):
         })
         self.sent_steering = self.steer_state_tracker.get_steer_value()
 
+
 class SteerValueState:
     def __init__(self):
         self.state = 1
@@ -104,4 +105,4 @@ class SteerValueState:
             return 10
         if self.state == 3:
             self.state = 1
-            return -40
+            return -20
