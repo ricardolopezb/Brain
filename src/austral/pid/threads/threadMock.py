@@ -30,7 +30,7 @@ import time
 
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
-    SteerMotorMockThread, EnableButton
+    SteerMotorMockThread, EnableButton, EngineRun
 )
 
 
@@ -67,6 +67,14 @@ class threadMock(ThreadWithStop):
                 "Owner": EnableButton.Owner.value,
                 "msgID": EnableButton.msgID.value,
                 "msgType": EnableButton.msgType.value,
+                "msgValue": True,
+            }
+        )
+        self.queuesList[EngineRun.Queue.value].put(
+            {
+                "Owner": EngineRun.Owner.value,
+                "msgID": EngineRun.msgID.value,
+                "msgType": EngineRun.msgType.value,
                 "msgValue": True,
             }
         )
