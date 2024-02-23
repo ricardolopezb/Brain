@@ -102,7 +102,7 @@ class SteerValueState:
             return 10
         if self.state == 2:
             self.state = 3
-            return 10
+            return 20
         if self.state == 3:
             self.state = 1
             return -20
