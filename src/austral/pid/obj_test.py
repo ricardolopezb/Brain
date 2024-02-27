@@ -21,25 +21,6 @@ class PIDController:
 
 
 
-camera = cv2.VideoCapture("C:/Users/batta/Downloads/output_video1708717321.7638366.avi")
-
-while True:
-    ret, image = camera.read()
-    if not ret:
-        print("Error al capturar la imagen desde la cámara.")
-        break
-    steering_angle = get_steering_angle(image, dt, kp, ki, kd, tolerancia, allowed_frames, prev_steering_angle,
-                                        consecutive_frames_without_left_line, consecutive_frames_without_right_line)
-    prev_steering_angle = steering_angle
-    cv2.imshow("Imagen", image)
-    cv2.waitKey(0)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-    elif cv2.waitKey(1) & 0xFF == ord(' '):
-        continue
-
-camera.release()
-cv2.destroyAllWindows()
 
 
 class LaneDetector:
@@ -55,12 +36,9 @@ class LaneDetector:
         self.prev_steering_angle = 0
 
     def get_steering_angle(self, image):
-        error, self.consecutive_frames_without_left_line, self.consecutive_frames_without_right_line = self.image_processing(
-            image=image,
-            consecutive_frames_without_left_line=self.consecutive_frames_without_left_line,
-            consecutive_frames_without_right_line=self.consecutive_frames_without_right_line)
+        error = self.image_processing(image)
         if isinstance(error, int):
-            steering_angle = self.control_signal(error=error, dt=self.dt, kp=self.kp, ki=self.ki, kd=self.kd, tolerancia=self.tolerancia)
+            steering_angle = self.control_signal(error)
             print('Calling PID', steering_angle, error)
         elif self.consecutive_frames_without_left_line == 0 and self.consecutive_frames_without_right_line > self.allowed_frames:
             steering_angle = 22
@@ -71,14 +49,17 @@ class LaneDetector:
         else:
             steering_angle = prev_steering_angle
             print('Same steering angle as before', steering_angle)
+        self.prev_steering_angle = steering_angle
         return steering_angle
 
-    def control_signal(self, error, dt, kp, ki, kd, tolerancia):
-        pid_controller = PIDController(kp, ki, kd)
-        if abs(error) < tolerancia:
+    def control_signal(self, error):
+        pid_controller = PIDController(self.kp, self.ki, self.kd)
+        if abs(error) < self.tolerancia:
             steering_angle = -3
         else:
-            steering_angle = pid_controller.compute(error, dt)
+            steering_angle = pid_controller.compute(error, self.dt)
+            if steering_angle < 0:
+                steering_angle = steering_angle - 3
         return round(steering_angle)
 
     def image_processing(self, image):
@@ -104,7 +85,7 @@ class LaneDetector:
         canny_image = cv2.Canny(noiseless_image, 100, 150)
 
         lines = cv2.HoughLinesP(canny_image, 1, np.pi / 180, 50, minLineLength=50, maxLineGap=150)
-        left_lines, right_lines = self.lines_classifier(lines=lines)
+        left_lines, right_lines = self.lines_classifier(lines)
         merged_left_lines = self.merge_lines(left_lines)
         merged_right_lines = self.merge_lines(right_lines)
         average_left_line = self.average_lines(merged_left_lines)
@@ -122,15 +103,17 @@ class LaneDetector:
                                   width=width)
         else:
             error = "Can not be calculated"
-
-        self.consecutive_frames_without_left_line, self.consecutive_frames_without_right_line = self.lane_detection(
+        print("BEFORE LANE DETECTION CALL")
+        print("Consecutive Without Left:", self.consecutive_frames_without_left_line)
+        print("Consecutive Without Right:", self.consecutive_frames_without_right_line)
+        self.lane_detection(
             left_lines=left_lines,
-            right_lines=right_lines,
-            consecutive_frames_without_left_line=self.consecutive_frames_without_left_line,
-            consecutive_frames_without_right_line=self.consecutive_frames_without_right_line,
-            allowed_frames=self.allowed_frames)
+            right_lines=right_lines)
+        print("AFTER LANE DETECTION CALL")
+        print("Consecutive Without Left:", self.consecutive_frames_without_left_line)
+        print("Consecutive Without Right:", self.consecutive_frames_without_right_line)
 
-        return error, self.consecutive_frames_without_left_line, self.consecutive_frames_without_right_line
+        return error
 
     def lines_classifier(self, lines):
         left_lines = []
@@ -186,6 +169,11 @@ class LaneDetector:
                  2)
 
     def lane_detection(self, left_lines, right_lines):
+        print("DENTRO DE LANE DETECTION")
+        print("Left Lines:", len(left_lines))
+        print("Right Lines:", len(right_lines))
+
+
         # Si se detectaron líneas tanto a la izquierda como a la derecha
         if len(left_lines) > 0 and len(right_lines) > 0:
             self.consecutive_frames_without_left_line = 0
@@ -204,7 +192,6 @@ class LaneDetector:
         else:
             self.consecutive_frames_without_left_line = self.consecutive_frames_without_left_line + 1
             self.consecutive_frames_without_right_line = self.consecutive_frames_without_right_line + 1
-        return self.consecutive_frameself.s_without_left_line, self.consecutive_frames_without_right_line
 
     def getting_error(self, average_left_line, average_right_line, height, width):
         x1_left, y1_left, x2_left, y2_left = average_left_line[0]
@@ -254,3 +241,25 @@ class LaneDetector:
                 if not merge_flag:
                     merged_lines.append(line)
         return merged_lines
+    
+
+camera = cv2.VideoCapture("C:/Users/batta/Downloads/output_video1708717321.7638366.avi")
+
+lane_detector = LaneDetector()
+while True:
+    ret, image = camera.read()
+    if not ret:
+        print("Error al capturar la imagen desde la cámara.")
+        break
+    
+    steering_angle = lane_detector.get_steering_angle(image)
+    prev_steering_angle = steering_angle
+    cv2.imshow("Imagen", image)
+    cv2.waitKey(0)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+    elif cv2.waitKey(1) & 0xFF == ord(' '):
+        continue
+
+camera.release()
+cv2.destroyAllWindows()

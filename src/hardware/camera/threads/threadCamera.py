@@ -32,6 +32,8 @@ import picamera2
 import time
 
 from multiprocessing import Pipe
+
+from src.austral.pid.obj_test import LaneDetector
 from src.utils.messages.allMessages import (
     mainCamera,
     serialCamera,
@@ -70,6 +72,7 @@ class threadCamera(ThreadWithStop):
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
+        self.lane_detector = LaneDetector()
 
     def subscribe(self):
         """Subscribe function. In this function we make all the required subscribe to process gateway"""
@@ -160,6 +163,8 @@ class threadCamera(ThreadWithStop):
                 print("REQUEST TYPE", type(request))
                 print("REQUEST2 TYPE", type(request2))
                 request2 = request2[:360, :]
+                steering_value = self.lane_detector.get_steering_angle(request)
+                print("***************** STEERING VALUE", steering_value)
                 _, encoded_img = cv2.imencode(".jpg", request2)
                 _, encoded_big_img = cv2.imencode(".jpg", request)
                 image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
