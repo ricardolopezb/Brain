@@ -57,19 +57,21 @@ class threadMock(ThreadWithStop):
 
     # ====================================== RUN ==========================================
     def run(self):
-        print("RUNNING MOCK")
-        if self.pipeRecvSteeringCalculation.poll():
-            value = self.pipeRecvSteeringCalculation.recv()
-            print("RECIEVED STEERING CALC:", value)
 
-            self.queuesList[Control.Queue.value].put({
-                "Owner": Control.Owner.value,
-                "msgID": Control.msgID.value,
-                "msgType": Control.msgType.value,
-                "msgValue": {'Speed': '10', 'Time': '5', 'Steer': value}
-            })
-            print("SENT CONTROL:", value)
-            time.sleep(1)
+        while True:
+            print("RUNNING MOCK")
+            if self.pipeRecvSteeringCalculation.poll():
+                value = self.pipeRecvSteeringCalculation.recv()
+                print("RECIEVED STEERING CALC:", value)
+
+                self.queuesList[Control.Queue.value].put({
+                    "Owner": Control.Owner.value,
+                    "msgID": Control.msgID.value,
+                    "msgType": Control.msgType.value,
+                    "msgValue": {'Speed': '10', 'Time': '5', 'Steer': value}
+                })
+                print("SENT CONTROL:", value)
+                time.sleep(1)
 
 
 
