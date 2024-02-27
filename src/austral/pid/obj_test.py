@@ -241,25 +241,23 @@ class LaneDetector:
                 if not merge_flag:
                     merged_lines.append(line)
         return merged_lines
-    
 
-camera = cv2.VideoCapture("C:/Users/batta/Downloads/output_video1708717321.7638366.avi")
 
-lane_detector = LaneDetector()
-while True:
-    ret, image = camera.read()
-    if not ret:
-        print("Error al capturar la imagen desde la cámara.")
-        break
-    
-    steering_angle = lane_detector.get_steering_angle(image)
-    prev_steering_angle = steering_angle
-    cv2.imshow("Imagen", image)
-    cv2.waitKey(0)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-    elif cv2.waitKey(1) & 0xFF == ord(' '):
-        continue
-
-camera.release()
-cv2.destroyAllWindows()
+# lane_detector = LaneDetector()
+# while True:
+#     ret, image = camera.read()
+#     if not ret:
+#         print("Error al capturar la imagen desde la cámara.")
+#         break
+#
+#     steering_angle = lane_detector.get_steering_angle(image)
+#     prev_steering_angle = steering_angle
+#     cv2.imshow("Imagen", image)
+#     cv2.waitKey(0)
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+#     elif cv2.waitKey(1) & 0xFF == ord(' '):
+#         continue
+#
+# camera.release()
+# cv2.destroyAllWindows()
