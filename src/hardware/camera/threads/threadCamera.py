@@ -213,6 +213,6 @@ class threadCamera(ThreadWithStop):
                 "Owner": SteeringCalculation.Owner.value,
                 "msgID": SteeringCalculation.msgID.value,
                 "msgType": SteeringCalculation.msgType.value,
-                "msgValue": steering_value,
+                "msgValue": {'value': steering_value},
             }
         )

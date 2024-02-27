@@ -200,4 +200,4 @@ class SteeringCalculation(Enum):
     Queue = "General"
     Owner = "threadCamera"
     msgID = 1
-    msgType = "Integer"
+    msgType = "dictionary"
