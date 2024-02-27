@@ -61,7 +61,8 @@ class threadMock(ThreadWithStop):
 
         while True:
             if self.pipeRecvSteeringCalculation.poll():
-                message = self.pipeRecvSteeringCalculation.recv()['value']['value']
+                result = self.pipeRecvSteeringCalculation.recv()
+                message = result['value']['value']
                 print("RECIEVED MESSAGE:", message)
                 value = float(message)
                 print("RECIEVED STEERING CALC:", value)
