@@ -53,6 +53,7 @@ class threadMock(ThreadWithStop):
         pipeRecvSteeringCalculation, pipeSendSteeringCalculation = Pipe(duplex=False)
         self.pipeRecvSteeringCalculation = pipeRecvSteeringCalculation
         self.pipeSendSteeringCalculation = pipeSendSteeringCalculation
+        self.subscribe()
 
     # ====================================== RUN ==========================================
     def run(self):
