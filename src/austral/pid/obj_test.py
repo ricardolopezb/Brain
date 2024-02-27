@@ -47,7 +47,7 @@ class LaneDetector:
             steering_angle = -22
             print('Turning Left', steering_angle)
         else:
-            steering_angle = prev_steering_angle
+            steering_angle = self.prev_steering_angle
             print('Same steering angle as before', steering_angle)
         self.prev_steering_angle = steering_angle
         return steering_angle
@@ -92,10 +92,10 @@ class LaneDetector:
         average_right_line = self.average_lines(merged_right_lines)
 
         if average_left_line is not None:
-            self.line_drawing(average_left_line, height=height)
+            self.line_drawing(image, average_left_line, height=height)
 
         if average_right_line is not None:
-            self.line_drawing(average_right_line, height=height)
+            self.line_drawing(image, average_right_line, height=height)
 
         if average_left_line is not None and average_right_line is not None:
             error = self.getting_error(average_left_line=average_left_line, average_right_line=average_right_line,
@@ -158,7 +158,7 @@ class LaneDetector:
             x = int(x1 + (y - y1) / slope)
             return x, y
 
-    def line_drawing(self, line, height):
+    def line_drawing(self, image, line, height):
         x1, y1, x2, y2 = line[0]
         extended_line = np.array([
             self.get_intersection_point(line, 0),
