@@ -57,6 +57,7 @@ class threadMock(ThreadWithStop):
 
     # ====================================== RUN ==========================================
     def run(self):
+        print("RUNNING MOCK")
         if self.pipeRecvSteeringCalculation.poll():
             value = self.pipeRecvSteeringCalculation.recv()
             print("RECIEVED STEERING CALC:", value)
