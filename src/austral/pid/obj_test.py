@@ -20,9 +20,6 @@ class PIDController:
         return control_signal
 
 
-
-
-
 class LaneDetector:
     def __init__(self):
         self.consecutive_frames_without_left_line = 0
@@ -98,20 +95,15 @@ class LaneDetector:
             self.line_drawing(image, average_right_line, height=height)
 
         if average_left_line is not None and average_right_line is not None:
-            error = self.getting_error(average_left_line=average_left_line, average_right_line=average_right_line,
-                                  height=height,
-                                  width=width)
+            error = self.getting_error(image, average_left_line=average_left_line,
+                                       average_right_line=average_right_line,
+                                       height=height,
+                                       width=width)
         else:
             error = "Can not be calculated"
-        print("BEFORE LANE DETECTION CALL")
-        print("Consecutive Without Left:", self.consecutive_frames_without_left_line)
-        print("Consecutive Without Right:", self.consecutive_frames_without_right_line)
         self.lane_detection(
             left_lines=left_lines,
             right_lines=right_lines)
-        print("AFTER LANE DETECTION CALL")
-        print("Consecutive Without Left:", self.consecutive_frames_without_left_line)
-        print("Consecutive Without Right:", self.consecutive_frames_without_right_line)
 
         return error
 
@@ -169,11 +161,6 @@ class LaneDetector:
                  2)
 
     def lane_detection(self, left_lines, right_lines):
-        print("DENTRO DE LANE DETECTION")
-        print("Left Lines:", len(left_lines))
-        print("Right Lines:", len(right_lines))
-
-
         # Si se detectaron líneas tanto a la izquierda como a la derecha
         if len(left_lines) > 0 and len(right_lines) > 0:
             self.consecutive_frames_without_left_line = 0
@@ -193,7 +180,7 @@ class LaneDetector:
             self.consecutive_frames_without_left_line = self.consecutive_frames_without_left_line + 1
             self.consecutive_frames_without_right_line = self.consecutive_frames_without_right_line + 1
 
-    def getting_error(self, average_left_line, average_right_line, height, width):
+    def getting_error(self, image, average_left_line, average_right_line, height, width):
         x1_left, y1_left, x2_left, y2_left = average_left_line[0]
         x1_right, y1_right, x2_right, y2_right = average_right_line[0]
 
@@ -241,7 +228,6 @@ class LaneDetector:
                 if not merge_flag:
                     merged_lines.append(line)
         return merged_lines
-
 
 # lane_detector = LaneDetector()
 # while True:
