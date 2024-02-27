@@ -27,10 +27,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 import threading
 import time
-
+from multiprocessing import Pipe
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
-    SteerMotorMockThread, EnableButton, EngineRun
+    SteerMotorMockThread, EnableButton, EngineRun, SteeringCalculation, Control
 )
 
 
@@ -50,15 +50,40 @@ class threadMock(ThreadWithStop):
         self.steer_state_tracker = SteerValueState()
         self.sent_steering = self.steer_state_tracker.get_steer_value()
         self.Queue_Sending()
+        pipeRecvSteeringCalculation, pipeSendSteeringCalculation = Pipe(duplex=False)
+        self.pipeRecvSteeringCalculation = pipeRecvSteeringCalculation
+        self.pipeSendSteeringCalculation = pipeSendSteeringCalculation
 
     # ====================================== RUN ==========================================
     def run(self):
-        pass
-        # while True:
-        #     time.sleep(3)
-        #     self.sendqueue()
+        if self.pipeRecvSteeringCalculation.poll():
+            value = self.pipeRecvSteeringCalculation.recv()
+            print("RECIEVED STEERING CALC:", value)
+
+            self.queuesList[Control.Queue.value].put({
+                "Owner": Control.Owner.value,
+                "msgID": Control.msgID.value,
+                "msgType": Control.msgType.value,
+                "msgValue": {'Speed': '10', 'Time': '5', 'Steer': value}
+            })
+            print("SENT CONTROL:", value)
+            time.sleep(1)
 
 
+
+    def subscribe(self):
+        """Subscribe function. In this function we make all the required subscribe to process gateway"""
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": SteeringCalculation.Owner.value,
+                "msgID": SteeringCalculation.msgID.value,
+                "To": {
+                    "receiver": "threadMock",
+                    "pipe": self.pipeSendSteeringCalculation,
+                },
+            }
+        )
 
     # ==================================== SENDING =======================================
     def Queue_Sending(self):

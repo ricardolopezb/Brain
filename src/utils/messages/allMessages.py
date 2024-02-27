@@ -193,3 +193,11 @@ class SignalRunning(Enum):
     Owner = "threadWrite"
     msgID = 2
     msgType = "Boolean"
+
+
+######################    Lane Detection  ###########################
+class SteeringCalculation(Enum):
+    Queue = "Warning"
+    Owner = "threadCamera"
+    msgID = 1
+    msgType = "Integer"

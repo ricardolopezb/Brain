@@ -40,6 +40,7 @@ from src.utils.messages.allMessages import (
     Recording,
     Record,
     Config,
+    SteeringCalculation
 )
 from src.templates.threadwithstop import ThreadWithStop
 
@@ -163,7 +164,7 @@ class threadCamera(ThreadWithStop):
                 request2 = request2[:360, :]
                 steering_value = self.lane_detector.get_steering_angle(request)
                 print("***************** STEERING VALUE", steering_value)
-
+                self.send_steering_value(steering_value)
                 _, encoded_img = cv2.imencode(".jpg", request)
                 _, encoded_big_img = cv2.imencode(".jpg", request)
                 image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
@@ -203,3 +204,13 @@ class threadCamera(ThreadWithStop):
         )
         self.camera.configure(config)
         self.camera.start()
+
+    def send_steering_value(self, steering_value):
+        self.queuesList[SteeringCalculation.Queue.value].put(
+            {
+                "Owner": SteeringCalculation.Owner.value,
+                "msgID": SteeringCalculation.msgID.value,
+                "msgType": SteeringCalculation.msgType.value,
+                "msgValue": steering_value,
+            }
+        )
