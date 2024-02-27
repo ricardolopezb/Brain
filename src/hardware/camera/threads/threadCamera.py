@@ -161,7 +161,6 @@ class threadCamera(ThreadWithStop):
                     "lores"
                 )  # Will capture an array that can be used by OpenCV library
                 request2 = request2[:360, :]
-                steering_value = self.lane_detector.get_steering_angle(request)
                 steering_value = self.lane_detector.get_steering_angle(request2)
                 print("***************** STEERING VALUE", steering_value)
                 _, encoded_img = cv2.imencode(".jpg", request2)
