@@ -62,6 +62,8 @@ class threadMock(ThreadWithStop):
         while True:
             if self.pipeRecvSteeringCalculation.poll():
                 result = self.pipeRecvSteeringCalculation.recv()
+                if result['Type'] == 'base64':
+                    continue
                 print("RESULTT:", result)
                 message = result['value']['value']
                 print("RECIEVED MESSAGE:", message)
