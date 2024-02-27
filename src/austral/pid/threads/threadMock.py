@@ -74,7 +74,7 @@ class threadMock(ThreadWithStop):
                     "Owner": Control.Owner.value,
                     "msgID": Control.msgID.value,
                     "msgType": Control.msgType.value,
-                    "msgValue": {'Speed': '10', 'Time': '5', 'Steer': value}
+                    "msgValue": {'Speed': '10', 'Time': '0.5', 'Steer': value}
                 })
                 print("SENT CONTROL:", value)
                 time.sleep(1)
