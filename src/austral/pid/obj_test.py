@@ -185,8 +185,15 @@ class LaneDetector:
         x1_right, y1_right, x2_right, y2_right = average_right_line[0]
 
         # Calcular los puntos donde las líneas promedio izquierda y derecha intersectan el borde inferior de la imagen
-        bottom_left_x = int(x1_left + (height - y1_left) * (x2_left - x1_left) / (y2_left - y1_left))
-        bottom_right_x = int(x1_right + (height - y1_right) * (x2_right - x1_right) / (y2_right - y1_right))
+        a = (y2_left - y1_left)
+        if y2_left - y1_left == 0:
+            a = 99
+        bottom_left_x = int(x1_left + (height - y1_left) * (x2_left - x1_left) / a)
+
+        b = (y2_right - y1_right)
+        if y2_right - y1_right == 0:
+            b = 99
+        bottom_right_x = int(x1_right + (height - y1_right) * (x2_right - x1_right) / b)
 
         # Calcular el punto medio entre estos puntos
         midpoint_x = (bottom_left_x + bottom_right_x) // 2
