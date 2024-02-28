@@ -172,33 +172,33 @@ class threadCamera(ThreadWithStop):
                     self.video_writer.write(cv2_image)
 
                 current_epoch = int(time.time())
-                if current_epoch - self.last_epoch_demo > self.demo_period:
-                    self.last_epoch_demo = self.last_epoch_demo + self.demo_period
-                    request2 = self.camera.capture_array(
-                        "lores"
-                    )  # Will capture an array that can be used by OpenCV library
-                    request2 = request2[:360, :]
+                #if current_epoch - self.last_epoch_demo > self.demo_period:
+                self.last_epoch_demo = self.last_epoch_demo + self.demo_period
+                request2 = self.camera.capture_array(
+                    "lores"
+                )  # Will capture an array that can be used by OpenCV library
+                request2 = request2[:360, :]
 
-                    _, encoded_img = cv2.imencode(".jpg", request)
-                    _, encoded_big_img = cv2.imencode(".jpg", request)
-                    image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
-                    image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
-                    self.queuesList[mainCamera.Queue.value].put(
-                        {
-                            "Owner": mainCamera.Owner.value,
-                            "msgID": mainCamera.msgID.value,
-                            "msgType": mainCamera.msgType.value,
-                            "msgValue": image_data_encoded2,
-                        }
-                    )
-                    self.queuesList[serialCamera.Queue.value].put(
-                        {
-                            "Owner": serialCamera.Owner.value,
-                            "msgID": serialCamera.msgID.value,
-                            "msgType": serialCamera.msgType.value,
-                            "msgValue": image_data_encoded,
-                        }
-                    )
+                _, encoded_img = cv2.imencode(".jpg", request)
+                _, encoded_big_img = cv2.imencode(".jpg", request)
+                image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
+                image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
+                self.queuesList[mainCamera.Queue.value].put(
+                    {
+                        "Owner": mainCamera.Owner.value,
+                        "msgID": mainCamera.msgID.value,
+                        "msgType": mainCamera.msgType.value,
+                        "msgValue": image_data_encoded2,
+                    }
+                )
+                self.queuesList[serialCamera.Queue.value].put(
+                    {
+                        "Owner": serialCamera.Owner.value,
+                        "msgID": serialCamera.msgID.value,
+                        "msgType": serialCamera.msgType.value,
+                        "msgValue": image_data_encoded,
+                    }
+                )
                 if current_epoch - self.last_epoch_lanes > self.lanes_period:
                     steering_value = self.lane_detector.get_steering_angle(request)
                     print("***************** STEERING VALUE", steering_value)
