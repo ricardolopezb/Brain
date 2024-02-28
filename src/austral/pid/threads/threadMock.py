@@ -64,11 +64,8 @@ class threadMock(ThreadWithStop):
                 result = self.pipeRecvSteeringCalculation.recv()
                 if result['Type'] == 'base64':
                     continue
-                print("RESULTT:", result)
                 message = result['value']['value']
-                print("RECIEVED MESSAGE:", message)
                 value = float(message)
-                print("RECIEVED STEERING CALC:", value)
 
                 self.queuesList[Control.Queue.value].put({
                     "Owner": Control.Owner.value,
@@ -77,7 +74,6 @@ class threadMock(ThreadWithStop):
                     "msgValue": {'Speed': '10', 'Time': '0.5', 'Steer': value}
                 })
                 print("SENT CONTROL:", value)
-                time.sleep(1)
 
 
 

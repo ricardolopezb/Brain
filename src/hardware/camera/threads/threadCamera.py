@@ -224,8 +224,6 @@ class threadCamera(ThreadWithStop):
         self.camera.start()
 
     def send_steering_value(self, steering_value):
-        print("SENDING STEERING CALCULATION", steering_value)
-        print("PUTTING IN QUEUE:", SteeringCalculation.Queue.value)
         self.queuesList[SteeringCalculation.Queue.value].put(
             {
                 "Owner": SteeringCalculation.Owner.value,
