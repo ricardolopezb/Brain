@@ -81,7 +81,7 @@ class threadCamera(ThreadWithStop):
         self.last_epoch_signs = time.time()
 
         # Cada cuanto quiero que se corra la conditional branch
-        self.demo_period = 0.2  # in seconds
+        self.demo_period = 0.001  # in seconds
         self.lanes_period = 3  # in seconds
         self.signs_period = 5  # in seconds
 
@@ -178,9 +178,7 @@ class threadCamera(ThreadWithStop):
                         "lores"
                     )  # Will capture an array that can be used by OpenCV library
                     request2 = request2[:360, :]
-                    steering_value = self.lane_detector.get_steering_angle(request)
-                    print("***************** STEERING VALUE", steering_value)
-                    self.send_steering_value(steering_value)
+
                     _, encoded_img = cv2.imencode(".jpg", request)
                     _, encoded_big_img = cv2.imencode(".jpg", request)
                     image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
@@ -201,6 +199,10 @@ class threadCamera(ThreadWithStop):
                             "msgValue": image_data_encoded,
                         }
                     )
+                if current_epoch - self.last_epoch_lanes > self.lanes_period:
+                    steering_value = self.lane_detector.get_steering_angle(request)
+                    print("***************** STEERING VALUE", steering_value)
+                    self.send_steering_value(steering_value)
             var = not var
 
     # =============================== START ===============================================
