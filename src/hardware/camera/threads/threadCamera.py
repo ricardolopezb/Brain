@@ -75,6 +75,18 @@ class threadCamera(ThreadWithStop):
         self.Configs()
         self.lane_detector = LaneDetector()
 
+        # Variables for run() timing
+        self.last_epoch_demo = time.time()
+        self.last_epoch_lanes = time.time()
+        self.last_epoch_signs = time.time()
+
+        # Cada cuanto quiero que se corra la conditional branch
+        self.demo_period = 0.2  # in seconds
+        self.lanes_period = 3  # in seconds
+        self.signs_period = 5  # in seconds
+
+        self.frame = None
+
     def subscribe(self):
         """Subscribe function. In this function we make all the required subscribe to process gateway"""
         self.queuesList["Config"].put(
@@ -158,33 +170,37 @@ class threadCamera(ThreadWithStop):
                 if self.recording == True:
                     cv2_image = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
                     self.video_writer.write(cv2_image)
-                request2 = self.camera.capture_array(
-                    "lores"
-                )  # Will capture an array that can be used by OpenCV library
-                request2 = request2[:360, :]
-                steering_value = self.lane_detector.get_steering_angle(request)
-                print("***************** STEERING VALUE", steering_value)
-                self.send_steering_value(steering_value)
-                _, encoded_img = cv2.imencode(".jpg", request)
-                _, encoded_big_img = cv2.imencode(".jpg", request)
-                image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
-                image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
-                self.queuesList[mainCamera.Queue.value].put(
-                    {
-                        "Owner": mainCamera.Owner.value,
-                        "msgID": mainCamera.msgID.value,
-                        "msgType": mainCamera.msgType.value,
-                        "msgValue": image_data_encoded2,
-                    }
-                )
-                self.queuesList[serialCamera.Queue.value].put(
-                    {
-                        "Owner": serialCamera.Owner.value,
-                        "msgID": serialCamera.msgID.value,
-                        "msgType": serialCamera.msgType.value,
-                        "msgValue": image_data_encoded,
-                    }
-                )
+
+                current_epoch = int(time.time())
+                if current_epoch - self.last_epoch_demo > self.demo_period:
+                    self.last_epoch_demo = self.last_epoch_demo + self.demo_period
+                    request2 = self.camera.capture_array(
+                        "lores"
+                    )  # Will capture an array that can be used by OpenCV library
+                    request2 = request2[:360, :]
+                    steering_value = self.lane_detector.get_steering_angle(request)
+                    print("***************** STEERING VALUE", steering_value)
+                    self.send_steering_value(steering_value)
+                    _, encoded_img = cv2.imencode(".jpg", request)
+                    _, encoded_big_img = cv2.imencode(".jpg", request)
+                    image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
+                    image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
+                    self.queuesList[mainCamera.Queue.value].put(
+                        {
+                            "Owner": mainCamera.Owner.value,
+                            "msgID": mainCamera.msgID.value,
+                            "msgType": mainCamera.msgType.value,
+                            "msgValue": image_data_encoded2,
+                        }
+                    )
+                    self.queuesList[serialCamera.Queue.value].put(
+                        {
+                            "Owner": serialCamera.Owner.value,
+                            "msgID": serialCamera.msgID.value,
+                            "msgType": serialCamera.msgType.value,
+                            "msgValue": image_data_encoded,
+                        }
+                    )
             var = not var
 
     # =============================== START ===============================================
