@@ -27,7 +27,7 @@ class LaneDetector:
         self.dt = 1
         self.kp = 0.08
         self.ki = 0.05
-        self.kd = 0.05
+        self.kd = 0
         self.tolerancia = 30
         self.allowed_frames = 5
         self.prev_steering_angle = 0

@@ -94,7 +94,7 @@ class threadRead(ThreadWithStop):
         if buff[1] == "1":
             print(buff[2:-2])
         elif buff[1] == "2":
-            print(buff[2:-2])
+            print("STEERING RESPONSE", buff[2:-2])
         elif buff[1] == "3":
             print(buff[2:-2])
         elif buff[1] == "4":

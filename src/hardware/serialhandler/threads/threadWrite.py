@@ -160,11 +160,6 @@ class threadWrite(ThreadWithStop):
         """In this function we check if we got the enable engine signal. After we got it we will start getting messages from raspberry PI. It will transform them into NUCLEO commands and send them."""
         while self._running:
             try:
-                if first_time:
-                    time.sleep(4)
-                    self.serialCom.write("#7:1;;".encode("ascii"))
-                    print("******** SENT ACTIVATE IMU *********")
-                    first_time = False
                 if self.pipeRecvRunningSignal.poll():
                     msg = self.pipeRecvRunningSignal.recv()
                     if msg["value"] == True:
