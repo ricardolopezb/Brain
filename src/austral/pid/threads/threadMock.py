@@ -62,8 +62,9 @@ class threadMock(ThreadWithStop):
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": {"action": "speed", "value": "10"}
+            "msgValue": "10"
         })
+        print("SENT SPEED")
 
         while True:
             if self.pipeRecvSteeringCalculation.poll():
@@ -77,7 +78,7 @@ class threadMock(ThreadWithStop):
                     "Owner": SteerMotor.Owner.value,
                     "msgID": SteerMotor.msgID.value,
                     "msgType": SteerMotor.msgType.value,
-                    "msgValue": {"action": "steer", "value": value}
+                    "msgValue": value
                 })
 
                 print("SENT CONTROL:", value)
