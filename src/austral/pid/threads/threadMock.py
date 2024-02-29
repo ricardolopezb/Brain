@@ -61,6 +61,7 @@ class threadMock(ThreadWithStop):
             "msgType": SpeedMotor.msgType.value,
             "msgValue": "10"
         })
+        self.last_steering_sent = 0
 
     # ====================================== RUN ==========================================
     def run(self):
@@ -75,13 +76,15 @@ class threadMock(ThreadWithStop):
                     continue
                 message = result['value']['value']
                 value = float(message)
-
+                if value == self.last_steering_sent:
+                    continue
                 self.queuesList[SteerMotor.Queue.value].put({
                     "Owner": SteerMotor.Owner.value,
                     "msgID": SteerMotor.msgID.value,
                     "msgType": SteerMotor.msgType.value,
                     "msgValue": value
                 })
+                self.last_steering_sent = value
 
                 print("SENT CONTROL:", value)
 
