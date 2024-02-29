@@ -30,7 +30,7 @@ import time
 from multiprocessing import Pipe
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
-    SteerMotorMockThread, EnableButton, EngineRun, SteeringCalculation, Control
+    SteerMotorMockThread, EnableButton, EngineRun, SteeringCalculation, Control, SpeedMotor, SteerMotor
 )
 
 
@@ -58,6 +58,12 @@ class threadMock(ThreadWithStop):
     # ====================================== RUN ==========================================
     def run(self):
         print("RUNNING MOCK")
+        self.queuesList[SpeedMotor.Queue.value].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": {"action": "speed", "value": "10"}
+        })
 
         while True:
             if self.pipeRecvSteeringCalculation.poll():
@@ -67,11 +73,11 @@ class threadMock(ThreadWithStop):
                 message = result['value']['value']
                 value = float(message)
 
-                self.queuesList[Control.Queue.value].put({
-                    "Owner": Control.Owner.value,
-                    "msgID": Control.msgID.value,
-                    "msgType": Control.msgType.value,
-                    "msgValue": {'Speed': '10', 'Time': '0.5', 'Steer': value}
+                self.queuesList[SteerMotor.Queue.value].put({
+                    "Owner": SteerMotor.Owner.value,
+                    "msgID": SteerMotor.msgID.value,
+                    "msgType": SteerMotor.msgType.value,
+                    "msgValue": {"action": "steer", "value": value}
                 })
 
                 print("SENT CONTROL:", value)
