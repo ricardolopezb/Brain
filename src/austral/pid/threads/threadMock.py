@@ -54,16 +54,18 @@ class threadMock(ThreadWithStop):
         self.pipeRecvSteeringCalculation = pipeRecvSteeringCalculation
         self.pipeSendSteeringCalculation = pipeSendSteeringCalculation
         self.subscribe()
-
-    # ====================================== RUN ==========================================
-    def run(self):
-        print("RUNNING MOCK")
+        time.sleep(1)
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
             "msgValue": "10"
         })
+
+    # ====================================== RUN ==========================================
+    def run(self):
+        print("RUNNING MOCK")
+
         print("SENT SPEED")
 
         while True:
