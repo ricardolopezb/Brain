@@ -106,10 +106,10 @@ class LaneDetector:
         average_horizontal_line = self.average_lines(merged_horizontal_lines)
 
         if average_left_line is not None:
-            self.line_drawing(average_left_line, height=height)
+            self.line_drawing(image, average_left_line, height=height)
 
         if average_right_line is not None:
-            self.line_drawing(average_right_line, height=height)
+            self.line_drawing(image, average_right_line, height=height)
 
         if average_horizontal_line is not None:
             x1, y1, x2, y2 = average_horizontal_line[0]
