@@ -174,6 +174,13 @@ class threadCamera(ThreadWithStop):
                 current_epoch = int(time.time())
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
+
+                if current_epoch - self.last_epoch_lanes > self.lanes_period:
+                    self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
+                    steering_value = self.lane_detector.get_steering_angle(request)
+                    print("*** "+ str(current_epoch) + " ******** STEERING VALUE", steering_value)
+                    self.send_steering_value(steering_value)
+
                 request2 = self.camera.capture_array(
                     "lores"
                 )  # Will capture an array that can be used by OpenCV library
@@ -199,11 +206,6 @@ class threadCamera(ThreadWithStop):
                         "msgValue": image_data_encoded,
                     }
                 )
-                if current_epoch - self.last_epoch_lanes > self.lanes_period:
-                    self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
-                    steering_value = self.lane_detector.get_steering_angle(request)
-                    print("*** "+ str(current_epoch) + " ******** STEERING VALUE", steering_value)
-                    self.send_steering_value(steering_value)
             var = not var
 
     # =============================== START ===============================================
