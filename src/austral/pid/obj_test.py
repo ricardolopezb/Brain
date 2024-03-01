@@ -3,20 +3,39 @@ import numpy as np
 
 
 class PIDController:
-    def __init__(self, Kp, Ki, Kd):
+    def __init__(self, Kp, Ki, Kd, tolerancia):
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
         self.prev_error = 0
         self.integral = 0
+        self.iteration_count = 0
+        self.integral_reset_interval = 10
+        self.tolerancia = tolerancia
 
-    def compute(self, error, dt):
+    def compute(self, error, dt, integral_reset_interval=None):
+        if integral_reset_interval is not None:
+            self.integral_reset_interval = integral_reset_interval
+
         proportional = error
-        self.integral += error * dt
+        self.integral = self.integral + error * dt
         derivative = (error - self.prev_error) / dt
         self.prev_error = error
-        control_signal = self.Kp * proportional + self.Ki * self.integral + self.Kd * derivative
-        control_signal = max(min(control_signal, 22), -22)
+
+        self.iteration_count = self.iteration_count + 1
+
+        # Reiniciar el término integral si se alcanza el intervalo deseado
+        if self.iteration_count % self.integral_reset_interval == 0:
+            self.integral = 0
+
+        if abs(error) < self.tolerancia:
+            control_signal = -3
+        else:
+            control_signal = self.Kp * proportional + self.Ki * self.integral + self.Kd * derivative
+            control_signal = max(min(control_signal, 22), -22)
+        print(proportional)
+        print(self.integral)
+        print(derivative)
         return control_signal
 
 
@@ -24,14 +43,14 @@ class LaneDetector:
     def __init__(self):
         self.consecutive_frames_without_left_line = 0
         self.consecutive_frames_without_right_line = 0
-        self.dt = 1
+        self.dt = 0.2
         self.kp = 0.08
-        self.ki = 0
-        self.kd = 0
+        self.ki = 0.03
+        self.kd = 0.03
         self.tolerancia = 30
         self.allowed_frames = 5
         self.prev_steering_angle = 0
-        self.pid_controller = PIDController(self.kp, self.ki, self.kd)
+        self.pid_controller = PIDController(self.kp, self.ki, self.kd, self.tolerancia)
 
     def get_steering_angle(self, image):
         error = self.image_processing(image)
@@ -51,12 +70,7 @@ class LaneDetector:
         return steering_angle
 
     def control_signal(self, error):
-        if abs(error) < self.tolerancia:
-            steering_angle = -3
-        else:
-            steering_angle = self.pid_controller.compute(error, self.dt)
-            if steering_angle < 0:
-                steering_angle = steering_angle - 3
+        steering_angle = self.pid_controller.compute(error, self.dt)
         return round(steering_angle)
 
     def image_processing(self, image):
@@ -254,46 +268,3 @@ class LaneDetector:
 #
 # camera.release()
 # cv2.destroyAllWindows()
-
-
-class PIDController:
-    def _init_(self, Kp, Ki, Kd):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
-        self.prev_error = 0
-        self.integral = 0
-        self.iteration_count = 0
-        self.integral_reset_interval = 10
-
-    def compute(self, error, dt, integral_reset_interval=None):
-        if integral_reset_interval is not None:
-            self.integral_reset_interval = integral_reset_interval
-
-        proportional = error
-        self.integral = self.integral + error * dt
-        derivative = (error - self.prev_error) / dt
-        self.prev_error = error
-
-        self.iteration_count = self.iteration_count + 1
-
-        # Reiniciar el término integral si se alcanza el intervalo deseado
-        if self.iteration_count % self.integral_reset_interval == 0:
-            self.integral = 0
-
-        if abs(error) < tolerancia:
-            control_signal = -3
-        else:
-            control_signal = self.Kp * proportional + self.Ki * self.integral + self.Kd * derivative
-            control_signal = max(min(control_signal, 22), -22)
-        print(proportional)
-        print(self.integral)
-        print(derivative)
-        return control_signal
-
-
-# -------------------------------------------------------------------------------------------------------
-
-def control_signal(error, dt, kp, ki, kd, tolerancia):
-    steering_angle = pid_controller.compute(error, dt)
-    return round(steering_angle)
