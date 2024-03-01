@@ -239,3 +239,4 @@ class threadCamera(ThreadWithStop):
                 "msgValue": {'value': steering_value},
             }
         )
+        self.last_sent_steering_value = steering_value
