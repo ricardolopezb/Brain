@@ -44,7 +44,7 @@ class LaneDetector:
         self.consecutive_frames_without_left_line = 0
         self.consecutive_frames_without_right_line = 0
         self.dt = 0.2
-        self.kp = 0.2
+        self.kp = 0.1
         self.ki = 0
         self.kd = 0
         self.tolerancia = 50
