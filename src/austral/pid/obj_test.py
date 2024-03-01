@@ -96,17 +96,24 @@ class LaneDetector:
         canny_image = cv2.Canny(noiseless_image, 100, 150)
 
         lines = cv2.HoughLinesP(canny_image, 1, np.pi / 180, 50, minLineLength=50, maxLineGap=150)
-        left_lines, right_lines = self.lines_classifier(lines)
+
+        left_lines, right_lines, horizontal_lines = self.lines_classifier(lines=lines)
         merged_left_lines = self.merge_lines(left_lines)
         merged_right_lines = self.merge_lines(right_lines)
+        merged_horizontal_lines = self.merge_lines(horizontal_lines)
         average_left_line = self.average_lines(merged_left_lines)
         average_right_line = self.average_lines(merged_right_lines)
+        average_horizontal_line = self.average_lines(merged_horizontal_lines)
 
         if average_left_line is not None:
-            self.line_drawing(image, average_left_line, height=height)
+            self.line_drawing(average_left_line, height=height)
 
         if average_right_line is not None:
-            self.line_drawing(image, average_right_line, height=height)
+            self.line_drawing(average_right_line, height=height)
+
+        if average_horizontal_line is not None:
+            x1, y1, x2, y2 = average_horizontal_line[0]
+            cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
         if average_left_line is not None and average_right_line is not None:
             error = self.getting_error(image, average_left_line=average_left_line,
@@ -121,9 +128,37 @@ class LaneDetector:
 
         return error
 
+    # def lines_classifier(self, lines):
+    #     left_lines = []
+    #     right_lines = []
+    #     if lines is not None:
+    #         for line in lines:
+    #             x1, y1, x2, y2 = line[0]
+    #             # Calcular la pendiente de la línea
+    #             if x2 - x1 == 0:  # Evitar división por cero
+    #                 slope = np.pi / 2  # Línea vertical, pendiente infinita
+    #             else:
+    #                 slope = np.arctan((y2 - y1) / (x2 - x1))
+    #
+    #             # Convertir la pendiente a grados
+    #             angle_degrees = np.degrees(abs(slope))
+    #
+    #             # Verificar si la línea es horizontal (dentro del margen de +/- 20 grados)
+    #             if angle_degrees > 80 and angle_degrees < 100:  # Cambia los valores según el margen deseado
+    #                 continue
+    #
+    #             # Clasificar la línea como izquierda o derecha basándose en la pendiente
+    #             if slope < 0:
+    #                 left_lines.append(line)
+    #             else:
+    #                 right_lines.append(line)
+    #     return left_lines, right_lines
+
     def lines_classifier(self, lines):
         left_lines = []
         right_lines = []
+        horizontal_lines = []
+
         if lines is not None:
             for line in lines:
                 x1, y1, x2, y2 = line[0]
@@ -137,7 +172,9 @@ class LaneDetector:
                 angle_degrees = np.degrees(abs(slope))
 
                 # Verificar si la línea es horizontal (dentro del margen de +/- 20 grados)
-                if angle_degrees > 80 and angle_degrees < 100:  # Cambia los valores según el margen deseado
+                if abs(angle_degrees) < 20 or abs(
+                        angle_degrees - 180) < 20:  # Considera líneas dentro de +/- 20 grados de horizontal
+                    horizontal_lines.append(line)
                     continue
 
                 # Clasificar la línea como izquierda o derecha basándose en la pendiente
@@ -145,8 +182,8 @@ class LaneDetector:
                     left_lines.append(line)
                 else:
                     right_lines.append(line)
-        return left_lines, right_lines
 
+        return left_lines, right_lines, horizontal_lines
     def average_lines(self, lines):
         if len(lines) > 0:
             lines_array = np.array(lines)
