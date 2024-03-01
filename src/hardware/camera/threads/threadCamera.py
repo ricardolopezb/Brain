@@ -86,6 +86,7 @@ class threadCamera(ThreadWithStop):
         self.signs_period = 5  # in seconds
 
         self.frame = None
+        self.last_sent_steering_value = -1000
 
     def subscribe(self):
         """Subscribe function. In this function we make all the required subscribe to process gateway"""
@@ -227,6 +228,8 @@ class threadCamera(ThreadWithStop):
         self.camera.start()
 
     def send_steering_value(self, steering_value):
+        if self.last_sent_steering_value == steering_value:
+            return
         print(f"****** ${time.time()} ********** ENQUEUING STEERING VALUE ${steering_value} ****************")
         self.queuesList[SteeringCalculation.Queue.value].put(
             {
