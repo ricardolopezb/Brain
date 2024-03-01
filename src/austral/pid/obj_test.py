@@ -48,7 +48,7 @@ class LaneDetector:
         self.ki = 0
         self.kd = 0
         self.tolerancia = 50
-        self.allowed_frames = 4
+        self.allowed_frames = 3
         self.prev_steering_angle = 0
         self.pid_controller = PIDController(self.kp, self.ki, self.kd, self.tolerancia)
 
