@@ -125,7 +125,6 @@ class threadGateway(ThreadWithStop):
             # We are using "elif" because we are processing one message at a time.
             # We work with the queues in the priority order( We start from the high priority to low priority)
             if not self.queuesList["Critical"].empty():
-                print("critical not empty")
                 message = self.queuesList["Critical"].get()
             elif not self.queuesList["Warning"].empty():
                 print("warning not empty")

@@ -178,7 +178,7 @@ class threadCamera(ThreadWithStop):
                 if current_epoch - self.last_epoch_lanes > self.lanes_period:
                     self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
                     steering_value = self.lane_detector.get_steering_angle(request)
-                    print("*** "+ str(current_epoch) + " ******** STEERING VALUE", steering_value)
+
                     self.send_steering_value(steering_value)
 
                 request2 = self.camera.capture_array(
@@ -227,6 +227,7 @@ class threadCamera(ThreadWithStop):
         self.camera.start()
 
     def send_steering_value(self, steering_value):
+        print(f"****** ${time.time()} ********** ENQUEUING STEERING VALUE ${steering_value} ****************")
         self.queuesList[SteeringCalculation.Queue.value].put(
             {
                 "Owner": SteeringCalculation.Owner.value,
