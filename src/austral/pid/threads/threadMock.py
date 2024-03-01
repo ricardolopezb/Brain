@@ -59,7 +59,7 @@ class threadMock(ThreadWithStop):
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": "5"
+            "msgValue": "3"
         })
         self.last_steering_sent = 0
 
