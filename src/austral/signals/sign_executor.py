@@ -31,12 +31,12 @@ class SignExecutor:
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": 10
+            "msgValue": 0
         })
         time.sleep(3)
         self.queue_list['Warning'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": 10
+            "msgValue": 30
         })
