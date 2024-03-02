@@ -188,7 +188,7 @@ class threadCamera(ThreadWithStop):
 
                 if current_epoch - self.last_epoch_signs > self.signs_period:
                     self.last_epoch_signs = self.last_epoch_signs + self.signs_period
-                    found_sign = self.sign_detector.detect_signal(request, threshold=1)
+                    found_sign = self.sign_detector.detect_signal(request, threshold=10)
                     print(f"************* Found sign: {found_sign}")
                     if found_sign:
                         self.sign_executor.execute(found_sign)
