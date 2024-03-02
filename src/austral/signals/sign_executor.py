@@ -11,7 +11,10 @@ class SignExecutor:
     def execute(self, sign):
         if sign == self.just_seen_sign:
             return
-
+        if sign is None:
+            print("SIGN IS NONE")
+            self.just_seen_sign = None
+            return
         if sign == "crosswalk":
             print("FOUND A CROSSWALK")
         elif sign == "parking":
@@ -21,9 +24,7 @@ class SignExecutor:
         elif sign == "yield":
             print("FOUND A YIELD")
         print("SETTING JUST SEEN SIGN TO", sign)
-        if sign is None:
-            self.just_seen_sign = None
-            return
+
         self.just_seen_sign = sign
 
     def send_parking_sequence(self):
