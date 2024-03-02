@@ -50,9 +50,17 @@ class SignDetector:
         import os
         if os.path.exists('src/austral/signals/signs/crosswalk.png'):
             print('The file crosswalk.png does exist')
+        else:
+            print('The file crosswalk.png does not exist')
         if os.path.exists('src/austral/signals/signs/parking.png'):
             print('The file parking.png does exist')
+        else:
+            print('The file parking.png does not exist')
         if os.path.exists('src/austral/signals/signs/stop.png'):
             print('The file stop.png does exist')
+        else:
+            print('The file stop.png does not exist')
         if os.path.exists('src/austral/signals/signs/yield.png'):
             print('The file yield.png does exist')
+        else:
+            print('The file yield.png does not exist')
