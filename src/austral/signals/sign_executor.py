@@ -16,7 +16,8 @@ class SignExecutor:
         elif sign == "parking":
             self.send_parking_sequence()
         elif sign == "stop":
-            self.send_stop_sequence()
+            #self.send_stop_sequence()
+            self.send_parking_sequence()
         elif sign == "yield":
             print("FOUND A YIELD")
         print("SETTING JUST SEEN SIGN TO", sign)
