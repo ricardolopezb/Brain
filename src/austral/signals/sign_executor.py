@@ -43,5 +43,5 @@ class SignExecutor:
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": 30
+            "msgValue": 5
         })
