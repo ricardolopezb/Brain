@@ -4,19 +4,13 @@ import cv2 as cv
 class SignDetector:
     def __init__(self):
         self.sift = cv.SIFT_create()
-        self.base_signal_images = {}
-        self.flann = self._setup_flann()
-        self.image_paths = {
-            'crosswalk': 'signs/crosswalk.png',
-            'parking': 'signs/parking.png',
-            'stop': 'signs/stop.png',
-            'yield': 'signs/yield.png'
+        self.base_signal_images = {
+            'crosswalk': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/crosswalk.png', cv.IMREAD_GRAYSCALE)),
+            'parking': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/parking.png', cv.IMREAD_GRAYSCALE)),
+            'stop': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/stop.png', cv.IMREAD_GRAYSCALE)),
+            'yield': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/yield.png', cv.IMREAD_GRAYSCALE))
         }
-        for signal_name, path in self.image_paths.items():
-            img = cv.imread(path, cv.IMREAD_GRAYSCALE)
-            if img is None:
-                print(f"Failed to load image at path: {path}")
-            self.base_signal_images[signal_name] = self._generate_keypoints_and_descriptors(img)
+        self.flann = self._setup_flann()
 
     def detect_signal(self, image):
         coincidence_percentage = {}
@@ -40,6 +34,7 @@ class SignDetector:
         # return the key of the one with the highest percentage. If it is zero, return None
         return max(coincidence_percentage, key=coincidence_percentage.get) if max(
             coincidence_percentage.values()) > 0 else None
+
 
     def _generate_keypoints_and_descriptors(self, img):
         return self.sift.detectAndCompute(img, None)
