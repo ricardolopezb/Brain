@@ -6,6 +6,12 @@ class SignDetector:
         self.sift = cv.SIFT_create()
         self.base_signal_images = {}
         self.flann = self._setup_flann()
+        self.image_paths = {
+            'crosswalk': 'signs/crosswalk.png',
+            'parking': 'signs/parking.png',
+            'stop': 'signs/stop.png',
+            'yield': 'signs/yield.png'
+        }
         for signal_name, path in self.image_paths.items():
             img = cv.imread(path, cv.IMREAD_GRAYSCALE)
             if img is None:
