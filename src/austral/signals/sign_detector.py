@@ -13,9 +13,8 @@ class SignDetector:
         }
         self.flann = self._setup_flann()
 
-    def detect_signal(self, image):
+    def detect_signal(self, image, threshold=0):
         coincidence_percentage = {}
-        print("TYPE OF IMAGE: ", type(image))
         kp2, des2 = self.sift.detectAndCompute(image, None)
 
         for signal_name, (kp1, des1) in self.base_signal_images.items():
@@ -34,7 +33,7 @@ class SignDetector:
 
         # return the key of the one with the highest percentage. If it is zero, return None
         return max(coincidence_percentage, key=coincidence_percentage.get) if max(
-            coincidence_percentage.values()) > 0 else None
+            coincidence_percentage.values()) > threshold else None
 
 
     def _generate_keypoints_and_descriptors(self, img):
@@ -46,21 +45,3 @@ class SignDetector:
         search_params = dict(checks=200)  # or pass empty dictionary
         return cv.FlannBasedMatcher(index_params, search_params)
 
-    def check_existing_files(self):
-        import os
-        if os.path.exists('src/austral/signals/signs/crosswalk.png'):
-            print('The file crosswalk.png does exist')
-        else:
-            print('The file crosswalk.png does not exist')
-        if os.path.exists('src/austral/signals/signs/parking.png'):
-            print('The file parking.png does exist')
-        else:
-            print('The file parking.png does not exist')
-        if os.path.exists('src/austral/signals/signs/stop.png'):
-            print('The file stop.png does exist')
-        else:
-            print('The file stop.png does not exist')
-        if os.path.exists('src/austral/signals/signs/yield.png'):
-            print('The file yield.png does exist')
-        else:
-            print('The file yield.png does not exist')
