@@ -5,10 +5,10 @@ class SignDetector:
     def __init__(self):
         self.sift = cv.SIFT_create()
         self.base_signal_images = {
-            'crosswalk': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/crosswalk.png', cv.IMREAD_GRAYSCALE)),
-            'parking': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/parking.png', cv.IMREAD_GRAYSCALE)),
+            #'crosswalk': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/crosswalk.png', cv.IMREAD_GRAYSCALE)),
+            #'parking': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/parking.png', cv.IMREAD_GRAYSCALE)),
             'stop': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/stop.png', cv.IMREAD_GRAYSCALE)),
-            'yield': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/yield.png', cv.IMREAD_GRAYSCALE))
+            #'yield': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/yield.png', cv.IMREAD_GRAYSCALE))
         }
         self.flann = self._setup_flann()
 
