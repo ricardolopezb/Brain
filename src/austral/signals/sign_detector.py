@@ -4,14 +4,13 @@ import cv2 as cv
 class SignDetector:
     def __init__(self):
         self.sift = cv.SIFT_create()
-        self.base_signal_images = {
-            'crosswalk': self._generate_keypoints_and_descriptors(
-                cv.imread('signs/crosswalk.png', cv.IMREAD_GRAYSCALE)),
-            'parking': self._generate_keypoints_and_descriptors(cv.imread('signs/parking.png', cv.IMREAD_GRAYSCALE)),
-            'stop': self._generate_keypoints_and_descriptors(cv.imread('signs/stop.png', cv.IMREAD_GRAYSCALE)),
-            'yield': self._generate_keypoints_and_descriptors(cv.imread('signs/yield.png', cv.IMREAD_GRAYSCALE))
-        }
+        self.base_signal_images = {}
         self.flann = self._setup_flann()
+        for signal_name, path in self.image_paths.items():
+            img = cv.imread(path, cv.IMREAD_GRAYSCALE)
+            if img is None:
+                print(f"Failed to load image at path: {path}")
+            self.base_signal_images[signal_name] = self._generate_keypoints_and_descriptors(img)
 
     def detect_signal(self, image):
         coincidence_percentage = {}
