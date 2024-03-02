@@ -27,12 +27,12 @@ class SignExecutor:
     def send_parking_sequence(self):
         print("SENDING PARKING SEQUENCE")
         speed = 20.0
-        self.queue_list['Warning'].put({
-            "Owner": Control.Owner.value,
-            "msgID": Control.msgID.value,
-            "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
-        })
+        # self.queue_list['Warning'].put({
+        #     "Owner": Control.Owner.value,
+        #     "msgID": Control.msgID.value,
+        #     "msgType": Control.msgType.value,
+        #     "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
+        # })
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
