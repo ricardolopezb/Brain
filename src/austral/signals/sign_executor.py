@@ -25,6 +25,62 @@ class SignExecutor:
 
     def send_parking_sequence(self):
         print("SENDING PARKING SEQUENCE")
+        speed = 20.0
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
+        })
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': 22.0}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': -22.0}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': -speed, 'Time': 1, 'Steer': -4.0}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': -22.0}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': 22.0}
+        })
+
+        # self.MySendCommand(speed, -2.8, 1.0)
+        # self.MySendCommand(-speed, 22.0, 2)
+        # self.MySendCommand(-speed, -22.0, 2)
+        # self.MySendCommand(speed, -2.8, 1)
+        # self.MySendCommand(-speed, -4.0, 1)
+        # self.MySendCommand(speed, -22.0, 1.5)
+        # self.MySendCommand(speed, 22.0, 1.5)
 
     def send_stop_sequence(self):
         # self.queue_list['Critical'].put({
