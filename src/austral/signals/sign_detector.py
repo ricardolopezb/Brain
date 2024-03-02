@@ -4,7 +4,6 @@ import cv2 as cv
 class SignDetector:
     def __init__(self):
         self.sift = cv.SIFT_create()
-        self.check_existing_files()
         self.base_signal_images = {
             'crosswalk': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/crosswalk.png', cv.IMREAD_GRAYSCALE)),
             'parking': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/parking.png', cv.IMREAD_GRAYSCALE)),
