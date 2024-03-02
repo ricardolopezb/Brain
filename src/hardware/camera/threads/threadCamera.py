@@ -34,6 +34,7 @@ import time
 from multiprocessing import Pipe
 
 from src.austral.pid.obj_test import LaneDetector
+from src.austral.signals.sign_detector import SignDetector
 from src.utils.messages.allMessages import (
     mainCamera,
     serialCamera,
@@ -74,6 +75,7 @@ class threadCamera(ThreadWithStop):
         self.Queue_Sending()
         self.Configs()
         self.lane_detector = LaneDetector()
+        self.sign_detector = SignDetector()
 
         # Variables for run() timing
         self.last_epoch_demo = time.time()
@@ -181,6 +183,11 @@ class threadCamera(ThreadWithStop):
                     steering_value = self.lane_detector.get_steering_angle(request)
 
                     self.send_steering_value(steering_value)
+
+                if current_epoch - self.last_epoch_signs > self.signs_period:
+                    self.last_epoch_signs = self.last_epoch_signs + self.signs_period
+                    found_sign = self.sign_detector.detect_signal(request)
+                    print(f"************* Found sign: {found_sign}")
 
                 request2 = self.camera.capture_array(
                     "lores"
