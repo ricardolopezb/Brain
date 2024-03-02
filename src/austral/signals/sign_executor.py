@@ -5,9 +5,12 @@ from src.utils.messages.allMessages import SpeedMotor, Control
 
 class SignExecutor:
     def __init__(self, queue_list):
+        self.just_seen_sign = None
         self.queue_list = queue_list
 
     def execute(self, sign):
+        if sign == self.just_seen_sign:
+            return
         if sign == "crosswalk":
             print("FOUND A CROSSWALK")
         elif sign == "parking":
@@ -16,6 +19,8 @@ class SignExecutor:
             self.send_stop_sequence()
         elif sign == "yield":
             print("FOUND A YIELD")
+        print("SETTING JUST SEEN SIGN TO", sign)
+        self.just_seen_sign = sign
 
     def send_parking_sequence(self):
         print("SENDING PARKING SEQUENCE")
