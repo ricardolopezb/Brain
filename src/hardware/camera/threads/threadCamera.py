@@ -77,7 +77,7 @@ class threadCamera(ThreadWithStop):
         self.Configs()
         self.lane_detector = LaneDetector()
         self.sign_detector = SignDetector()
-        self.sign_executor = SignExecutor()
+        self.sign_executor = SignExecutor(queuesList)
 
         # Variables for run() timing
         self.last_epoch_demo = time.time()

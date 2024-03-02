@@ -2,8 +2,7 @@ from src.utils.messages.allMessages import SpeedMotor, Control
 
 
 class SignExecutor:
-    def __init__(self, sign, queue_list):
-        self.sign = sign
+    def __init__(self, queue_list):
         self.queue_list = queue_list
 
     def execute(self, sign):
