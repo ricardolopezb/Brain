@@ -4,6 +4,7 @@ import cv2 as cv
 class SignDetector:
     def __init__(self):
         self.sift = cv.SIFT_create()
+        self.check_existing_files()
         self.base_signal_images = {
             'crosswalk': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/crosswalk.png', cv.IMREAD_GRAYSCALE)),
             'parking': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/parking.png', cv.IMREAD_GRAYSCALE)),
@@ -44,3 +45,14 @@ class SignDetector:
         index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=12)
         search_params = dict(checks=200)  # or pass empty dictionary
         return cv.FlannBasedMatcher(index_params, search_params)
+
+    def check_existing_files(self):
+        import os
+        if os.path.exists('src/austral/signals/signs/crosswalk.png'):
+            print('The file crosswalk.png does exist')
+        if os.path.exists('src/austral/signals/signs/parking.png'):
+            print('The file parking.png does exist')
+        if os.path.exists('src/austral/signals/signs/stop.png'):
+            print('The file stop.png does exist')
+        if os.path.exists('src/austral/signals/signs/yield.png'):
+            print('The file yield.png does exist')
