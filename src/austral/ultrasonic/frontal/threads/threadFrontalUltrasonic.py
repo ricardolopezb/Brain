@@ -74,26 +74,6 @@ class threadFrontalUltrasonic(ThreadWithStop):
                     self.accelerate()
                     self.is_braked = False
 
-
-
-
-
-
-
-
-                # if read_chr == "":
-                #     print("NOTHING IN THE WAY. SPEEDING")
-                #     self.queuesList[SpeedMotor.Queue.value].put({
-                #         "Owner": SpeedMotor.Owner.value,
-                #         "msgID": SpeedMotor.msgID.value,
-                #         "msgType": SpeedMotor.msgType.value,
-                #         "msgValue": 10
-                #     })
-                #     self.is_braked = False
-                #     continue
-                # if self.is_braked:
-                #     continue
-
             except UnicodeDecodeError:
                 pass
 
@@ -101,28 +81,6 @@ class threadFrontalUltrasonic(ThreadWithStop):
     def Queue_Sending(self):
         pass
 
-    def sendqueue(self, buff):
-        """This function select which type of message we receive from NUCLEO and send the data further."""
-        print("BUFF:", buff)
-        print("SENDING ULTRASONIC VALUE", buff[1:])
-        self.queuesList[SpeedMotor.Queue.value].put({
-            "Owner": SpeedMotor.Owner.value,
-            "msgID": SpeedMotor.msgID.value,
-            "msgType": SpeedMotor.msgType.value,
-            "msgValue": 0
-        })
-        self.is_braked = True
-
-        # if buff[1] == "6":
-        #     #InstantConsumption.Queue
-        #     self.queuesList['General'].put(
-        #         {
-        #             "Owner": InstantConsumption.Owner,
-        #             "msgID": InstantConsumption.msgID,
-        #             "msgType": InstantConsumption.msgType,
-        #             "msgValue": float(buff[3:-2]),
-        #         }
-        #     )
 
     def brake(self):
         print("BRAKING")
