@@ -1,5 +1,6 @@
 # Copyright (c) 2019, Bosch Engineering Center Cluj and BFMC organizers
 # All rights reserved.
+from src.austral.ultrasonic.frontal.threads.threadFrontalUltrasonic import threadFrontalUltrasonic
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -71,5 +72,5 @@ class processFrontalUltrasonic(WorkerProcess):
     # ===================================== INIT TH =================================
     def _init_threads(self):
         """Initializes the read and the write thread."""
-        readTh = threadRead(self.serialCom, self.historyFile, self.queuesList)
-        self.threads.append(readTh)
+        ultrasonicThread = threadFrontalUltrasonic(self.serialCom, self.historyFile, self.queuesList)
+        self.threads.append(ultrasonicThread)
