@@ -11,17 +11,18 @@ class SignExecutor:
     def execute(self, sign):
         if sign == self.just_seen_sign:
             return
-        if sign == "crosswalk":
+        if self.just_seen_sign == 'stop' and sign is None:
+            self.send_stop_sequence()
+
+        elif self.just_seen_sign == 'parking' and sign is None:
+            self.send_parking_sequence()
+
+        elif sign == "crosswalk":
             print("FOUND A CROSSWALK")
-        elif sign == "parking":
-            self.send_parking_sequence()
-        elif sign == "stop":
-            #self.send_stop_sequence()
-            self.send_parking_sequence()
         elif sign == "yield":
             print("FOUND A YIELD")
-        print("SETTING JUST SEEN SIGN TO", sign)
 
+        print("SETTING JUST SEEN SIGN TO", sign)
         self.just_seen_sign = sign
 
     def send_parking_sequence(self):
