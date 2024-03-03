@@ -31,7 +31,7 @@ from src.utils.messages.allMessages import (
     BatteryLvl,
     ImuData,
     InstantConsumption,
-    EnableButton,
+    EnableButton, SpeedMotor,
 )
 
 
@@ -52,7 +52,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
         self.queuesList = queueList
         self.acumulator = 0
         self.Queue_Sending()
-        print("THREADFRONTALULTRASONIC INIT")
+        self.is_braked = False
 
     # ====================================== RUN ==========================================
     def run(self):
@@ -60,6 +60,17 @@ class threadFrontalUltrasonic(ThreadWithStop):
             read_chr = self.serialCon.read()
             try:
                 read_chr = read_chr.decode("ascii")
+                if read_chr == "" and self.is_braked:
+                    print("NOTHING IN THE WAY. SPEEDING")
+                    self.queuesList[SpeedMotor.Queue.value].put({
+                        "Owner": SpeedMotor.Owner.value,
+                        "msgID": SpeedMotor.msgID.value,
+                        "msgType": SpeedMotor.msgType.value,
+                        "msgValue": 5
+                    })
+                    self.is_braked = False
+                if self.is_braked:
+                    continue
                 if read_chr == "{":
                     self.isResponse = True
                     if len(self.buff) != 0:
@@ -83,6 +94,14 @@ class threadFrontalUltrasonic(ThreadWithStop):
         """This function select which type of message we receive from NUCLEO and send the data further."""
         print("BUFF:", buff)
         print("SENDING ULTRASONIC VALUE", buff[1:])
+        self.queuesList[SpeedMotor.Queue.value].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": 0
+        })
+        self.is_braked = True
+
         # if buff[1] == "6":
         #     #InstantConsumption.Queue
         #     self.queuesList['General'].put(
