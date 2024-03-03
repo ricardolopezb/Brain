@@ -53,6 +53,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
         self.acumulator = 0
         self.Queue_Sending()
         self.is_braked = False
+        self.should_brake = False
 
     # ====================================== RUN ==========================================
     def run(self):
@@ -60,29 +61,39 @@ class threadFrontalUltrasonic(ThreadWithStop):
             read_chr = self.serialCon.read()
             try:
                 read_chr = read_chr.decode("ascii")
-                if read_chr == "" and self.is_braked:
-                    print("NOTHING IN THE WAY. SPEEDING")
-                    self.queuesList[SpeedMotor.Queue.value].put({
-                        "Owner": SpeedMotor.Owner.value,
-                        "msgID": SpeedMotor.msgID.value,
-                        "msgType": SpeedMotor.msgType.value,
-                        "msgValue": 5
-                    })
+
+                if read_chr == "":
+                    self.should_brake = False
+                else:
+                    self.should_brake = True
+
+                if self.should_brake and self.is_braked == False:
+                    self.brake()
+                    self.is_braked = True
+                if self.should_brake == False and self.is_braked:
+                    self.accelerate()
                     self.is_braked = False
-                if self.is_braked:
-                    continue
-                if read_chr == "{":
-                    self.isResponse = True
-                    if len(self.buff) != 0:
-                        self.sendqueue(self.buff)
-                    self.buff = ""
-                elif read_chr == "}":
-                    self.isResponse = False
-                    if len(self.buff) != 0:
-                        self.sendqueue(self.buff)
-                    self.buff = ""
-                if self.isResponse:
-                    self.buff += read_chr
+
+
+
+
+
+
+
+
+                # if read_chr == "":
+                #     print("NOTHING IN THE WAY. SPEEDING")
+                #     self.queuesList[SpeedMotor.Queue.value].put({
+                #         "Owner": SpeedMotor.Owner.value,
+                #         "msgID": SpeedMotor.msgID.value,
+                #         "msgType": SpeedMotor.msgType.value,
+                #         "msgValue": 10
+                #     })
+                #     self.is_braked = False
+                #     continue
+                # if self.is_braked:
+                #     continue
+
             except UnicodeDecodeError:
                 pass
 
@@ -112,4 +123,23 @@ class threadFrontalUltrasonic(ThreadWithStop):
         #             "msgValue": float(buff[3:-2]),
         #         }
         #     )
+
+    def brake(self):
+        print("BRAKING")
+        self.queuesList[SpeedMotor.Queue.value].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": 0
+        })
+
+
+    def accelerate(self):
+        print("NOTHING IN THE WAY. SPEEDING")
+        self.queuesList[SpeedMotor.Queue.value].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": 10
+        })
 
