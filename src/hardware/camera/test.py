@@ -32,5 +32,6 @@ def capture_and_process_images(model):
         cv2.destroyAllWindows()
 
 
+
 # Ejemplo de uso
 capture_and_process_images(model)
