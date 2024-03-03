@@ -29,6 +29,8 @@
 # ===================================== GENERAL IMPORTS ==================================
 import sys
 
+from src.austral.pid.mock import processMock
+
 sys.path.append(".")
 from multiprocessing import Queue, Event
 import logging
@@ -71,6 +73,10 @@ SerialHandler = True
 processGateway = processGateway(queueList, logging)
 allProcesses.append(processGateway)
 
+process_mock = processMock(queueList)
+allProcesses.append(process_mock)
+
+
 # Initializing camera
 if Camera:
     processCamera = processCamera(queueList, logging)
@@ -98,7 +104,7 @@ if TrafficCommunication:
 
 # Initializing serial connection NUCLEO - > PI
 if SerialHandler:
-    processSerialHandler = processSerialHandler(queueList, logging)
+    processSerialHandler = processSerialHandler(queueList, logging, debugging=True)
     allProcesses.append(processSerialHandler)
 
 # ===================================== START PROCESSES ==================================

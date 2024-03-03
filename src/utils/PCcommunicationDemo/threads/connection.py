@@ -132,7 +132,8 @@ class SingleConnection(protocol.Protocol):
                     }
                 )
             elif dataJSON["action"] == "STS":
-                self.factory.queues[Record.Queue.value].put(
+                print("received sts data", dataJSON["value"])
+                self.factory.queues[Control.Queue.value].put(
                     {
                         "Owner": Control.Owner.value,
                         "msgID": Control.msgID.value,
@@ -163,6 +164,8 @@ from src.utils.messages.allMessages import (
     SignalRunning,
     Recording,
     Location,
+    ImuData,
+    BatteryLvl
 )
 
 
@@ -211,6 +214,16 @@ class FactoryDealer(protocol.Factory):
                 Location.Owner.value,
                 Location.msgID.value,
             ): 8,
+            (
+                ImuData.msgType.value,
+                ImuData.Owner.value,
+                ImuData.msgID.value,
+            ): 9,
+            (
+                BatteryLvl.msgType.value,
+                BatteryLvl.Owner.value,
+                BatteryLvl.msgID.value,
+            ): 10,
         }
 
     def send_data_to_client(self, messageValue, messageType, messageOwner, messageId):

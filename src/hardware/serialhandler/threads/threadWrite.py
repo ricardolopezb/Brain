@@ -34,9 +34,11 @@ from src.utils.messages.allMessages import (
     EngineRun,
     Control,
     SteerMotor,
+    SteerMotorMockThread,
     SpeedMotor,
     Brake,
 )
+import time
 
 
 class threadWrite(ThreadWithStop):
@@ -116,6 +118,15 @@ class threadWrite(ThreadWithStop):
         self.queuesList["Config"].put(
             {
                 "Subscribe/Unsubscribe": "subscribe",
+                "Owner": SteerMotorMockThread.Owner.value,
+                "msgID": SteerMotorMockThread.msgID.value,
+                "To": {"receiver": "threadWrite", "pipe": self.pipeSendSteer},
+            }
+        )
+
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
                 "Owner": SpeedMotor.Owner.value,
                 "msgID": SpeedMotor.msgID.value,
                 "To": {"receiver": "threadWrite", "pipe": self.pipeSendSpeed},
@@ -145,6 +156,7 @@ class threadWrite(ThreadWithStop):
 
     # ===================================== RUN ==========================================
     def run(self):
+        first_time = True
         """In this function we check if we got the enable engine signal. After we got it we will start getting messages from raspberry PI. It will transform them into NUCLEO commands and send them."""
         while self._running:
             try:
@@ -163,6 +175,7 @@ class threadWrite(ThreadWithStop):
                         self.serialCom.write(command_msg.encode("ascii"))
                         self.logFile.write(command_msg)
                 if self.running:
+
                     if self.pipeRecvBreak.poll():
                         message = self.pipeRecvBreak.recv()
                         command = {"action": "1", "speed": float(message["value"])}
@@ -179,9 +192,11 @@ class threadWrite(ThreadWithStop):
                         message = self.pipeRecvSteer.recv()
                         command = {"action": "2", "steerAngle": float(message["value"])}
                         command_msg = self.messageConverter.get_command(**command)
+                        print(f"****** ${time.time()} ********** DEQUEUING AND SENDING STEERING VALUE ${float(message['value'])} ****************")
                         self.serialCom.write(command_msg.encode("ascii"))
                         self.logFile.write(command_msg)
                     elif self.pipeRecvControl.poll():
+                        print("SENDING DATA TO SERIAL")
                         message = self.pipeRecvControl.recv()
                         command = {
                             "action": "9",

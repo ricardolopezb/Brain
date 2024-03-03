@@ -32,12 +32,17 @@ import picamera2
 import time
 
 from multiprocessing import Pipe
+
+from src.austral.pid.obj_test import LaneDetector
+from src.austral.signals.sign_detector import SignDetector
+from src.austral.signals.sign_executor import SignExecutor
 from src.utils.messages.allMessages import (
     mainCamera,
     serialCamera,
     Recording,
     Record,
     Config,
+    SteeringCalculation
 )
 from src.templates.threadwithstop import ThreadWithStop
 
@@ -70,6 +75,22 @@ class threadCamera(ThreadWithStop):
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
+        self.lane_detector = LaneDetector()
+        self.sign_detector = SignDetector()
+        self.sign_executor = SignExecutor(queuesList)
+
+        # Variables for run() timing
+        self.last_epoch_demo = time.time()
+        self.last_epoch_lanes = time.time()
+        self.last_epoch_signs = time.time()
+
+        # Cada cuanto quiero que se corra la conditional branch
+        self.demo_period = 0.001  # in seconds
+        self.lanes_period = 0.5  # in seconds
+        self.signs_period = 5  # in seconds
+
+        self.frame = None
+        self.last_sent_steering_value = -1000
 
     def subscribe(self):
         """Subscribe function. In this function we make all the required subscribe to process gateway"""
@@ -154,11 +175,29 @@ class threadCamera(ThreadWithStop):
                 if self.recording == True:
                     cv2_image = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
                     self.video_writer.write(cv2_image)
+
+                current_epoch = int(time.time())
+                #if current_epoch - self.last_epoch_demo > self.demo_period:
+                self.last_epoch_demo = self.last_epoch_demo + self.demo_period
+
+                # if current_epoch - self.last_epoch_lanes > self.lanes_period:
+                #     self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
+                #     steering_value = self.lane_detector.get_steering_angle(request)
+                #
+                #     self.send_steering_value(steering_value)
+
+                if current_epoch - self.last_epoch_signs > self.signs_period:
+                    self.last_epoch_signs = self.last_epoch_signs + self.signs_period
+                    found_sign = self.sign_detector.detect_signal(request, threshold=10)
+                    print(f"************* Found sign: {found_sign}")
+                    self.sign_executor.execute(found_sign)
+
                 request2 = self.camera.capture_array(
                     "lores"
                 )  # Will capture an array that can be used by OpenCV library
                 request2 = request2[:360, :]
-                _, encoded_img = cv2.imencode(".jpg", request2)
+
+                _, encoded_img = cv2.imencode(".jpg", request)
                 _, encoded_big_img = cv2.imencode(".jpg", request)
                 image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
                 image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
@@ -197,3 +236,17 @@ class threadCamera(ThreadWithStop):
         )
         self.camera.configure(config)
         self.camera.start()
+
+    def send_steering_value(self, steering_value):
+        if self.last_sent_steering_value == steering_value:
+            return
+        print(f"****** ${time.time()} ********** ENQUEUING STEERING VALUE ${steering_value} ****************")
+        self.queuesList[SteeringCalculation.Queue.value].put(
+            {
+                "Owner": SteeringCalculation.Owner.value,
+                "msgID": SteeringCalculation.msgID.value,
+                "msgType": SteeringCalculation.msgType.value,
+                "msgValue": {'value': steering_value},
+            }
+        )
+        self.last_sent_steering_value = steering_value

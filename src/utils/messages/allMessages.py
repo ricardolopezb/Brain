@@ -99,6 +99,12 @@ class SteerMotor(Enum):
     msgID = 3
     msgType = "dictionary"
 
+class SteerMotorMockThread(Enum):
+    Queue = "General"
+    Owner = "threadMock"
+    msgID = 4
+    msgType = "dictionary"
+
 
 # {"action": "steer", "value": val}
 
@@ -187,3 +193,11 @@ class SignalRunning(Enum):
     Owner = "threadWrite"
     msgID = 2
     msgType = "Boolean"
+
+
+######################    Lane Detection  ###########################
+class SteeringCalculation(Enum):
+    Queue = "Critical"
+    Owner = "threadCamera"
+    msgID = 1
+    msgType = "dictionary"

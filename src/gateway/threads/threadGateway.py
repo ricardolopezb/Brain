@@ -127,6 +127,7 @@ class threadGateway(ThreadWithStop):
             if not self.queuesList["Critical"].empty():
                 message = self.queuesList["Critical"].get()
             elif not self.queuesList["Warning"].empty():
+                print("warning not empty")
                 message = self.queuesList["Warning"].get()
             elif not self.queuesList["General"].empty():
                 message = self.queuesList["General"].get()

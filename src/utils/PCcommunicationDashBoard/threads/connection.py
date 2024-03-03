@@ -159,7 +159,9 @@ class FactoryDealer(protocol.Factory):
                 messageValue, messageType, messageOwner, messageId
             )
         else:
-            print("Client not connected")
+            pass
+            # TODO this is for demo connection
+            #print("Client not connected")
 
     # ================================== BUILD PROTOCOL ========================================
     def buildProtocol(self, addr):
