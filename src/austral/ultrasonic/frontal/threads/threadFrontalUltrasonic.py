@@ -52,6 +52,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
         self.queuesList = queueList
         self.acumulator = 0
         self.Queue_Sending()
+        print("THREADFRONTALULTRASONIC INIT")
 
     # ====================================== RUN ==========================================
     def run(self):
