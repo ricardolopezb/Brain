@@ -77,8 +77,8 @@ allProcesses.append(processGateway)
 process_mock = processMock(queueList)
 allProcesses.append(process_mock)
 
-processFrontalUltrasonic(queueList)
-allProcesses.append(processFrontalUltrasonic)
+# processFrontalUltrasonic(queueList)
+# allProcesses.append(processFrontalUltrasonic)
 
 
 # Initializing camera
