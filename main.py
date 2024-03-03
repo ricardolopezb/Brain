@@ -30,6 +30,7 @@
 import sys
 
 from src.austral.pid.mock import processMock
+from src.austral.ultrasonic.frontal.processFrontalUltrasonic import processFrontalUltrasonic
 
 sys.path.append(".")
 from multiprocessing import Queue, Event
@@ -75,6 +76,9 @@ allProcesses.append(processGateway)
 
 process_mock = processMock(queueList)
 allProcesses.append(process_mock)
+
+processFrontalUltrasonic(queueList)
+allProcesses.append(processFrontalUltrasonic)
 
 
 # Initializing camera
