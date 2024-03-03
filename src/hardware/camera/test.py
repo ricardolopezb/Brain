@@ -30,8 +30,6 @@ def capture_and_process_images(model):
     finally:
         cap.release()
         cv2.destroyAllWindows()
-
-
-
+s
 # Ejemplo de uso
 capture_and_process_images(model)
