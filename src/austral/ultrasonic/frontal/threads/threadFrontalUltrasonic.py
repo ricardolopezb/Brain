@@ -58,7 +58,6 @@ class threadFrontalUltrasonic(ThreadWithStop):
     def run(self):
         while self._running:
             read_chr = self.serialCon.read()
-            print("READING CHARACTER:", read_chr)
             try:
                 read_chr = read_chr.decode("ascii")
                 if read_chr == "{":
@@ -83,7 +82,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
     def sendqueue(self, buff):
         """This function select which type of message we receive from NUCLEO and send the data further."""
         print("BUFF:", buff)
-        print("SENDING ULTRASONIC VALUE", buff[1:-2])
+        print("SENDING ULTRASONIC VALUE", buff[1:])
         # if buff[1] == "6":
         #     #InstantConsumption.Queue
         #     self.queuesList['General'].put(
