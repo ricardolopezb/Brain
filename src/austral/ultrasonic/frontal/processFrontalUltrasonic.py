@@ -72,5 +72,5 @@ class processFrontalUltrasonic(WorkerProcess):
     # ===================================== INIT TH =================================
     def _init_threads(self):
         """Initializes the read and the write thread."""
-        ultrasonicThread = threadFrontalUltrasonic(self.serialCom, self.historyFile, self.queuesList)
+        ultrasonicThread = threadFrontalUltrasonic(self.serialCom, self.queuesList)
         self.threads.append(ultrasonicThread)
