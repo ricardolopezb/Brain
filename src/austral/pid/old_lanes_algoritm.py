@@ -39,7 +39,7 @@ class PIDController:
         return control_signal
 
 
-class LaneDetector:
+class OldLaneDetector:
     def __init__(self):
         self.consecutive_frames_without_left_line = 0
         self.consecutive_frames_without_right_line = 0

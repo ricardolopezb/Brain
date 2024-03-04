@@ -34,6 +34,7 @@ import time
 from multiprocessing import Pipe
 
 from src.austral.pid.obj_test import LaneDetector
+from src.austral.pid.old_lanes_algoritm import OldLaneDetector
 from src.austral.signals.sign_detector import SignDetector
 from src.austral.signals.sign_executor import SignExecutor
 from src.utils.messages.allMessages import (
@@ -75,7 +76,7 @@ class threadCamera(ThreadWithStop):
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
-        self.lane_detector = LaneDetector()
+        self.lane_detector = OldLaneDetector()
         self.sign_detector = SignDetector()
         self.sign_executor = SignExecutor(queuesList)
 
