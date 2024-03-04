@@ -180,11 +180,11 @@ class threadCamera(ThreadWithStop):
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
 
-                # if current_epoch - self.last_epoch_lanes > self.lanes_period:
-                #     self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
-                #     steering_value = self.lane_detector.get_steering_angle(request)
-                #
-                #     self.send_steering_value(steering_value)
+                if current_epoch - self.last_epoch_lanes > self.lanes_period:
+                    self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
+                    steering_value = self.lane_detector.get_steering_angle(request)
+
+                    self.send_steering_value(steering_value)
 
                 if current_epoch - self.last_epoch_signs > self.signs_period:
                     self.last_epoch_signs = self.last_epoch_signs + self.signs_period
