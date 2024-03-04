@@ -115,7 +115,7 @@ class LaneDetector:
             steering_angle = self.follow_mid_line(image, average_horizontal_line, height, width)
         else:
             if self.is_detecting_both_lines(average_left_line, average_right_line):
-                error = self.getting_error(average_left_line, average_right_line, height, width)
+                error = self.getting_error(image, average_left_line, average_right_line, height, width)
                 steering_angle = self.control_signal(error)
             elif average_left_line is not None:
                 steering_angle = self.follow_left_line(average_left_line)
