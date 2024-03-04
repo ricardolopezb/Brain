@@ -75,9 +75,9 @@ class OldLaneDetector:
         return round(steering_angle)
 
     def image_processing(self, image):
-        threshold_value = 190
-        kernel_value = 11
-        ROI_value = 0.5
+        threshold_value = 165
+        kernel_value = 7
+        ROI_value = 0.45
 
         height, width = image.shape[:2]
 
@@ -173,18 +173,22 @@ class OldLaneDetector:
                 angle_degrees = np.degrees(abs(slope))
 
                 # Verificar si la línea es horizontal (dentro del margen de +/- 20 grados)
-                if abs(angle_degrees) < 20 or abs(
-                        angle_degrees - 180) < 20:  # Considera líneas dentro de +/- 20 grados de horizontal
+                if abs(angle_degrees) < 7 or abs(
+                        angle_degrees - 180) < 7:  # Considera líneas dentro de +/- 20 grados de horizontal
                     horizontal_lines.append(line)
                     continue
 
                 # Clasificar la línea como izquierda o derecha basándose en la pendiente
-                if slope < 0:
-                    left_lines.append(line)
+                if abs(angle_degrees) > 50 or abs(angle_degrees - 180) > 50:
+                    if slope < 0:
+                        left_lines.append(line)
+                    else:
+                        right_lines.append(line)
                 else:
-                    right_lines.append(line)
+                    continue
 
         return left_lines, right_lines, horizontal_lines
+
     def average_lines(self, lines):
         if len(lines) > 0:
             lines_array = np.array(lines)
