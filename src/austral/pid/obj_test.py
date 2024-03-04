@@ -44,6 +44,7 @@ class LaneDetector:
     def __init__(self):
         self.consecutive_frames_without_left_line = 0
         self.consecutive_frames_without_right_line = 0
+        self.consecutive_frames_with_horizontal_line = 0
         self.dt = 0.2
         self.kp = 0.1
         self.ki = 0.05
@@ -51,6 +52,7 @@ class LaneDetector:
         self.tolerancia = 50
         self.allowed_frames = 4
         self.prev_steering_angle = 0
+        self.prev_horizontal_line = 0
         self.pid_controller = PIDController(self.kp, self.ki, self.kd, self.tolerancia)
 
     def follow_left_line(self, line):
@@ -100,17 +102,16 @@ class LaneDetector:
                  (165, 0, 255), 2)
         return steering_angle
 
-    def get_steering_angle(self, image, prev_steering_angle, prev_horizontal_line,
-                           consecutive_frames_with_horizontal_line):
+    def get_steering_angle(self, image):
         average_left_line, average_right_line, average_horizontal_line, height, width, canny_image = self.image_processing(
             image=image)
         if average_horizontal_line is not None:
-            consecutive_frames_with_horizontal_line = consecutive_frames_with_horizontal_line + 1
+            self.consecutive_frames_with_horizontal_line = self.consecutive_frames_with_horizontal_line + 1
         else:
-            consecutive_frames_with_horizontal_line = 0
+            self.consecutive_frames_with_horizontal_line = 0
 
-        if average_horizontal_line is not None and consecutive_frames_with_horizontal_line > 5:
-            prev_horizontal_line = 1
+        if average_horizontal_line is not None and self.consecutive_frames_with_horizontal_line > 5:
+            self.prev_horizontal_line = 1
             steering_angle = self.follow_mid_line(image, average_horizontal_line, height, width)
         else:
             if self.is_detecting_both_lines(average_left_line, average_right_line):
@@ -121,9 +122,9 @@ class LaneDetector:
             elif average_right_line is not None:
                 steering_angle = self.follow_right_line(average_right_line)
             else:
-                steering_angle = prev_steering_angle
-
-        return steering_angle, prev_horizontal_line, canny_image, consecutive_frames_with_horizontal_line
+                steering_angle = self.prev_steering_angle
+        self.prev_steering_angle = steering_angle
+        return steering_angle, canny_image
 
     def is_detecting_both_lines(self, average_left_line, average_right_line):
         return average_left_line is not None and average_right_line is not None

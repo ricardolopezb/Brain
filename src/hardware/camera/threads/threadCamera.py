@@ -182,7 +182,7 @@ class threadCamera(ThreadWithStop):
 
                 if current_epoch - self.last_epoch_lanes > self.lanes_period:
                     self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
-                    steering_value = self.lane_detector.get_steering_angle(request)
+                    steering_value, _ = self.lane_detector.get_steering_angle(request)
 
                     self.send_steering_value(steering_value)
 
