@@ -124,7 +124,7 @@ class LaneDetector:
             else:
                 steering_angle = self.prev_steering_angle
         self.prev_steering_angle = steering_angle
-        return steering_angle, canny_image
+        return steering_angle
 
     def is_detecting_both_lines(self, average_left_line, average_right_line):
         return average_left_line is not None and average_right_line is not None
