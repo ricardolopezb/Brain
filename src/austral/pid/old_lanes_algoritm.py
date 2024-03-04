@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import math
 
 
 class PIDController:
@@ -53,80 +52,23 @@ class LaneDetector:
         self.prev_steering_angle = 0
         self.pid_controller = PIDController(self.kp, self.ki, self.kd, self.tolerancia)
 
-    def follow_left_line(self, line):
-        x1, y1, x2, y2 = line[0]
-        dx = x2 - x1
-        dy = y2 - y1
-        if dx != 0:
-            pendiente = math.degrees(abs(dy / dx))
-            print('PENDIENTE', pendiente)
-            if pendiente > 30:
-                steering_angle = round(22 - ((pendiente - 30) * (22 / 60)))
-            else:
-                steering_angle = 22
-        return steering_angle
 
-    def follow_right_line(self, line):
-        x1, y1, x2, y2 = line[0]
-        dx = x2 - x1
-        dy = y2 - y1
-        if dx != 0:
-            pendiente = math.degrees(abs(dy / dx))
-            print('PENDIENTE', pendiente)
-            if pendiente > 30:
-                steering_angle = round(- (22 - ((pendiente - 30) * (22 / 60))))
-            else:
-                steering_angle = -22
-        return steering_angle
-
-    def control_signal(self, error):
-        steering_angle = self.pid_controller.compute(error)
-        return round(steering_angle)
-
-    # ------------------------------------------------------------------------------------------
-
-    def signal_detector(self):
-        signal_detected = 1
-        return signal_detected
-
-    def follow_mid_line(self, image, average_horizontal_line, height, width):
-        x1, y1, x2, y2 = average_horizontal_line[0]
-        mid_point_horizontal_line_x = (x1 + x2) // 2
-        mid_point_horizontal_line_y = (y1 + y2) // 2
-        bottom_center_x = width // 2
-        error = mid_point_horizontal_line_x - bottom_center_x
-        steering_angle = self.control_signal(error)
-        cv2.line(image, (mid_point_horizontal_line_x, mid_point_horizontal_line_y), (bottom_center_x, height),
-                 (165, 0, 255), 2)
-        return steering_angle
-
-    def get_steering_angle(self, image, prev_steering_angle, prev_horizontal_line,
-                           consecutive_frames_with_horizontal_line):
-        average_left_line, average_right_line, average_horizontal_line, height, width, canny_image = self.image_processing(
-            image=image)
-        if average_horizontal_line is not None:
-            consecutive_frames_with_horizontal_line = consecutive_frames_with_horizontal_line + 1
+    def get_steering_angle(self, image):
+        error = self.image_processing(image)
+        if isinstance(error, int):
+            steering_angle = self.control_signal(error)
+            print('Calling PID', steering_angle, error)
+        elif self.consecutive_frames_without_left_line == 0 and self.consecutive_frames_without_right_line > self.allowed_frames:
+            steering_angle = 22
+            print('Turning Right', steering_angle)
+        elif self.consecutive_frames_without_left_line > self.allowed_frames and self.consecutive_frames_without_right_line == 0:
+            steering_angle = -22
+            print('Turning Left', steering_angle)
         else:
-            consecutive_frames_with_horizontal_line = 0
-
-        if average_horizontal_line is not None and consecutive_frames_with_horizontal_line > 5:
-            prev_horizontal_line = 1
-            steering_angle = self.follow_mid_line(image, average_horizontal_line, height, width)
-        else:
-            if self.is_detecting_both_lines(average_left_line, average_right_line):
-                error = self.getting_error(average_left_line, average_right_line, height, width)
-                steering_angle = self.control_signal(error)
-            elif average_left_line is not None:
-                steering_angle = self.follow_left_line(average_left_line)
-            elif average_right_line is not None:
-                steering_angle = self.follow_right_line(average_right_line)
-            else:
-                steering_angle = prev_steering_angle
-
-        return steering_angle, prev_horizontal_line, canny_image, consecutive_frames_with_horizontal_line
-
-    def is_detecting_both_lines(self, average_left_line, average_right_line):
-        return average_left_line is not None and average_right_line is not None
+            steering_angle = self.prev_steering_angle
+            print('Same steering angle as before', steering_angle)
+        self.prev_steering_angle = steering_angle
+        return steering_angle
 
     def control_signal(self, error):
         steering_angle = self.pid_controller.compute(error, self.dt)
@@ -135,7 +77,7 @@ class LaneDetector:
     def image_processing(self, image):
         threshold_value = 190
         kernel_value = 11
-        ROI_value = 0.55
+        ROI_value = 0.5
 
         height, width = image.shape[:2]
 
@@ -157,25 +99,35 @@ class LaneDetector:
         lines = cv2.HoughLinesP(canny_image, 1, np.pi / 180, 50, minLineLength=50, maxLineGap=150)
 
         left_lines, right_lines, horizontal_lines = self.lines_classifier(lines=lines)
-
         merged_left_lines = self.merge_lines(left_lines)
         merged_right_lines = self.merge_lines(right_lines)
         merged_horizontal_lines = self.merge_lines(horizontal_lines)
-
         average_left_line = self.average_lines(merged_left_lines)
+        average_right_line = self.average_lines(merged_right_lines)
+        average_horizontal_line = self.average_lines(merged_horizontal_lines)
+
         if average_left_line is not None:
             self.line_drawing(image, average_left_line, height=height)
 
-        average_right_line = self.average_lines(merged_right_lines)
         if average_right_line is not None:
             self.line_drawing(image, average_right_line, height=height)
 
-        average_horizontal_line = self.average_lines(merged_horizontal_lines)
         if average_horizontal_line is not None:
             x1, y1, x2, y2 = average_horizontal_line[0]
             cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
-        return average_left_line, average_right_line, average_horizontal_line, height, width, canny_image
+        if average_left_line is not None and average_right_line is not None:
+            error = self.getting_error(image, average_left_line=average_left_line,
+                                       average_right_line=average_right_line,
+                                       height=height,
+                                       width=width)
+        else:
+            error = "Can not be calculated"
+        self.lane_detection(
+            left_lines=left_lines,
+            right_lines=right_lines)
+
+        return error
 
     # def lines_classifier(self, lines):
     #     left_lines = []
@@ -233,7 +185,6 @@ class LaneDetector:
                     right_lines.append(line)
 
         return left_lines, right_lines, horizontal_lines
-
     def average_lines(self, lines):
         if len(lines) > 0:
             lines_array = np.array(lines)
