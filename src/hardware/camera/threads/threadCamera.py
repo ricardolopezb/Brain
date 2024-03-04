@@ -76,7 +76,7 @@ class threadCamera(ThreadWithStop):
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
-        self.lane_detector = OldLaneDetector()
+        self.lane_detector = LaneDetector()
         self.sign_detector = SignDetector()
         self.sign_executor = SignExecutor(queuesList)
 
