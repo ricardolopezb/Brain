@@ -52,6 +52,7 @@ class LaneDetector:
         self.prev_steering_angle = 0
         self.pid_controller = PIDController(self.kp, self.ki, self.kd, self.tolerancia)
 
+
     def get_steering_angle(self, image):
         error = self.image_processing(image)
         if isinstance(error, int):
