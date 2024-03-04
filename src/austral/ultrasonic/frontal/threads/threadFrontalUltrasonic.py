@@ -98,6 +98,6 @@ class threadFrontalUltrasonic(ThreadWithStop):
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": 10
+            "msgValue": 3
         })
 
