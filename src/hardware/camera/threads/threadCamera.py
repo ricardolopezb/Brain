@@ -89,7 +89,7 @@ class threadCamera(ThreadWithStop):
 
         # Cada cuanto quiero que se corra la conditional branch
         self.demo_period = 0.001  # in seconds
-        self.lanes_period = 0.5  # in seconds
+        self.lanes_period = 1  # in seconds
         self.signs_period = 5  # in seconds
 
         self.frame = None
