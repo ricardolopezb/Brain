@@ -56,7 +56,7 @@ class threadMock(ThreadWithStop):
         self.subscribe()
         speed = 8
         time.sleep(1)
-        self.queuesList['Critical'].put({
+        self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
@@ -79,7 +79,7 @@ class threadMock(ThreadWithStop):
                 value = float(message)
                 if value == self.last_steering_sent:
                     continue
-                self.queuesList[SteerMotor.Queue.value].put({
+                self.queuesList['Critical'].put({
                     "Owner": SteerMotor.Owner.value,
                     "msgID": SteerMotor.msgID.value,
                     "msgType": SteerMotor.msgType.value,
