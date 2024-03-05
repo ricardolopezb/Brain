@@ -1,9 +1,6 @@
 import cv2
 import numpy as np
 
-# Inicializar la cámara
-cap = cv2.VideoCapture(0)
-
 
 class ColorDetector:
     def __init__(self):
