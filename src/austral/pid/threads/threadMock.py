@@ -56,7 +56,7 @@ class threadMock(ThreadWithStop):
         self.subscribe()
         speed = 8
         time.sleep(1)
-        self.queuesList[SpeedMotor.Queue.value].put({
+        self.queuesList['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
