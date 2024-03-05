@@ -3,6 +3,7 @@ import numpy as np
 import math
 
 
+
 class PIDController:
     def __init__(self, Kp, Ki, Kd, tolerancia):
         self.Kp = Kp
@@ -124,7 +125,7 @@ class LaneDetector:
             else:
                 steering_angle = self.prev_steering_angle
         self.prev_steering_angle = steering_angle
-        return steering_angle
+        return self.standarize_angle(steering_angle)
 
     def is_detecting_both_lines(self, average_left_line, average_right_line):
         return average_left_line is not None and average_right_line is not None
@@ -351,6 +352,27 @@ class LaneDetector:
                 if not merge_flag:
                     merged_lines.append(line)
         return merged_lines
+
+    def standarize_angle(self, angle):
+        if -22 <= angle <= -16:
+            return -22
+        elif -15 <= angle <= -7:
+            return -11
+        elif -6 <= angle <= 6:
+            return -3
+        elif 7 <= angle <= 15:
+            return 11
+        elif 16 <= angle <= 22:
+            return 22
+
+
+    def between(self, current, min, max):
+        return min <= current <= max
+
+
+
+
+
 
 # lane_detector = LaneDetector()
 # while True:
