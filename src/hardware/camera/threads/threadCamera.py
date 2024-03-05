@@ -35,6 +35,7 @@ from multiprocessing import Pipe
 
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
+from src.austral.signals.color_detector import ColorDetector
 from src.austral.signals.sign_detector import SignDetector
 from src.austral.signals.sign_executor import SignExecutor
 from src.utils.messages.allMessages import (
@@ -79,6 +80,7 @@ class threadCamera(ThreadWithStop):
         self.lane_detector = OldLaneDetector()
         self.sign_detector = SignDetector()
         self.sign_executor = SignExecutor(queuesList)
+        self.color_detector = ColorDetector()
 
         # Variables for run() timing
         self.last_epoch_demo = time.time()
@@ -189,9 +191,11 @@ class threadCamera(ThreadWithStop):
 
                 if current_epoch - self.last_epoch_signs > self.signs_period:
                     self.last_epoch_signs = self.last_epoch_signs + self.signs_period
-                    found_sign = self.sign_detector.detect_signal(request, threshold=10)
-                    print(f"************* Found sign: {found_sign}")
-                    self.sign_executor.execute(found_sign)
+                    found_color = self.color_detector.detect_color(request)
+                    print(f"********** FOUND COLOR: {found_color} *******")
+                    # found_sign = self.sign_detector.detect_signal(request, threshold=10)
+                    # print(f"************* Found sign: {found_sign}")
+                    # self.sign_executor.execute(found_sign)
 
                 request2 = self.camera.capture_array(
                     "lores"
