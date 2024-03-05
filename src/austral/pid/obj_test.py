@@ -63,8 +63,9 @@ class LaneDetector:
         if dx != 0:
             pendiente = math.degrees(abs(dy / dx))
             print('PENDIENTE', pendiente)
-            if pendiente > 30:
-                steering_angle = round(22 - ((pendiente - 30) * (22 / 60)))
+            if pendiente > 40:
+                return -3
+                #steering_angle = round(22 - ((pendiente - 30) * (22 / 60)))
             else:
                 steering_angle = 22
         return steering_angle
@@ -76,8 +77,9 @@ class LaneDetector:
         if dx != 0:
             pendiente = math.degrees(abs(dy / dx))
             print('PENDIENTE', pendiente)
-            if pendiente > 30:
-                steering_angle = round(- (22 - ((pendiente - 30) * (22 / 60))))
+            if pendiente > 40:
+                steering_angle = -3
+                #steering_angle = round(- (22 - ((pendiente - 30) * (22 / 60))))
             else:
                 steering_angle = -22
         return steering_angle
