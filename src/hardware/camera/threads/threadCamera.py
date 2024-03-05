@@ -89,7 +89,7 @@ class threadCamera(ThreadWithStop):
 
         # Cada cuanto quiero que se corra la conditional branch
         self.demo_period = 0.001  # in seconds
-        self.lanes_period = 1  # in seconds
+        self.lanes_period = 0.5  # in seconds
         self.signs_period = 5  # in seconds
 
         self.frame = None
@@ -218,11 +218,11 @@ class threadCamera(ThreadWithStop):
                 )
                 if current_epoch - self.last_epoch_signs > self.signs_period:
                     self.last_epoch_signs = self.last_epoch_signs + self.signs_period
-                    found_color = self.color_detector.detect_color(request)
-                    print(f"********** FOUND COLOR: {found_color} *******")
-                    # found_sign = self.sign_detector.detect_signal(request, threshold=10)
-                    # print(f"************* Found sign: {found_sign}")
-                    # self.sign_executor.execute(found_sign)
+                    # found_color = self.color_detector.detect_color(request)
+                    # print(f"********** FOUND COLOR: {found_color} *******")
+                    found_sign = self.sign_detector.detect_signal(request, threshold=10)
+                    print(f"************* Found sign: {found_sign}")
+                    self.sign_executor.execute(found_sign)
             var = not var
 
     # =============================== START ===============================================
