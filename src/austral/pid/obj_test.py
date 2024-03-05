@@ -305,10 +305,21 @@ class LaneDetector:
         midpoint_y = height
 
         # Calcular la intersección de las líneas promedio izquierda y derecha
-        slope_left = (y2_left - y1_left) / (x2_left - x1_left)
-        slope_right = (y2_right - y1_right) / (x2_right - x1_right)
+        c = (x2_left - x1_left)
+        if x2_left - x1_left == 0:
+            c = 0.01
+        slope_left = (y2_left - y1_left) / c
+
+        d = (x2_right - x1_right)
+        if x2_right - x1_right == 0:
+            d = 0.01
+        slope_right = (y2_right - y1_right) / d
+
+        e = (slope_left - slope_right)
+        if slope_left - slope_right == 0:
+            e = 0.01
         intersection_x = int(
-            (y1_right - y1_left + slope_left * x1_left - slope_right * x1_right) / (slope_left - slope_right))
+            (y1_right - y1_left + slope_left * x1_left - slope_right * x1_right) / e)
         intersection_y = int(slope_left * (intersection_x - x1_left) + y1_left)
 
         cv2.circle(image, (intersection_x, intersection_y), 5, (255, 0, 255), -1)
