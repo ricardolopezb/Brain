@@ -92,6 +92,7 @@ class threadRead(ThreadWithStop):
     def sendqueue(self, buff):
         """This function select which type of message we receive from NUCLEO and send the data further."""
         if buff[1] == "1":
+            print("SET SPEED RESPONSE")
             print(buff[2:-2])
         elif buff[1] == "2":
             print("STEERING RESPONSE", buff[2:-2])
