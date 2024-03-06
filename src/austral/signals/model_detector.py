@@ -5,7 +5,7 @@ import pathlib
 class ModelDetector:
     pathlib.WindowsPath = pathlib.PosixPath
     def __init__(self):
-        self.model = torch.hub.load('src/signals/ultralytics', 'custom', path='./best.pt', force_reload=True, trust_repo=True, source='local')
+        self.model = torch.hub.load('src/austral/signals/ultralytics', 'custom', path='./best.pt', force_reload=True, trust_repo=True, source='local')
 
 
     def detect(self, frame, lookupSignal):
