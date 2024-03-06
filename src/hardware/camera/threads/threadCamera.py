@@ -183,6 +183,14 @@ class threadCamera(ThreadWithStop):
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
 
+                if current_epoch - self.last_epoch_signs > self.signs_period:
+                    self.last_epoch_signs = self.last_epoch_signs + self.signs_period
+                    found_color = self.color_detector.detect_color(request)
+                    print(f"********** FOUND COLOR: {found_color} *******")
+                    # found_sign = self.sign_detector.detect_signal(request, threshold=10)
+                    # print(f"************* Found sign: {found_sign}")
+                    # self.sign_executor.execute(found_sign)
+
                 if current_epoch - self.last_epoch_lanes > self.lanes_period:
                     self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
                     steering_value = self.lane_detector.get_steering_angle(request)
@@ -216,13 +224,7 @@ class threadCamera(ThreadWithStop):
                         "msgValue": image_data_encoded,
                     }
                 )
-                if current_epoch - self.last_epoch_signs > self.signs_period:
-                    self.last_epoch_signs = self.last_epoch_signs + self.signs_period
-                    # found_color = self.color_detector.detect_color(request)
-                    # print(f"********** FOUND COLOR: {found_color} *******")
-                    found_sign = self.sign_detector.detect_signal(request, threshold=10)
-                    print(f"************* Found sign: {found_sign}")
-                    self.sign_executor.execute(found_sign)
+
             var = not var
 
     # =============================== START ===============================================
