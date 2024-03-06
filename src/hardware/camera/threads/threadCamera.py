@@ -229,9 +229,9 @@ class threadCamera(ThreadWithStop):
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
             print(f"********** FOUND COLOR: {found_color} *******")
-            if found_color == 'RED':
+            if found_color == 'ROJO':
                 self.sign_detector.detect(request, 'stop')
-            elif found_color == 'BLUE':
+            elif found_color == 'AZUL':
                 self.sign_detector.detect(request, 'crosswalk')
             return mask_frame
         return request
