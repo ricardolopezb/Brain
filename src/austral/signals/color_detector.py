@@ -11,7 +11,7 @@ class ColorDetector:
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         # Definir el rango de color azul en HSV
-        lower_blue = np.array([110, 50, 50])
+        lower_blue = np.array([120, 100, 100])  # Adjust these values
         upper_blue = np.array([130, 255, 255])
 
         # Crear una máscara que solo contenga colores azules
