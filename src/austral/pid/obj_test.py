@@ -137,7 +137,7 @@ class LaneDetector:
         return round(steering_angle)
 
     def image_processing(self, image):
-        threshold_value = 165
+        threshold_value = 195 #165 antes
         kernel_value = 7
         ROI_value = 0.45
 
