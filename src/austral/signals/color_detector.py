@@ -58,10 +58,10 @@ class ColorDetector:
         print("Blue pixels: ", blue_pixels)
         print("Red pixels: ", red_pixels)
 
-        # por cada dia que pasa, el apocalipsis deja de ser un miedo y se torna una esperanza
-        if blue_pixels < red_pixels:
+
+        if blue_pixels > red_pixels:
             color = "AZUL"
-        elif red_pixels < blue_pixels:
+        elif red_pixels > blue_pixels:
             color = "ROJO"
         return detected_colors, color
 
