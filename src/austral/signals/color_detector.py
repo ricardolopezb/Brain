@@ -46,10 +46,12 @@ class ColorDetector:
             return False, mask_red
 
     def detect_color(self, frame):
+        print("FRAME TYPE:", type(frame))
         detected_blue, blue_mask = self.detecta_azul(frame)
         detected_red, red_mask = self.detecta_rojo(frame)
         combined_mask = cv2.bitwise_or(blue_mask, red_mask)
         detected_colors = cv2.bitwise_and(frame, frame, mask=combined_mask)
+        print("DETECTED COLORS TYPE:", type(detected_colors))
         return detected_colors
         # if detected_red:
         #     return "ROJO"
