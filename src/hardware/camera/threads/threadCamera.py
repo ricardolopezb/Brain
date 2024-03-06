@@ -232,6 +232,7 @@ class threadCamera(ThreadWithStop):
             found_color = self.color_detector.detect_color(request)
             #print(f"********** FOUND COLOR: {found_color} *******")
             return found_color
+        return request
             # found_sign = self.sign_detector.detect_signal(request, threshold=10)
             # print(f"************* Found sign: {found_sign}")
             # self.sign_executor.execute(found_sign)
