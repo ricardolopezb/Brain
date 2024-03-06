@@ -61,7 +61,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
             read_chr = self.serialCon.read()
             try:
                 read_chr = read_chr.decode("ascii")
-
+                print("READ CHAR:", read_chr)
                 if read_chr == "0":
                     self.should_brake = False
                 else:
