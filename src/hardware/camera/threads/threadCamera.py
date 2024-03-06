@@ -205,6 +205,7 @@ class threadCamera(ThreadWithStop):
                         "msgValue": image_data_encoded2,
                     }
                 )
+                print("SENDING IMAGE *************")
                 self.queuesList[serialCamera.Queue.value].put(
                     {
                         "Owner": serialCamera.Owner.value,
