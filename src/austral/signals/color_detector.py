@@ -11,7 +11,7 @@ class ColorDetector:
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         # Definir el rango de color azul en HSV
-        lower_blue = np.array([120, 70, 70])  # Adjust these values
+        lower_blue = np.array([120, 100, 100])  # Adjust these values
         upper_blue = np.array([130, 255, 255])
 
         # Crear una máscara que solo contenga colores azules
@@ -50,7 +50,7 @@ class ColorDetector:
         detected_red, red_mask = self.detecta_rojo(frame)
         combined_mask = cv2.bitwise_or(blue_mask, red_mask)
         detected_colors = cv2.bitwise_and(frame, frame, mask=combined_mask)
-        color = "NO COLOR"
+
 
         blue_pixels = cv2.countNonZero(blue_mask)
         red_pixels = cv2.countNonZero(red_mask)
@@ -58,8 +58,9 @@ class ColorDetector:
         print("Blue pixels: ", blue_pixels)
         print("Red pixels: ", red_pixels)
 
-
-        if blue_pixels > red_pixels:
+        if blue_pixels < 4000 and red_pixels < 4000:
+            color = "NO COLOR"
+        elif blue_pixels > red_pixels:
             color = "AZUL"
         elif red_pixels > blue_pixels:
             color = "ROJO"

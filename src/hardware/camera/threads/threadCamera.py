@@ -36,6 +36,7 @@ from multiprocessing import Pipe
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
 from src.austral.signals.color_detector import ColorDetector
+from src.austral.signals.model_detector import ModelDetector
 from src.austral.signals.sign_detector import SignDetector
 from src.austral.signals.sign_executor import SignExecutor
 from src.utils.messages.allMessages import (
@@ -78,7 +79,7 @@ class threadCamera(ThreadWithStop):
         self.Queue_Sending()
         self.Configs()
         self.lane_detector = LaneDetector()
-        self.sign_detector = SignDetector()
+        self.sign_detector = ModelDetector()
         self.sign_executor = SignExecutor(queuesList)
         self.color_detector = ColorDetector()
 
@@ -232,6 +233,10 @@ class threadCamera(ThreadWithStop):
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
             print(f"********** FOUND COLOR: {found_color} *******")
+            if found_color == 'RED':
+                self.sign_detector.detect(request, 'stop')
+            elif found_color == 'BLUE':
+                self.sign_detector.detect(request, 'crosswalk')
             return mask_frame
         return request
             # found_sign = self.sign_detector.detect_signal(request, threshold=10)

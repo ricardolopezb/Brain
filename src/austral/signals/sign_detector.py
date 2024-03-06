@@ -1,7 +1,9 @@
 import cv2 as cv
-
+import torch
+import pathlib
 
 class SignDetector:
+    pathlib.WindowsPath = pathlib.PosixPath
     def __init__(self):
         self.sift = cv.SIFT_create()
         self.base_signal_images = {
@@ -11,6 +13,7 @@ class SignDetector:
             #'yield': self._generate_keypoints_and_descriptors(cv.imread('src/austral/signals/signs/yield.png', cv.IMREAD_GRAYSCALE))
         }
         self.flann = self._setup_flann()
+
 
     def detect_signal(self, image, threshold=0):
         coincidence_percentage = {}
