@@ -54,7 +54,7 @@ class threadMock(ThreadWithStop):
         self.pipeRecvSteeringCalculation = pipeRecvSteeringCalculation
         self.pipeSendSteeringCalculation = pipeSendSteeringCalculation
         self.subscribe()
-        speed = 8
+        speed = 3
         time.sleep(1)
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
