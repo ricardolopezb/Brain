@@ -51,11 +51,14 @@ class ColorDetector:
         combined_mask = cv2.bitwise_or(blue_mask, red_mask)
         detected_colors = cv2.bitwise_and(frame, frame, mask=combined_mask)
         color = "NO COLOR"
-        if detected_red:
-            color = "ROJO"
 
-        if detected_blue:
+        blue_pixels = cv2.countNonZero(blue_mask)
+        red_pixels = cv2.countNonZero(red_mask)
+
+        if blue_pixels > red_pixels:
             color = "AZUL"
+        elif red_pixels > blue_pixels:
+            color = "ROJO"
         return detected_colors, color
 
 
