@@ -183,8 +183,8 @@ class threadCamera(ThreadWithStop):
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
 
-                self.detect_lanes(current_epoch, request)
                 self.detect_signs(current_epoch, request)
+                self.detect_lanes(current_epoch, request)
 
                 request2 = self.camera.capture_array(
                     "lores"
