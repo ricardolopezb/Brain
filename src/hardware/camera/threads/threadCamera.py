@@ -185,7 +185,9 @@ class threadCamera(ThreadWithStop):
 
                 request = self.detect_signs(current_epoch, request)
                 #self.detect_lanes(current_epoch, request)
-
+                if request is None:
+                    var = not var
+                    continue
                 request2 = self.camera.capture_array(
                     "lores"
                 )  # Will capture an array that can be used by OpenCV library
