@@ -62,15 +62,15 @@ class threadFrontalUltrasonic(ThreadWithStop):
             try:
                 read_chr = read_chr.decode("ascii")
 
-                if read_chr == "":
+                if read_chr == "0":
                     self.should_brake = False
                 else:
                     self.should_brake = True
 
-                if self.should_brake and self.is_braked == False:
+                if self.should_brake and not self.is_braked:
                     self.brake()
                     self.is_braked = True
-                if self.should_brake == False and self.is_braked:
+                if not self.should_brake and self.is_braked:
                     self.accelerate()
                     self.is_braked = False
 
