@@ -28,10 +28,10 @@ class ColorDetector:
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         # Rojo bajo (ajustando para capturar rojos más saturados y brillantes)
-        lower_red1 = np.array([170, 150, 150])
+        lower_red1 = np.array([160, 100, 100])
         upper_red1 = np.array([180, 255, 255])
-        # Rojo alto (también ajustado para la misma razón)
-        lower_red2 = np.array([0, 150, 150])
+        # Rojo alto (por ejemplo, 0-10)
+        lower_red2 = np.array([0, 100, 100])
         upper_red2 = np.array([10, 255, 255])
 
         # Crear una máscara que solo contenga colores rojos
