@@ -46,15 +46,18 @@ class ColorDetector:
             return False, mask_red
 
     def detect_color(self, frame):
-        detected_blue, _ = self.detecta_azul(frame)
-        detected_red, _ = self.detecta_rojo(frame)
-        if detected_red:
-            return "ROJO"
-
-        if detected_blue:
-            return "AZUL"
-
-        return "NO COLOR"
+        detected_blue, blue_mask = self.detecta_azul(frame)
+        detected_red, red_mask = self.detecta_rojo(frame)
+        combined_mask = cv2.bitwise_or(blue_mask, red_mask)
+        detected_colors = cv2.bitwise_and(frame, frame, mask=combined_mask)
+        return detected_colors
+        # if detected_red:
+        #     return "ROJO"
+        #
+        # if detected_blue:
+        #     return "AZUL"
+        #
+        # return "NO COLOR"
 
 # while True:
 #     # Leer el frame de la cámara

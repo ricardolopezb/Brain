@@ -183,8 +183,8 @@ class threadCamera(ThreadWithStop):
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
 
-                self.detect_signs(current_epoch, request)
-                self.detect_lanes(current_epoch, request)
+                request = self.detect_signs(current_epoch, request)
+                #self.detect_lanes(current_epoch, request)
 
                 request2 = self.camera.capture_array(
                     "lores"
@@ -225,7 +225,8 @@ class threadCamera(ThreadWithStop):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             found_color = self.color_detector.detect_color(request)
-            print(f"********** FOUND COLOR: {found_color} *******")
+            #print(f"********** FOUND COLOR: {found_color} *******")
+            return found_color
             # found_sign = self.sign_detector.detect_signal(request, threshold=10)
             # print(f"************* Found sign: {found_sign}")
             # self.sign_executor.execute(found_sign)
