@@ -48,10 +48,12 @@ class ColorDetector:
     def detect_color(self, frame):
         detected_blue, _ = self.detecta_azul(frame)
         detected_red, _ = self.detecta_rojo(frame)
-        if detected_blue:
-            return "AZUL"
         if detected_red:
             return "ROJO"
+
+        if detected_blue:
+            return "AZUL"
+
         return "NO COLOR"
 
 # while True:
