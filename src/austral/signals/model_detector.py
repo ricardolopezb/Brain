@@ -9,7 +9,9 @@ class ModelDetector:
 
 
     def detect(self, frame, lookupSignal):
+        print("***************** ENTERED MODEL DETECTION")
         results = self.model(frame)
+        print(results)
         if lookupSignal in str(results):
             print(f"Se encontró la señal '{lookupSignal}'.")
         else:

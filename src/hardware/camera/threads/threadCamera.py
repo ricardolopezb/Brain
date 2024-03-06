@@ -184,10 +184,7 @@ class threadCamera(ThreadWithStop):
                 current_epoch = int(time.time())
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
-                initial_time = time.time()
                 request = self.detect_signs(current_epoch, request)
-                final_time = time.time()
-                print(f"TIME TO DETECT SIGNS: {final_time - initial_time}")
                 #self.detect_lanes(current_epoch, request)
                 if request is None:
                     var = not var
@@ -209,7 +206,6 @@ class threadCamera(ThreadWithStop):
                         "msgValue": image_data_encoded2,
                     }
                 )
-                print("SENDING IMAGE *************")
                 self.queuesList[serialCamera.Queue.value].put(
                     {
                         "Owner": serialCamera.Owner.value,
