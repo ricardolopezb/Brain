@@ -197,7 +197,7 @@ class SignalRunning(Enum):
 
 ######################    Lane Detection  ###########################
 class SteeringCalculation(Enum):
-    Queue = "Critical"
+    Queue = "Warning"
     Owner = "threadCamera"
     msgID = 1
     msgType = "dictionary"

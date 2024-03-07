@@ -93,14 +93,14 @@ class SignExecutor:
         #     "msgType": Control.msgType.value,
         #     "msgValue": {'Speed': 0, 'Time': 3, 'Steer': 0}
         # })
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
             "msgValue": 0
         })
         time.sleep(3)
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
