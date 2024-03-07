@@ -187,17 +187,17 @@ class threadCamera(ThreadWithStop):
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
 
-                #request = self.detect_signs(current_epoch, request)
 
 
-                if request is None:
-                    var = not var
-                    continue
+
+                # if request is None:
+                #     var = not var
+                #     continue
 
                 _, signs_encoded_img = cv2.imencode(".jpg", request)
                 self.detect_signs(current_epoch, request, signs_encoded_img)
 
-                #self.detect_lanes(current_epoch, request)
+                self.detect_lanes(current_epoch, request)
 
                 request2 = self.camera.capture_array(
                     "lores"
@@ -249,6 +249,7 @@ class threadCamera(ThreadWithStop):
                 response = self.model_service.send(encoded_img, 'stop')
                 if response['found'] == True:
                     print(f"############ MODEL ANSWER: STOP ############")
+                    self.sign_executor.execute('stop')
 
             elif found_color == 'ROJO':
                 #self.sign_detector.detect(request, 'crosswalk')
@@ -259,6 +260,8 @@ class threadCamera(ThreadWithStop):
                     print(f"############ MODEL ANSWER: CROSSWALK ############")
                 else:
                     print(f"############ MODEL ANSWER: PARKING ############")
+            else:
+                self.sign_executor.execute(None)
             return mask_frame
         return request
             # found_sign = self.sign_detector.detect_signal(request, threshold=10)

@@ -11,7 +11,9 @@ class SignExecutor:
     def execute(self, sign):
         if sign == self.just_seen_sign:
             return
-        if self.just_seen_sign == 'stop' and sign is None:
+        # if self.just_seen_sign == 'stop' and sign is None:
+        #     self.send_stop_sequence()
+        if sign == 'stop':
             self.send_stop_sequence()
 
         elif self.just_seen_sign == 'parking' and sign is None:
