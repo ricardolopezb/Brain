@@ -37,6 +37,7 @@ from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
 from src.austral.signals.color_detector import ColorDetector
 from src.austral.signals.model_detector import ModelDetector
+from src.austral.signals.model_request_sender import ModelRequestSender
 from src.austral.signals.sign_detector import SignDetector
 from src.austral.signals.sign_executor import SignExecutor
 from src.utils.messages.allMessages import (
@@ -80,6 +81,7 @@ class threadCamera(ThreadWithStop):
         self.Configs()
         self.lane_detector = LaneDetector()
         #self.sign_detector = ModelDetector()
+        self.model_service = ModelRequestSender()
         self.sign_executor = SignExecutor(queuesList)
         self.color_detector = ColorDetector()
 
@@ -185,13 +187,18 @@ class threadCamera(ThreadWithStop):
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
 
-                self.detect_lanes(current_epoch, request)
                 #request = self.detect_signs(current_epoch, request)
 
 
                 if request is None:
                     var = not var
                     continue
+
+                _, signs_encoded_img = cv2.imencode(".jpg", request)
+                self.detect_signs(current_epoch, request, signs_encoded_img)
+
+                self.detect_lanes(current_epoch, request)
+
                 request2 = self.camera.capture_array(
                     "lores"
                 )  # Will capture an array that can be used by OpenCV library
@@ -201,6 +208,9 @@ class threadCamera(ThreadWithStop):
                 _, encoded_big_img = cv2.imencode(".jpg", request)
                 image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
                 image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
+
+
+
                 self.queuesList[mainCamera.Queue.value].put(
                     {
                         "Owner": mainCamera.Owner.value,
@@ -227,15 +237,17 @@ class threadCamera(ThreadWithStop):
             steering_value = self.lane_detector.get_steering_angle(request)
             self.send_steering_value(steering_value)
 
-    def detect_signs(self, current_epoch, request):
+    def detect_signs(self, current_epoch, request, encoded_img):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
             print(f"********** FOUND COLOR: {found_color} *******")
             if found_color == 'ROJO':
-                self.sign_detector.detect(request, 'stop')
+                #self.sign_detector.detect(request, 'stop')
+                self.model_service.send(encoded_img, 'stop')
             elif found_color == 'AZUL':
-                self.sign_detector.detect(request, 'crosswalk')
+                #self.sign_detector.detect(request, 'crosswalk')
+                self.model_service.send(encoded_img, 'crosswalk')
             return mask_frame
         return request
             # found_sign = self.sign_detector.detect_signal(request, threshold=10)
