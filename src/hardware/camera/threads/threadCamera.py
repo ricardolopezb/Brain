@@ -197,7 +197,7 @@ class threadCamera(ThreadWithStop):
                 _, signs_encoded_img = cv2.imencode(".jpg", request)
                 self.detect_signs(current_epoch, request, signs_encoded_img)
 
-                self.detect_lanes(current_epoch, request)
+                #self.detect_lanes(current_epoch, request)
 
                 request2 = self.camera.capture_array(
                     "lores"
