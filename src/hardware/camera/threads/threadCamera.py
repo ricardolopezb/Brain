@@ -79,7 +79,7 @@ class threadCamera(ThreadWithStop):
         self.Queue_Sending()
         self.Configs()
         self.lane_detector = LaneDetector()
-        self.sign_detector = ModelDetector()
+        #self.sign_detector = ModelDetector()
         self.sign_executor = SignExecutor(queuesList)
         self.color_detector = ColorDetector()
 
