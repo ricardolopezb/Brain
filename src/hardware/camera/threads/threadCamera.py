@@ -241,7 +241,6 @@ class threadCamera(ThreadWithStop):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
-            print(f"********** FOUND COLOR: {found_color} *******")
 
             # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
 
@@ -249,7 +248,7 @@ class threadCamera(ThreadWithStop):
                 #self.sign_detector.detect(request, 'stop')
                 response = self.model_service.send(encoded_img, 'stop')
                 if response['found'] == True:
-                    print(f"############ MODEL ANSWER: {response} ############")
+                    print(f"############ MODEL ANSWER: STOP ############")
 
             elif found_color == 'ROJO':
                 #self.sign_detector.detect(request, 'crosswalk')
@@ -257,9 +256,9 @@ class threadCamera(ThreadWithStop):
                 response = self.model_service.send(encoded_img, 'crosswalk')
 
                 if response['found'] == True:
-                    print(f"############ MODEL ANSWER: {response} ############")
+                    print(f"############ MODEL ANSWER: CROSSWALK ############")
                 else:
-                    print(f"############ MODEL ANSWER: {response} ############")
+                    print(f"############ MODEL ANSWER: PARKING ############")
             return mask_frame
         return request
             # found_sign = self.sign_detector.detect_signal(request, threshold=10)
