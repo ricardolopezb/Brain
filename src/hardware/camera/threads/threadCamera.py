@@ -258,8 +258,10 @@ class threadCamera(ThreadWithStop):
 
                 if response['found'] == True:
                     print(f"############ MODEL ANSWER: CROSSWALK ############")
+                    self.sign_executor.execute('crosswalk')
                 else:
                     print(f"############ MODEL ANSWER: PARKING ############")
+                    self.sign_executor.execute('parking')
             else:
                 self.sign_executor.execute(None)
             return mask_frame
