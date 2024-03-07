@@ -59,7 +59,7 @@ class ColorDetector:
         print(red_pixels)
 
 
-        if blue_pixels < 4000 and red_pixels < 4000:
+        if blue_pixels < 900 and red_pixels < 900:
             color = "NO COLOR"
         elif blue_pixels > red_pixels:
             color = "AZUL"
