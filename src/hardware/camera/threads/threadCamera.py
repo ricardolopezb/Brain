@@ -33,6 +33,7 @@ import time
 
 from multiprocessing import Pipe
 
+from src.austral.configs import LANES_FPS, SIGNS_FPS
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
 from src.austral.signals.color_detector import ColorDetector
@@ -92,8 +93,8 @@ class threadCamera(ThreadWithStop):
 
         # Cada cuanto quiero que se corra la conditional branch
         self.demo_period = 0.001  # in seconds
-        self.lanes_period = 0.5  # in seconds
-        self.signs_period = 0.2  # in seconds
+        self.lanes_period = 1 / LANES_FPS  # in seconds
+        self.signs_period = 1 / SIGNS_FPS  # in seconds
 
         self.frame = None
         self.last_sent_steering_value = -1000
