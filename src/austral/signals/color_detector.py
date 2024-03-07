@@ -55,6 +55,9 @@ class ColorDetector:
         blue_pixels = cv2.countNonZero(blue_mask)
         red_pixels = cv2.countNonZero(red_mask)
 
+        print(blue_pixels)
+        print(red_pixels)
+
 
         if blue_pixels < 4000 and red_pixels < 4000:
             color = "NO COLOR"
