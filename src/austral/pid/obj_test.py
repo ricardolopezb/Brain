@@ -139,7 +139,7 @@ class LaneDetector:
     def image_processing(self, image):
         threshold_value = 165
         kernel_value = 7
-        ROI_value = 0.45
+        ROI_value = 0.55
 
         height, width = image.shape[:2]
 
