@@ -56,7 +56,7 @@ class ColorDetector:
         red_pixels = cv2.countNonZero(red_mask)
 
 
-        if blue_pixels < 900 and red_pixels < 900:
+        if blue_pixels < 600 and red_pixels < 600:
             color = "NO COLOR"
         elif blue_pixels > red_pixels:
             color = "AZUL"
