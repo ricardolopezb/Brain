@@ -184,8 +184,11 @@ class threadCamera(ThreadWithStop):
                 current_epoch = int(time.time())
                 #if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
-                request = self.detect_signs(current_epoch, request)
-                #self.detect_lanes(current_epoch, request)
+
+                self.detect_lanes(current_epoch, request)
+                #request = self.detect_signs(current_epoch, request)
+
+
                 if request is None:
                     var = not var
                     continue
