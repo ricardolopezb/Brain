@@ -175,7 +175,7 @@ class threadCamera(ThreadWithStop):
             if self.debugger == True:
                 self.logger.warning("getting image")
             request = self.camera.capture_array("main")
-            request = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
+            #request = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
             if var:
                 if self.recording == True:
                     cv2_image = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
