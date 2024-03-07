@@ -28,6 +28,8 @@
 import threading
 import time
 from multiprocessing import Pipe
+
+from src.austral.configs import BASE_SPEED
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
     SteerMotorMockThread, EnableButton, EngineRun, SteeringCalculation, Control, SpeedMotor, SteerMotor
@@ -54,13 +56,12 @@ class threadMock(ThreadWithStop):
         self.pipeRecvSteeringCalculation = pipeRecvSteeringCalculation
         self.pipeSendSteeringCalculation = pipeSendSteeringCalculation
         self.subscribe()
-        speed = 3
         time.sleep(1)
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": speed
+            "msgValue": BASE_SPEED,
         })
         self.last_steering_sent = 0
 

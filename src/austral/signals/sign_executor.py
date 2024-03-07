@@ -1,5 +1,6 @@
 import time
 
+from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED
 from src.utils.messages.allMessages import SpeedMotor, Control
 
 
@@ -20,7 +21,7 @@ class SignExecutor:
             self.send_parking_sequence()
 
         elif sign == "crosswalk":
-            print("FOUND A CROSSWALK")
+            self.send_crosswalk_sequence()
         elif sign == "yield":
             print("FOUND A YIELD")
 
@@ -29,13 +30,7 @@ class SignExecutor:
 
     def send_parking_sequence(self):
         print("SENDING PARKING SEQUENCE")
-        speed = 20.0
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
-        # })
+        speed = PARKING_SPEED
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
@@ -99,10 +94,25 @@ class SignExecutor:
             "msgType": SpeedMotor.msgType.value,
             "msgValue": 0
         })
-        time.sleep(3)
+        time.sleep(STOP_DURATION)
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": 3
+            "msgValue": BASE_SPEED
+        })
+
+    def send_crosswalk_sequence(self):
+        self.queue_list['Critical'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": LOW_SPEED
+        })
+        time.sleep(CROSSWALK_EXECUTION_DURATION)
+        self.queue_list['Critical'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": BASE_SPEED
         })
