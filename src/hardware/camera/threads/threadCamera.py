@@ -244,10 +244,12 @@ class threadCamera(ThreadWithStop):
             print(f"********** FOUND COLOR: {found_color} *******")
             if found_color == 'ROJO':
                 #self.sign_detector.detect(request, 'stop')
-                self.model_service.send(encoded_img, 'stop')
+                response = self.model_service.send(encoded_img, 'stop')
+                print(f"############ MODEL ANSWER: {response} ############")
             elif found_color == 'AZUL':
                 #self.sign_detector.detect(request, 'crosswalk')
-                self.model_service.send(encoded_img, 'crosswalk')
+                response = self.model_service.send(encoded_img, 'crosswalk')
+                print(f"############ MODEL ANSWER: {response} ############")
             return mask_frame
         return request
             # found_sign = self.sign_detector.detect_signal(request, threshold=10)
