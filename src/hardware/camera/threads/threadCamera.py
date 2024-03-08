@@ -33,7 +33,7 @@ import time
 
 from multiprocessing import Pipe
 
-from src.austral.configs import LANES_FPS, SIGNS_FPS
+from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
 from src.austral.signals.color_detector import ColorDetector
@@ -52,6 +52,8 @@ from src.utils.messages.allMessages import (
 from src.templates.threadwithstop import ThreadWithStop
 
 camera_resolution = (512, 270)
+
+
 class threadCamera(ThreadWithStop):
     """Thread which will handle camera functionalities.\n
     Args:
@@ -81,7 +83,7 @@ class threadCamera(ThreadWithStop):
         self.Queue_Sending()
         self.Configs()
         self.lane_detector = LaneDetector()
-        #self.sign_detector = ModelDetector()
+        # self.sign_detector = ModelDetector()
         self.model_service = ModelRequestSender()
         self.sign_executor = SignExecutor(queuesList)
         self.color_detector = ColorDetector()
@@ -178,27 +180,26 @@ class threadCamera(ThreadWithStop):
             if self.debugger == True:
                 self.logger.warning("getting image")
             request = self.camera.capture_array("main")
-            #request = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
+            # request = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
             if var:
                 if self.recording == True:
                     cv2_image = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
                     self.video_writer.write(cv2_image)
 
                 current_epoch = int(time.time())
-                #if current_epoch - self.last_epoch_demo > self.demo_period:
+                # if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
-
-
-
 
                 # if request is None:
                 #     var = not var
                 #     continue
 
-                _, signs_encoded_img = cv2.imencode(".jpg", request)
-                #self.detect_signs(current_epoch, request, signs_encoded_img)
+                if ENABLE_SIGN_DETECTION:
+                    _, signs_encoded_img = cv2.imencode(".jpg", request)
+                    self.detect_signs(current_epoch, request, signs_encoded_img)
 
-                #self.detect_lanes(current_epoch, request)
+                if ENABLE_LANE_DETECTION:
+                    self.detect_lanes(current_epoch, request)
 
                 request2 = self.camera.capture_array(
                     "lores"
@@ -209,8 +210,6 @@ class threadCamera(ThreadWithStop):
                 _, encoded_big_img = cv2.imencode(".jpg", request)
                 image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
                 image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
-
-
 
                 self.queuesList[mainCamera.Queue.value].put(
                     {
@@ -229,7 +228,6 @@ class threadCamera(ThreadWithStop):
                     }
                 )
 
-
             var = not var
 
     def detect_lanes(self, current_epoch, request):
@@ -246,14 +244,14 @@ class threadCamera(ThreadWithStop):
             # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
 
             if found_color == 'AZUL':
-                #self.sign_detector.detect(request, 'stop')
+                # self.sign_detector.detect(request, 'stop')
                 response = self.model_service.send(encoded_img, 'stop')
                 if response['found'] == True:
                     print(f"############ MODEL ANSWER: STOP ############")
                     self.sign_executor.execute('stop')
 
             elif found_color == 'ROJO':
-                #self.sign_detector.detect(request, 'crosswalk')
+                # self.sign_detector.detect(request, 'crosswalk')
 
                 response = self.model_service.send(encoded_img, 'crosswalk')
 
@@ -267,9 +265,9 @@ class threadCamera(ThreadWithStop):
                 self.sign_executor.execute(None)
             return mask_frame
         return request
-            # found_sign = self.sign_detector.detect_signal(request, threshold=10)
-            # print(f"************* Found sign: {found_sign}")
-            # self.sign_executor.execute(found_sign)
+        # found_sign = self.sign_detector.detect_signal(request, threshold=10)
+        # print(f"************* Found sign: {found_sign}")
+        # self.sign_executor.execute(found_sign)
 
     # =============================== START ===============================================
     def start(self):

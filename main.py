@@ -29,6 +29,7 @@
 # ===================================== GENERAL IMPORTS ==================================
 import sys
 
+from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC
 from src.austral.pid.mock import processMock
 from src.austral.ultrasonic.frontal.processFrontalUltrasonic import processFrontalUltrasonic
 
@@ -77,8 +78,11 @@ allProcesses.append(processGateway)
 process_mock = processMock(queueList)
 allProcesses.append(process_mock)
 
-# process_frontal_ultrasonic = processFrontalUltrasonic(queueList)
-# allProcesses.append(process_frontal_ultrasonic)
+if ENABLE_FRONTAL_ULTRASONIC:
+    process_frontal_ultrasonic = processFrontalUltrasonic(queueList)
+    allProcesses.append(process_frontal_ultrasonic)
+
+
 
 
 # Initializing camera
