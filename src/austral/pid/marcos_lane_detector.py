@@ -160,6 +160,8 @@ class MarcosLaneDetector:
                         right_lines.append(line)
                 else:
                     continue
+        print('Left lines:', left_lines)
+        print('Right lines:', right_lines)
         return left_lines, right_lines
 
     def average_lines(self, lines):
