@@ -26,6 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 import threading
+
+from src.austral.api.data_sender import DataSender
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
     BatteryLvl,
@@ -85,6 +87,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
 
     def brake(self):
         print("BRAKING")
+        DataSender.send('/brake', {'braking': True})
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
@@ -95,6 +98,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
 
     def accelerate(self):
         print("NOTHING IN THE WAY. SPEEDING")
+        DataSender.send('/brake', {'braking': False})
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,

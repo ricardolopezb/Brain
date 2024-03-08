@@ -33,7 +33,9 @@ import time
 
 from multiprocessing import Pipe
 
+from src.austral.api.data_sender import DataSender
 from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION
+from src.austral.pid.marcos_lane_detector import MarcosLaneDetector
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
 from src.austral.signals.color_detector import ColorDetector
@@ -82,7 +84,7 @@ class threadCamera(ThreadWithStop):
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
-        self.lane_detector = LaneDetector()
+        self.lane_detector = MarcosLaneDetector()
         # self.sign_detector = ModelDetector()
         self.model_service = ModelRequestSender()
         self.sign_executor = SignExecutor(queuesList)
@@ -247,7 +249,7 @@ class threadCamera(ThreadWithStop):
                 # self.sign_detector.detect(request, 'stop')
                 response = self.model_service.send(encoded_img, 'stop')
                 if response['found'] == True:
-                    print(f"############ MODEL ANSWER: STOP ############")
+                    DataSender.send('/sign', {'sign': 'stop'})
                     self.sign_executor.execute('stop')
 
             elif found_color == 'ROJO':
@@ -256,10 +258,10 @@ class threadCamera(ThreadWithStop):
                 response = self.model_service.send(encoded_img, 'crosswalk')
 
                 if response['found'] == True:
-                    print(f"############ MODEL ANSWER: CROSSWALK ############")
+                    DataSender.send('/sign', {'sign': 'crosswalk'})
                     self.sign_executor.execute('crosswalk')
                 else:
-                    print(f"############ MODEL ANSWER: PARKING ############")
+                    DataSender.send('/sign', {'sign': 'parking'})
                     self.sign_executor.execute('parking')
             else:
                 self.sign_executor.execute(None)
