@@ -119,6 +119,7 @@ class MarcosLaneDetector:
         elif average_right_line is not None:
             steering_angle = self.follow_right_line(average_right_line)
         else:
+            print(f"IN ELSE WITH VALUE {self.kernel_value}")
             self.kernel_value = 1
             return self.get_steering_angle(image)
             steering_angle = self.prev_steering_angle
