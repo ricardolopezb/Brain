@@ -54,8 +54,8 @@ class MarcosLaneDetector:
         self.prev_steering_angle = 0
         self.prev_horizontal_line = 0
         self.pid_controller = PIDController(self.kp, self.ki, self.kd, self.tolerancia)
-        self.threshold_value = 130
-        self.kernel_value = 15
+        self.threshold_value = 150
+        self.kernel_value = 11
         self.ROI_value = 35 / 100
 
     def follow_left_line(self, line):
