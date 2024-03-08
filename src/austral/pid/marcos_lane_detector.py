@@ -285,13 +285,13 @@ class MarcosLaneDetector:
 
     def image_processing(self, image):
 
-        if kernel_value % 2 == 0:
-            kernel_value = kernel_value + 1
+        if self.kernel_value % 2 == 0:
+            self.kernel_value = self.kernel_value + 1
 
         height, width = image.shape[:2]
 
         x1 = 0
-        y1 = int(ROI_value * height)
+        y1 = int(self.ROI_value * height)
         x2 = width
         y2 = (height)
 
@@ -302,8 +302,8 @@ class MarcosLaneDetector:
         masked_image = cv2.bitwise_and(image, mask)
 
         grey_image = cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY)
-        _, binary_image = cv2.threshold(grey_image, threshold_value, 255, cv2.THRESH_BINARY)
-        noiseless_image = cv2.medianBlur(binary_image, kernel_value)
+        _, binary_image = cv2.threshold(grey_image, self.threshold_value, 255, cv2.THRESH_BINARY)
+        noiseless_image = cv2.medianBlur(binary_image, self.kernel_value)
         canny_image = cv2.Canny(noiseless_image, 100, 150)
 
         lines = cv2.HoughLinesP(canny_image, 1, np.pi / 180, 50, minLineLength=50, maxLineGap=150)
