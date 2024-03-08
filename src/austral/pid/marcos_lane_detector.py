@@ -107,7 +107,7 @@ class MarcosLaneDetector:
                  (165, 0, 255), 2)
         return steering_angle
 
-    def get_steering_angle(self, image):
+    def get_steering_angle(self, image, second_time=False):
 
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
@@ -119,13 +119,16 @@ class MarcosLaneDetector:
         elif average_right_line is not None:
             steering_angle = self.follow_right_line(average_right_line)
         else:
+            if second_time:
+                self.kernel_value = 15
+                return 0
             print(f"IN ELSE WITH VALUE {self.kernel_value}")
             self.kernel_value = 1
-            return self.get_steering_angle(image)
             steering_angle = self.prev_steering_angle
+            return self.get_steering_angle(image, second_time=True)
         self.kernel_value = 15
         self.prev_steering_angle = steering_angle
-        return steering_angle, canny_image
+        return steering_angle
 
     def is_detecting_both_lines(self, average_left_line, average_right_line):
         return average_left_line is not None and average_right_line is not None
