@@ -319,10 +319,10 @@ class MarcosLaneDetector:
 
         average_left_line = self.average_lines(merged_left_lines)
         if average_left_line is not None:
-            self.line_drawing(average_left_line, height=height)
+            self.line_drawing(image, average_left_line, height=height)
 
         average_right_line = self.average_lines(merged_right_lines)
         if average_right_line is not None:
-            self.line_drawing(average_right_line, height=height)
+            self.line_drawing(image, average_right_line, height=height)
 
         return average_left_line, average_right_line, height, width, canny_image
