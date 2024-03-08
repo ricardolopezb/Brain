@@ -79,9 +79,9 @@ class threadWrite(ThreadWithStop):
         self.Queue_Sending()
 
         # Stop IMU communication
-        print("Stopping IMU communication")
-        command_msg = "#6:0;;"
-        self.serialCom.write(command_msg.encode("ascii"))
+        # print("Stopping IMU communication")
+        # command_msg = "#6:0;;"
+        # self.serialCom.write(command_msg.encode("ascii"))
         if example:
             self.i = 0.0
             self.j = -1.0
