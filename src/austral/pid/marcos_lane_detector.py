@@ -122,7 +122,6 @@ class MarcosLaneDetector:
             if second_time:
                 self.kernel_value = 15
                 return 0
-            print(f"IN ELSE WITH VALUE {self.kernel_value}")
             self.kernel_value = 1
             steering_angle = self.prev_steering_angle
             return self.get_steering_angle(image, second_time=True)
@@ -160,8 +159,6 @@ class MarcosLaneDetector:
                         right_lines.append(line)
                 else:
                     continue
-        print('Left lines:', left_lines)
-        print('Right lines:', right_lines)
         return left_lines, right_lines
 
     def average_lines(self, lines):
@@ -320,12 +317,10 @@ class MarcosLaneDetector:
         merged_right_lines = self.merge_lines(right_lines)
 
         average_left_line = self.average_lines(merged_left_lines)
-        print('Average left line:', average_left_line)
         if average_left_line is not None:
             self.line_drawing(image, average_left_line, height=height)
 
         average_right_line = self.average_lines(merged_right_lines)
-        print('Average right line:', average_right_line)
         if average_right_line is not None:
             self.line_drawing(image, average_right_line, height=height)
 
