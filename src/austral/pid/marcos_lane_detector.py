@@ -41,7 +41,7 @@ class PIDController:
 
 
 class MarcosLaneDetector:
-    def __init__(self):
+    def __init__(self, queue_list):
         self.consecutive_frames_without_left_line = 0
         self.consecutive_frames_without_right_line = 0
         self.consecutive_frames_with_horizontal_line = 0
@@ -57,6 +57,7 @@ class MarcosLaneDetector:
         self.threshold_value = 150
         self.kernel_value = 11
         self.ROI_value = 35 / 100
+        self.queue_list = queue_list
 
     def follow_left_line(self, line):
         x1, y1, x2, y2 = line[0]

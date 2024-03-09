@@ -84,7 +84,7 @@ class threadCamera(ThreadWithStop):
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
-        self.lane_detector = MarcosLaneDetector()
+        self.lane_detector = MarcosLaneDetector(queuesList)
         # self.sign_detector = ModelDetector()
         self.model_service = ModelRequestSender()
         self.sign_executor = SignExecutor(queuesList)
