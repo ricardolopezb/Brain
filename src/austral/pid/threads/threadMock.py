@@ -84,7 +84,7 @@ class threadMock(ThreadWithStop):
                     continue
                 queue_to_send = 'Warning'
                 if abs(value) > 15:
-                    queue_to_send = 'Critical'
+                    queue_to_send = 'Warning'
 
                 self.queuesList[queue_to_send].put({
                     "Owner": SteerMotor.Owner.value,
