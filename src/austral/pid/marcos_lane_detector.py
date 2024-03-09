@@ -363,8 +363,8 @@ class MarcosLaneDetector:
                         a = 0.01
 
                     slope = np.abs((x - (width / 2)) / a)
-                    x = width
-                    y = height
+                    x = width-1
+                    y = height*0.35-1
 
         slope = math.degrees(slope)
         steering_angle = self.slope_mapper(slope)
