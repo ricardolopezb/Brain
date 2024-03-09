@@ -42,21 +42,27 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': 22.0}
+            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -3}
+        })
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': 22.0}
         })
         time.sleep(2)
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': -22.0}
+            "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': -22.0}
         })
         time.sleep(2)
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
+            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -3}
         })
         time.sleep(1)
 
@@ -64,7 +70,7 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 1, 'Steer': -4.0}
+            "msgValue": {'Speed': -speed, 'Time': 1, 'Steer': -3}
         })
         time.sleep(1)
 
@@ -72,7 +78,7 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': -22.0}
+            "msgValue": {'Speed': speed, 'Time': 3, 'Steer': -22.0}
         })
         time.sleep(1.5)
 
@@ -80,7 +86,7 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': 22.0}
+            "msgValue": {'Speed': speed, 'Time': 4, 'Steer': 22.0}
         })
         time.sleep(1.5)
 
