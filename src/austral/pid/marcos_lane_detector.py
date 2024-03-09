@@ -356,7 +356,7 @@ class MarcosLaneDetector:
             for x in np.linspace(0, int(width) - 2, int(width)-1):
                 x = int(x)
                 y = int(y)
-                value = canny[x][y]
+                value = canny[y][x]
                 if value == 255:
                     a = y - height
                     if a == 0:
