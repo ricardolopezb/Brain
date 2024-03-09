@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import math
 
-from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD
+from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED
+from src.utils.messages.allMessages import SpeedMotor
 
 
 class PIDController:
@@ -101,6 +102,14 @@ class MarcosLaneDetector:
                  (165, 0, 255), 2)
         return steering_angle
 
+    def lower_speed(self):
+        self.queue_list['Warning'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": LOW_SPEED
+        })
+
     def get_steering_angle(self, image, repetition=1):
 
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
@@ -109,8 +118,10 @@ class MarcosLaneDetector:
             error = self.getting_error(image, average_left_line, average_right_line, height, width)
             steering_angle = self.control_signal(error)
         elif average_left_line is not None:
+            self.lower_speed()
             steering_angle = self.follow_left_line(average_left_line)
         elif average_right_line is not None:
+            self.lower_speed()
             steering_angle = self.follow_right_line(average_right_line)
         else:
             if repetition == 2:
