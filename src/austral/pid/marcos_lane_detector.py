@@ -66,12 +66,7 @@ class MarcosLaneDetector:
         dy = y2 - y1
         if dx != 0:
             pendiente = math.degrees(abs(dy / dx))
-            print('PENDIENTE', pendiente)
-            if pendiente > 60:
-                return -3
-                # steering_angle = round(22 - ((pendiente - 30) * (22 / 60)))
-            else:
-                steering_angle = 22
+            steering_angle = self.slope_mapper(pendiente)
         return steering_angle
 
     def follow_right_line(self, line):
@@ -80,12 +75,9 @@ class MarcosLaneDetector:
         dy = y2 - y1
         if dx != 0:
             pendiente = math.degrees(abs(dy / dx))
-            print('PENDIENTE', pendiente)
-            if pendiente > 60:
-                steering_angle = -3
-                # steering_angle = round(- (22 - ((pendiente - 30) * (22 / 60))))
-            else:
-                steering_angle = -22
+            if dx != 0:
+                pendiente = math.degrees(abs(dy / dx))
+                steering_angle = self.slope_mapper(pendiente) * -1
         return steering_angle
 
     def control_signal(self, error):
@@ -122,8 +114,11 @@ class MarcosLaneDetector:
             steering_angle = self.follow_right_line(average_right_line)
         else:
             if repetition == 2:
+                angle = self.plan_c(canny_image, width, height)
                 self.kernel_value = 15
-                return 0
+                self.prev_steering_angle = angle
+                return angle
+
             self.kernel_value = 1
             steering_angle = self.prev_steering_angle
             return self.get_steering_angle(image, repetition=2)
@@ -277,6 +272,22 @@ class MarcosLaneDetector:
                     merged_lines.append(line)
         return merged_lines
 
+    def slope_mapper(self, angle):
+        if angle > 50:
+            return -3
+        elif angle > 40:
+            return 11
+        elif angle > 0:
+            return 22
+        elif angle > -40:
+            return -22
+        elif angle > -50:
+            return -11
+        else:
+            return -3
+
+
+
     def conditioning(self, frame, gauss_size, deviation):
         grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         grey[:117, :] = 140
@@ -338,4 +349,5 @@ class MarcosLaneDetector:
                     y = height
 
         slope = math.degrees(slope)
-        return slope
+        steering_angle = self.slope_mapper(slope)
+        return steering_angle
