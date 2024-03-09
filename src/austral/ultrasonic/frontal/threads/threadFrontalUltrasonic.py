@@ -28,6 +28,7 @@
 import threading
 
 from src.austral.api.data_sender import DataSender
+from src.austral.configs import BASE_SPEED
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
     BatteryLvl,
@@ -103,7 +104,8 @@ class threadFrontalUltrasonic(ThreadWithStop):
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": 3
+            "msgValue": BASE_SPEED
         })
         DataSender.send('/brake', {'braking': False})
+        DataSender.send('/speed', {'speed': BASE_SPEED})
 

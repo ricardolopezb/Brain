@@ -1,7 +1,8 @@
 import time
 
+from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED
-from src.utils.messages.allMessages import SpeedMotor, Control
+from src.utils.messages.allMessages import SpeedMotor
 
 
 class SignExecutor:
@@ -29,6 +30,7 @@ class SignExecutor:
         self.just_seen_sign = sign
 
     def send_parking_sequence(self):
+        DataSender.send('/sign', {'sign': 'Parking'})
         print("SENDING PARKING SEQUENCE")
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
@@ -81,6 +83,7 @@ class SignExecutor:
 
 
     def send_stop_sequence(self):
+        DataSender.send('/sign', {'sign': 'Stop'})
         # self.queue_list['Critical'].put({
         #     "Owner": Control.Owner.value,
         #     "msgID": Control.msgID.value,
@@ -93,6 +96,7 @@ class SignExecutor:
             "msgType": SpeedMotor.msgType.value,
             "msgValue": 0
         })
+        DataSender.send('/speed', {'speed': 0})
         time.sleep(STOP_DURATION)
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
@@ -100,15 +104,18 @@ class SignExecutor:
             "msgType": SpeedMotor.msgType.value,
             "msgValue": BASE_SPEED
         })
+        DataSender.send('/speed', {'speed': BASE_SPEED})
 
     def send_crosswalk_sequence(self):
         print("############### LOWERING SPEED")
+        DataSender.send('/sign', {'sign': 'Crosswalk'})
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
             "msgValue": LOW_SPEED
         })
+        DataSender.send('/speed', {'speed': LOW_SPEED})
         time.sleep(CROSSWALK_EXECUTION_DURATION)
         print("############### INCREASING SPEED")
         self.queue_list['Critical'].put({
@@ -117,3 +124,4 @@ class SignExecutor:
             "msgType": SpeedMotor.msgType.value,
             "msgValue": BASE_SPEED
         })
+        DataSender.send('/speed', {'speed': BASE_SPEED})
