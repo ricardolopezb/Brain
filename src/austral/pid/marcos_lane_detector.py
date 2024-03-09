@@ -137,6 +137,7 @@ class MarcosLaneDetector:
                 steering_angle = 22
             else:
                 steering_angle = self.follow_left_line(average_left_line)
+                self.just_seen_single_line = True
         elif average_right_line is not None:
             if not self.lowered_speed:
                 self.lower_speed()
@@ -145,6 +146,7 @@ class MarcosLaneDetector:
                 steering_angle = -22
             else:
                 steering_angle = self.follow_right_line(average_right_line)
+                self.just_seen_single_line = True
         else:
             if repetition == 2:
                 angle = self.plan_c(canny_image, width, height)
