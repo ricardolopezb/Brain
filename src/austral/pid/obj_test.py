@@ -74,6 +74,8 @@ class LaneDetector:
         x1, y1, x2, y2 = line[0]
         dx = x2 - x1
         dy = y2 - y1
+        if dx == 0:
+            dx = 0.01
         if dx != 0:
             pendiente = math.degrees(abs(dy / dx))
             print('PENDIENTE', pendiente)
