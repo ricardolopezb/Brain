@@ -346,7 +346,11 @@ class MarcosLaneDetector:
                 y = int(y)
                 value = canny[x][y]
                 if value == 255:
-                    slope = np.abs((x - (width / 2)) / (y - height))
+                    a = y - height
+                    if a == 0:
+                        a = 0.01
+
+                    slope = np.abs((x - (width / 2)) / a)
                     x = width
                     y = height
 
