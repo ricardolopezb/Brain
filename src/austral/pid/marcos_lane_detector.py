@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED
+from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED
 from src.utils.messages.allMessages import SpeedMotor
 
 
@@ -58,6 +58,8 @@ class MarcosLaneDetector:
         self.kernel_value = 11
         self.ROI_value = 35 / 100
         self.queue_list = queue_list
+        self.just_seen_single_line = False
+        self.lowered_speed = False
 
     def follow_left_line(self, line):
         x1, y1, x2, y2 = line[0]
@@ -100,6 +102,7 @@ class MarcosLaneDetector:
         return steering_angle
 
     def lower_speed(self):
+        self.lowered_speed = True
         self.queue_list['Warning'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
@@ -107,19 +110,41 @@ class MarcosLaneDetector:
             "msgValue": LOW_SPEED
         })
 
+    def increase_speed(self):
+        self.lowered_speed = False
+        self.queue_list['Warning'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": BASE_SPEED
+        })
+
     def get_steering_angle(self, image, repetition=1):
 
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
         if average_left_line is not None and average_right_line is not None:
+            if self.lowered_speed:
+                self.increase_speed()
+            self.just_seen_single_line = False
             error = self.getting_error(image, average_left_line, average_right_line, height, width)
             steering_angle = self.control_signal(error)
         elif average_left_line is not None:
-            self.lower_speed()
-            steering_angle = self.follow_left_line(average_left_line)
+            if not self.lowered_speed:
+                self.lower_speed()
+
+            if self.just_seen_single_line:
+                steering_angle = 22
+            else:
+                steering_angle = self.follow_left_line(average_left_line)
         elif average_right_line is not None:
-            self.lower_speed()
-            steering_angle = self.follow_right_line(average_right_line)
+            if not self.lowered_speed:
+                self.lower_speed()
+
+            if self.just_seen_single_line:
+                steering_angle = -22
+            else:
+                steering_angle = self.follow_right_line(average_right_line)
         else:
             if repetition == 2:
                 angle = self.plan_c(canny_image, width, height)
@@ -290,7 +315,7 @@ class MarcosLaneDetector:
             to_return = -11
         else:
             to_return = -3
-
+        # print('### MAPEADO', to_return)
         return to_return
 
 
