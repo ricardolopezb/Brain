@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import math
 
+from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD
+
 
 class PIDController:
     def __init__(self, Kp, Ki, Kd, tolerancia):
@@ -46,10 +48,10 @@ class MarcosLaneDetector:
         self.consecutive_frames_without_right_line = 0
         self.consecutive_frames_with_horizontal_line = 0
         self.dt = 0.2
-        self.kp = 0.1
-        self.ki = 0.05
-        self.kd = 0.05
-        self.tolerancia = 50
+        self.kp = PID_KP
+        self.ki = PID_KI
+        self.kd = PID_KD
+        self.tolerancia = PID_TOLERANCE
         self.allowed_frames = 4
         self.prev_steering_angle = 0
         self.prev_horizontal_line = 0
