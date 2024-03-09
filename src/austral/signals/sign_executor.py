@@ -48,7 +48,7 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': 22.0}
+            "msgValue": {'Speed': -speed, 'Time': 6, 'Steer': 22.0}
         })
         time.sleep(2)
         self.queue_list['Warning'].put({
