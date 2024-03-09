@@ -59,6 +59,7 @@ class MarcosLaneDetector:
         self.ROI_value = 35 / 100
         self.queue_list = queue_list
         self.just_seen_single_line = False
+        self.just_seen_two_lines = False
         self.lowered_speed = False
 
     def follow_left_line(self, line):
@@ -124,11 +125,18 @@ class MarcosLaneDetector:
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
         if average_left_line is not None and average_right_line is not None:
-            if self.lowered_speed:
+            if self.lowered_speed and self.just_seen_two_lines:
                 self.increase_speed()
-            self.just_seen_single_line = False
-            error = self.getting_error(image, average_left_line, average_right_line, height, width)
-            steering_angle = self.control_signal(error)
+
+
+            if self.just_seen_two_lines:
+                error = self.getting_error(image, average_left_line, average_right_line, height, width)
+                self.just_seen_two_lines = False
+                self.just_seen_single_line = False
+                steering_angle = self.control_signal(error)
+            else:
+                self.just_seen_two_lines = True
+                steering_angle = self.prev_steering_angle
         elif average_left_line is not None:
             if not self.lowered_speed:
                 self.lower_speed()
