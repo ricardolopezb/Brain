@@ -25,6 +25,8 @@ class SignExecutor:
             self.send_crosswalk_sequence()
         elif sign == "yield":
             print("FOUND A YIELD")
+        elif sign is None:
+            DataSender.send('/sign', {'sign': None})
 
         print("SETTING JUST SEEN SIGN TO", sign)
         self.just_seen_sign = sign
