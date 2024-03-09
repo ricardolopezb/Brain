@@ -342,6 +342,8 @@ class MarcosLaneDetector:
     def plan_c(self, canny, width, height):
         for y in np.linspace(0, int(height) - 1, int(height)):
             for x in np.linspace(0, int(width) - 1, int(width)):
+                x = int(x)
+                y = int(y)
                 value = canny[x][y]
                 if value == 255:
                     slope = np.abs((x - (width / 2)) / (y - height))
