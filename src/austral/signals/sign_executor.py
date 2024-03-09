@@ -2,7 +2,7 @@ import time
 
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED
-from src.utils.messages.allMessages import SpeedMotor
+from src.utils.messages.allMessages import SpeedMotor, Control
 
 
 class SignExecutor:
@@ -31,54 +31,54 @@ class SignExecutor:
 
     def send_parking_sequence(self):
         print("SENDING PARKING SEQUENCE")
-        self.queue_list['Critical'].put({
-            "Owner": SpeedMotor.Owner.value,
-            "msgID": SpeedMotor.msgID.value,
-            "msgType": SpeedMotor.msgType.value,
-            "msgValue": 0
+        # self.queue_list['Critical'].put({
+        #     "Owner": SpeedMotor.Owner.value,
+        #     "msgID": SpeedMotor.msgID.value,
+        #     "msgType": SpeedMotor.msgType.value,
+        #     "msgValue": 0
+        # })
+        speed = PARKING_SPEED
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': 22.0}
         })
-        # speed = PARKING_SPEED
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': 22.0}
-        # })
-        #
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': -22.0}
-        # })
-        #
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
-        # })
-        #
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': -speed, 'Time': 1, 'Steer': -4.0}
-        # })
-        #
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': -22.0}
-        # })
-        #
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': 22.0}
-        # })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': -22.0}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': -speed, 'Time': 1, 'Steer': -4.0}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': -22.0}
+        })
+
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': 22.0}
+        })
 
 
     def send_stop_sequence(self):
