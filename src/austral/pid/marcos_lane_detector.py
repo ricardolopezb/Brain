@@ -58,7 +58,7 @@ class MarcosLaneDetector:
         self.kernel_value = 11
         self.ROI_value = 35 / 100
         self.queue_list = queue_list
-        self.just_seen_single_line = False
+        self.consecutive_single_lines = 0
         self.just_seen_two_lines = False
         self.lowered_speed = False
 
@@ -132,7 +132,7 @@ class MarcosLaneDetector:
             if self.just_seen_two_lines:
                 error = self.getting_error(image, average_left_line, average_right_line, height, width)
                 self.just_seen_two_lines = False
-                self.just_seen_single_line = False
+                self.consecutive_single_lines = 0
                 steering_angle = self.control_signal(error)
             else:
                 self.just_seen_two_lines = True
@@ -141,20 +141,20 @@ class MarcosLaneDetector:
             if not self.lowered_speed:
                 self.lower_speed()
 
-            if self.just_seen_single_line:
+            if self.consecutive_single_lines == 2:
                 steering_angle = 22
             else:
                 steering_angle = self.follow_left_line(average_left_line)
-                self.just_seen_single_line = True
+                self.consecutive_single_lines = self.consecutive_single_lines + 1
         elif average_right_line is not None:
             if not self.lowered_speed:
                 self.lower_speed()
 
-            if self.just_seen_single_line:
+            if self.consecutive_single_lines == 2:
                 steering_angle = -22
             else:
                 steering_angle = self.follow_right_line(average_right_line)
-                self.just_seen_single_line = True
+                self.consecutive_single_lines = self.consecutive_single_lines + 1
         else:
             if repetition == 2:
                 angle = self.plan_c(canny_image, width, height)
