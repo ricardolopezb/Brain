@@ -356,7 +356,7 @@ class MarcosLaneDetector:
         y2 = (height)
 
         roi_vertices = np.array([[(x1, y1), (x2, y1), (x2, y2), (x1, y2)]], dtype=np.int32)
-        image = self.conditioning(image, 5, 0.9)
+        #image = self.conditioning(image, 5, 0.9)
         mask = np.zeros_like(image)
         cv2.fillPoly(mask, roi_vertices, (255, 255, 255))
         masked_image = cv2.bitwise_and(image, mask)
