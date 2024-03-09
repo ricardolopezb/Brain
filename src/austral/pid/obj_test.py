@@ -76,14 +76,14 @@ class LaneDetector:
         dy = y2 - y1
         if dx == 0:
             dx = 0.01
-        if dx != 0:
-            pendiente = math.degrees(abs(dy / dx))
-            print('PENDIENTE', pendiente)
-            if pendiente > 60:
-                steering_angle = -3
-                #steering_angle = round(- (22 - ((pendiente - 30) * (22 / 60))))
-            else:
-                steering_angle = -22
+
+        pendiente = math.degrees(abs(dy / dx))
+        print('PENDIENTE', pendiente)
+        if pendiente > 60:
+            steering_angle = -3
+            #steering_angle = round(- (22 - ((pendiente - 30) * (22 / 60))))
+        else:
+            steering_angle = -22
         return steering_angle
 
     def control_signal(self, error):
