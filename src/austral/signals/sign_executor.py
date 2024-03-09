@@ -38,12 +38,12 @@ class SignExecutor:
         #     "msgValue": 0
         # })
         speed = PARKING_SPEED
-        # self.queue_list['Warning'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -3}
-        # })
+        self.queue_list['Warning'].put({
+            "Owner": Control.Owner.value,
+            "msgID": Control.msgID.value,
+            "msgType": Control.msgType.value,
+            "msgValue": {'Speed': speed, 'Time': 0.5, 'Steer': -5}
+        })
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
