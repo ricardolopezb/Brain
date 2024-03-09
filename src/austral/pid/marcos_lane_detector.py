@@ -74,6 +74,7 @@ class MarcosLaneDetector:
             pendiente = math.degrees(abs(dy / dx))
             if dx != 0:
                 pendiente = math.degrees(abs(dy / dx))
+                print('### PENDIENTE', pendiente)
                 steering_angle = self.slope_mapper(pendiente) * -1
         return steering_angle
 
@@ -142,9 +143,6 @@ class MarcosLaneDetector:
                     slope = np.arctan((y2 - y1) / (x2 - x1))
 
                 angle_degrees = np.degrees(abs(slope))
-
-                print('### PENDIENTE', angle_degrees)
-
                 if angle_degrees > 30 or (angle_degrees < 155 and angle_degrees > 180):
                     if slope < 0:
                         left_lines.append(line)
@@ -269,18 +267,21 @@ class MarcosLaneDetector:
         return merged_lines
 
     def slope_mapper(self, angle):
+        to_return = 0
         if angle > 50:
-            return -3
+            to_return = 3
         elif angle > 40:
-            return 11
+            to_return = 11
         elif angle > 0:
-            return 22
+            to_return = 22
         elif angle > -40:
-            return -22
+            to_return = -22
         elif angle > -50:
-            return -11
+            to_return = -11
         else:
-            return -3
+            to_return = -3
+        print('### MAPEADO', to_return)
+        return to_return
 
 
 
@@ -332,6 +333,7 @@ class MarcosLaneDetector:
         average_right_line = self.average_lines(merged_right_lines)
         if average_right_line is not None:
             self.line_drawing(image, average_right_line, height=height)
+
 
         return average_left_line, average_right_line, height, width, canny_image
 
