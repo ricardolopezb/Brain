@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED
+from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED, THRESHOLD, ROI, KERNEL
 from src.utils.messages.allMessages import SpeedMotor
 
 
@@ -54,9 +54,9 @@ class MarcosLaneDetector:
         self.prev_steering_angle = 0
         self.prev_horizontal_line = 0
         self.pid_controller = PIDController(self.kp, self.ki, self.kd, self.tolerancia)
-        self.threshold_value = 150
-        self.kernel_value = 11
-        self.ROI_value = 35 / 100
+        self.threshold_value = THRESHOLD
+        self.kernel_value = KERNEL
+        self.ROI_value = ROI / 100
         self.queue_list = queue_list
         self.consecutive_single_right_lines = 0
         self.consecutive_single_left_lines = 0
@@ -356,7 +356,7 @@ class MarcosLaneDetector:
         y2 = (height)
 
         roi_vertices = np.array([[(x1, y1), (x2, y1), (x2, y2), (x1, y2)]], dtype=np.int32)
-        #image = self.conditioning(image, 5, 1)
+        image = self.conditioning(image, 5, 0.8)
         mask = np.zeros_like(image)
         cv2.fillPoly(mask, roi_vertices, (255, 255, 255))
         masked_image = cv2.bitwise_and(image, mask)
