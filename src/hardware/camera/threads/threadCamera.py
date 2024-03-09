@@ -248,7 +248,9 @@ class threadCamera(ThreadWithStop):
             if found_color == 'AZUL':
                 # self.sign_detector.detect(request, 'stop')
                 response = self.model_service.send(encoded_img, 'stop')
-                if response['found'] == True:
+                if response['found'] == 'none':
+                    return request
+                if response['found'] == 'stop':
                     DataSender.send('/sign', {'sign': 'Stop'})
                     self.sign_executor.execute('stop')
 
@@ -256,8 +258,10 @@ class threadCamera(ThreadWithStop):
                 # self.sign_detector.detect(request, 'crosswalk')
 
                 response = self.model_service.send(encoded_img, 'crosswalk')
+                if response['found'] == 'none':
+                    return request
 
-                if response['found'] == True:
+                if response['found'] == 'crosswalk':
                     print("###### FOUND A CROSSWALK")
                     DataSender.send('/sign', {'sign': 'Crosswalk'})
                     self.sign_executor.execute('crosswalk')
