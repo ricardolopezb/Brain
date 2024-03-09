@@ -44,20 +44,21 @@ class SignExecutor:
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': 22.0}
         })
-
+        time.sleep(2)
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': -22.0}
         })
-
+        time.sleep(2)
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -2.8}
         })
+        time.sleep(1)
 
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
@@ -65,6 +66,7 @@ class SignExecutor:
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': -speed, 'Time': 1, 'Steer': -4.0}
         })
+        time.sleep(1)
 
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
@@ -72,6 +74,7 @@ class SignExecutor:
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': -22.0}
         })
+        time.sleep(1.5)
 
         self.queue_list['Warning'].put({
             "Owner": Control.Owner.value,
@@ -79,6 +82,7 @@ class SignExecutor:
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': 22.0}
         })
+        time.sleep(1.5)
 
         self.queue_list['Warning'].put({
             "Owner": SpeedMotor.Owner.value,

@@ -109,7 +109,7 @@ class MarcosLaneDetector:
                  (165, 0, 255), 2)
         return steering_angle
 
-    def get_steering_angle(self, image, second_time=False):
+    def get_steering_angle(self, image, repetition=1):
 
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
@@ -121,12 +121,12 @@ class MarcosLaneDetector:
         elif average_right_line is not None:
             steering_angle = self.follow_right_line(average_right_line)
         else:
-            if second_time:
+            if repetition == 2:
                 self.kernel_value = 15
                 return 0
             self.kernel_value = 1
             steering_angle = self.prev_steering_angle
-            return self.get_steering_angle(image, second_time=True)
+            return self.get_steering_angle(image, repetition=2)
         self.kernel_value = 15
         self.prev_steering_angle = steering_angle
         return steering_angle
@@ -327,3 +327,15 @@ class MarcosLaneDetector:
             self.line_drawing(image, average_right_line, height=height)
 
         return average_left_line, average_right_line, height, width, canny_image
+
+    def plan_c(self, canny, width, height):
+        for y in np.linspace(0, int(height) - 1, int(height)):
+            for x in np.linspace(0, int(width) - 1, int(width)):
+                value = canny[x][y]
+                if value == 255:
+                    slope = np.abs((x - (width / 2)) / (y - height))
+                    x = width
+                    y = height
+
+        slope = math.degrees(slope)
+        return slope

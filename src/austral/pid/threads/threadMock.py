@@ -82,7 +82,11 @@ class threadMock(ThreadWithStop):
                 value = float(message)
                 if value == self.last_steering_sent:
                     continue
-                self.queuesList['Critical'].put({
+                queue_to_send = 'Warning'
+                if abs(value) > 15:
+                    queue_to_send = 'Critical'
+
+                self.queuesList[queue_to_send].put({
                     "Owner": SteerMotor.Owner.value,
                     "msgID": SteerMotor.msgID.value,
                     "msgType": SteerMotor.msgType.value,
