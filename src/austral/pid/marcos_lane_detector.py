@@ -36,9 +36,6 @@ class PIDController:
         else:
             control_signal = self.Kp * proportional + self.Ki * self.integral + self.Kd * derivative
             control_signal = max(min(control_signal, 22), -22)
-        print(proportional)
-        print(self.integral)
-        print(derivative)
         return control_signal
 
 
@@ -145,11 +142,10 @@ class MarcosLaneDetector:
                     slope = np.arctan((y2 - y1) / (x2 - x1))
 
                 angle_degrees = np.degrees(abs(slope))
-                print('Slope:', slope)
-                print('Angle in degrees:', angle_degrees)
+
+                print('### PENDIENTE', angle_degrees)
 
                 if angle_degrees > 30 or (angle_degrees < 155 and angle_degrees > 180):
-                    print('Angle in degrees:', angle_degrees)
                     if slope < 0:
                         left_lines.append(line)
                     else:
