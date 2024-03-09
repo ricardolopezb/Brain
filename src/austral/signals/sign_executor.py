@@ -25,14 +25,11 @@ class SignExecutor:
             self.send_crosswalk_sequence()
         elif sign == "yield":
             print("FOUND A YIELD")
-        elif sign is None:
-            DataSender.send('/sign', {'sign': None})
 
         print("SETTING JUST SEEN SIGN TO", sign)
         self.just_seen_sign = sign
 
     def send_parking_sequence(self):
-        DataSender.send('/sign', {'sign': 'Parking'})
         print("SENDING PARKING SEQUENCE")
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
@@ -85,7 +82,6 @@ class SignExecutor:
 
 
     def send_stop_sequence(self):
-        DataSender.send('/sign', {'sign': 'Stop'})
         # self.queue_list['Critical'].put({
         #     "Owner": Control.Owner.value,
         #     "msgID": Control.msgID.value,
@@ -110,7 +106,6 @@ class SignExecutor:
 
     def send_crosswalk_sequence(self):
         print("############### LOWERING SPEED")
-        DataSender.send('/sign', {'sign': 'Crosswalk'})
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,

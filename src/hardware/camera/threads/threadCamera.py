@@ -249,7 +249,7 @@ class threadCamera(ThreadWithStop):
                 # self.sign_detector.detect(request, 'stop')
                 response = self.model_service.send(encoded_img, 'stop')
                 if response['found'] == True:
-                    DataSender.send('/sign', {'sign': 'stop'})
+                    DataSender.send('/sign', {'sign': 'Stop'})
                     self.sign_executor.execute('stop')
 
             elif found_color == 'ROJO':
@@ -258,12 +258,13 @@ class threadCamera(ThreadWithStop):
                 response = self.model_service.send(encoded_img, 'crosswalk')
 
                 if response['found'] == True:
-                    DataSender.send('/sign', {'sign': 'crosswalk'})
+                    DataSender.send('/sign', {'sign': 'Crosswalk'})
                     self.sign_executor.execute('crosswalk')
                 else:
-                    DataSender.send('/sign', {'sign': 'parking'})
+                    DataSender.send('/sign', {'sign': 'Parking'})
                     self.sign_executor.execute('parking')
             else:
+                DataSender.send('/sign', {'sign': None})
                 self.sign_executor.execute(None)
             return mask_frame
         return request
