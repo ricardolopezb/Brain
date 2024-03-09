@@ -340,8 +340,8 @@ class MarcosLaneDetector:
         return average_left_line, average_right_line, height, width, canny_image
 
     def plan_c(self, canny, width, height):
-        for y in np.linspace(0, int(height) - 1, int(height)):
-            for x in np.linspace(0, int(width) - 1, int(width)):
+        for y in np.linspace(0, int(height) - 2, int(height)-1):
+            for x in np.linspace(0, int(width) - 2, int(width)-1):
                 x = int(x)
                 y = int(y)
                 value = canny[x][y]
