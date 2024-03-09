@@ -258,9 +258,11 @@ class threadCamera(ThreadWithStop):
                 response = self.model_service.send(encoded_img, 'crosswalk')
 
                 if response['found'] == True:
+                    print("###### FOUND A CROSSWALK")
                     DataSender.send('/sign', {'sign': 'Crosswalk'})
                     self.sign_executor.execute('crosswalk')
                 else:
+                    print("###### FOUND A PARKING")
                     DataSender.send('/sign', {'sign': 'Parking'})
                     self.sign_executor.execute('parking')
             else:
