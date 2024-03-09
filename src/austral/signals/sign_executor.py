@@ -2,7 +2,7 @@ import time
 
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED
-from src.utils.messages.allMessages import SpeedMotor, Control
+from src.utils.messages.allMessages import SpeedMotor, Control, SteerMotor
 
 
 class SignExecutor:
@@ -93,12 +93,6 @@ class SignExecutor:
 
 
     def send_stop_sequence(self):
-        # self.queue_list['Critical'].put({
-        #     "Owner": Control.Owner.value,
-        #     "msgID": Control.msgID.value,
-        #     "msgType": Control.msgType.value,
-        #     "msgValue": {'Speed': 0, 'Time': 3, 'Steer': 0}
-        # })
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
@@ -114,6 +108,13 @@ class SignExecutor:
             "msgValue": BASE_SPEED
         })
         DataSender.send('/speed', {'speed': BASE_SPEED})
+        self.queue_list['Warning'].put({
+            "Owner": SteerMotor.Owner.value,
+            "msgID": SteerMotor.msgID.value,
+            "msgType": SteerMotor.msgType.value,
+            "msgValue": -22
+        })
+        DataSender.send('/steer', {'steer': -22})
 
     def send_crosswalk_sequence(self):
         print("############### LOWERING SPEED")
