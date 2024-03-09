@@ -80,6 +80,13 @@ class SignExecutor:
             "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': 22.0}
         })
 
+        self.queue_list['Warning'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": BASE_SPEED
+        })
+
 
     def send_stop_sequence(self):
         # self.queue_list['Critical'].put({
