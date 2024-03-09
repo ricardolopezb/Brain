@@ -65,6 +65,7 @@ class MarcosLaneDetector:
         dy = y2 - y1
         if dx != 0:
             pendiente = math.degrees(abs(dy / dx))
+            print('### PENDIENTE (LEFT)', pendiente)
             steering_angle = self.slope_mapper(pendiente)
         return steering_angle
 
@@ -76,10 +77,8 @@ class MarcosLaneDetector:
             pendiente = math.degrees(abs(dy / dx))
             if dx != 0:
                 pendiente = math.degrees(abs(dy / dx))
-                print('### PENDIENTE', pendiente)
+                print('### PENDIENTE (RIGHT)', pendiente)
                 steering_angle = self.slope_mapper(pendiente) * -1
-                if steering_angle == 3:
-                    steering_angle = -3
         return steering_angle
 
     def control_signal(self, error):
