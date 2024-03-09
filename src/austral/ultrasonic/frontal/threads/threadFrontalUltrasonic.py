@@ -87,22 +87,23 @@ class threadFrontalUltrasonic(ThreadWithStop):
 
     def brake(self):
         print("BRAKING")
-        DataSender.send('/brake', {'braking': True})
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
             "msgValue": 0
         })
+        DataSender.send('/brake', {'braking': True})
+
 
 
     def accelerate(self):
         print("NOTHING IN THE WAY. SPEEDING")
-        DataSender.send('/brake', {'braking': False})
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
             "msgValue": 3
         })
+        DataSender.send('/brake', {'braking': False})
 
