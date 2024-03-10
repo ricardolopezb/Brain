@@ -159,15 +159,15 @@ class MarcosLaneDetector:
                 self.consecutive_single_right_lines = self.consecutive_single_right_lines + 1
         else:
             if repetition == 2:
-                angle = self.plan_c(canny_image, width, height)
-                self.kernel_value = 15
-                self.prev_steering_angle = angle
-                return angle
+                self.kernel_value = KERNEL
+                self.threshold_value = THRESHOLD
+                return self.prev_steering_angle
 
-            self.kernel_value = 1
+            self.kernel_value = 9
+            self.threshold_value = 26
             steering_angle = self.prev_steering_angle
             return self.get_steering_angle(image, repetition=2)
-        self.kernel_value = 15
+        self.kernel_value = KERNEL
         self.prev_steering_angle = steering_angle
         return steering_angle
 
