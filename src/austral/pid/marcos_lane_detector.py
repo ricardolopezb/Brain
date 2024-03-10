@@ -64,6 +64,7 @@ class MarcosLaneDetector:
         self.consecutive_single_left_lines = 0
         self.just_seen_two_lines = False
         self.lowered_speed = False
+        self.should_decrease_votes = False
 
     def follow_left_line(self, line):
         x1, y1, x2, y2 = line[0]
@@ -151,8 +152,7 @@ class MarcosLaneDetector:
                 steering_angle = self.follow_left_line(average_left_line)
                 self.consecutive_single_left_lines = self.consecutive_single_left_lines + 1
         elif average_right_line is not None:
-            self.necessary_votes = 33
-            print("(RIGHT) - DECREASING VOTES TO", self.necessary_votes)
+            self.should_decrease_votes = True
             if self.consecutive_single_right_lines == 1:
                 if not self.lowered_speed:
                     self.lower_speed()
@@ -177,7 +177,12 @@ class MarcosLaneDetector:
             return self.get_steering_angle(image, repetition=2)
         self.kernel_value = KERNEL
         self.threshold_value = THRESHOLD
-        self.necessary_votes = NECESSARY_VOTES
+        if self.should_decrease_votes:
+            self.necessary_votes = 33
+            self.should_decrease_votes = False
+        else:
+            self.necessary_votes = NECESSARY_VOTES
+
         self.prev_steering_angle = steering_angle
         return steering_angle
 
