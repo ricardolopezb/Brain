@@ -54,6 +54,13 @@ class SignExecutor:
         # })
 
         speed = PARKING_SPEED
+
+        self.queue_list['Critical'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": 0
+        })
         # self.queue_list['Warning'].put({
         #     "Owner": Control.Owner.value,
         #     "msgID": Control.msgID.value,
