@@ -37,12 +37,12 @@ class SignExecutor:
         if self.parking_seen:
             return
 
-        self.queue_list = {
-            'Critical': Queue(),
-            'Warning': Queue(),
-            'General': Queue(),
-            'Config': self.queue_list['Config'],
-        }
+        # self.queue_list = {
+        #     'Critical': Queue(),
+        #     'Warning': Queue(),
+        #     'General': Queue(),
+        #     'Config': self.queue_list['Config'],
+        # }
         time.sleep(3)
 
         print("SENDING PARKING SEQUENCE")
