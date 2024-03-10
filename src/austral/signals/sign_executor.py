@@ -38,13 +38,6 @@ class SignExecutor:
         #     "msgValue": 0
         # })
 
-        self.queue_list = {
-            "Critical": Queue(),
-            "Warning": Queue(),
-            "General": Queue(),
-            "Config": self.queue_list['Config'],
-        }
-
         speed = PARKING_SPEED
         # self.queue_list['Warning'].put({
         #     "Owner": Control.Owner.value,
@@ -52,21 +45,21 @@ class SignExecutor:
         #     "msgType": Control.msgType.value,
         #     "msgValue": {'Speed': speed, 'Time': 0.5, 'Steer': -5}
         # })
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': -speed, 'Time': 8, 'Steer': 22.0}
         })
         time.sleep(8)
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': -22.0}
         })
         time.sleep(2)
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
@@ -74,7 +67,7 @@ class SignExecutor:
         })
         time.sleep(1)
 
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
@@ -82,7 +75,7 @@ class SignExecutor:
         })
         time.sleep(1)
 
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
@@ -90,7 +83,7 @@ class SignExecutor:
         })
         time.sleep(1.5)
 
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
@@ -98,7 +91,7 @@ class SignExecutor:
         })
         time.sleep(1.5)
 
-        self.queue_list['Warning'].put({
+        self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
