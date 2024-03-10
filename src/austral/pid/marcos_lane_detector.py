@@ -184,7 +184,7 @@ class MarcosLaneDetector:
                 self.new_votes_logic_start_time = time.time()
                 self.first_time_in_votes_logic = False
 
-            if time.time() - self.new_votes_logic_start_time > 100:
+            if time.time() - self.new_votes_logic_start_time > 90:
                 print("TURING OFF NEW LOGIC **********")
                 set_new_votes_logic(False)
 
