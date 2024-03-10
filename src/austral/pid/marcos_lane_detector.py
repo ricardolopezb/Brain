@@ -140,8 +140,9 @@ class MarcosLaneDetector:
                 self.just_seen_two_lines = True
                 steering_angle = self.prev_steering_angle
         elif average_left_line is not None:
-            if not self.lowered_speed:
-                self.lower_speed()
+            if self.consecutive_single_left_lines == 1:
+                if not self.lowered_speed:
+                    self.lower_speed()
 
             if self.consecutive_single_left_lines == 2:
                 steering_angle = 22
@@ -149,8 +150,9 @@ class MarcosLaneDetector:
                 steering_angle = self.follow_left_line(average_left_line)
                 self.consecutive_single_left_lines = self.consecutive_single_left_lines + 1
         elif average_right_line is not None:
-            if not self.lowered_speed:
-                self.lower_speed()
+            if self.consecutive_single_right_lines == 1:
+                if not self.lowered_speed:
+                    self.lower_speed()
 
             if self.consecutive_single_right_lines == 2:
                 steering_angle = -22
