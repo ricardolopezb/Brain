@@ -10,6 +10,7 @@ class SignExecutor:
     def __init__(self, queue_list):
         self.just_seen_sign = None
         self.queue_list = queue_list
+        self.parking_seen = False
 
     def execute(self, sign):
         if sign == self.just_seen_sign:
@@ -34,6 +35,9 @@ class SignExecutor:
         self.just_seen_sign = sign
 
     def send_parking_sequence(self):
+        if self.parking_seen:
+            return
+
         print("SENDING PARKING SEQUENCE")
         # self.queue_list['Critical'].put({
         #     "Owner": SpeedMotor.Owner.value,
@@ -101,6 +105,7 @@ class SignExecutor:
             "msgType": SpeedMotor.msgType.value,
             "msgValue": BASE_SPEED
         })
+        self.parking_seen = True
 
 
     def send_stop_sequence(self):
