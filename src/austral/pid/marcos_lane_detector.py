@@ -129,7 +129,6 @@ class MarcosLaneDetector:
         })
 
     def get_steering_angle(self, image, repetition=1):
-        global NEW_VOTES_LOGIC_ENABLED
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
         if average_left_line is not None and average_right_line is not None:
