@@ -11,6 +11,8 @@ class SignExecutor:
         self.just_seen_sign = None
         self.queue_list = queue_list
         self.parking_seen = False
+        self.crosswalk_seen = False
+        self.stop_seen = False
 
     def execute(self, sign):
         if sign == self.just_seen_sign:
@@ -35,6 +37,8 @@ class SignExecutor:
 
     def send_parking_sequence(self):
         if self.parking_seen:
+            return
+        if not self.crosswalk_seen or not self.stop_seen:
             return
 
         # self.queue_list = {
@@ -148,8 +152,11 @@ class SignExecutor:
         })
         DataSender.send('/steer', {'steer': -22})
         set_new_votes_logic(True)
+        self.stop_seen = True
 
     def send_crosswalk_sequence(self):
+        if not self.stop_seen:
+            return
         print("############### LOWERING SPEED")
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
@@ -167,3 +174,4 @@ class SignExecutor:
             "msgValue": BASE_SPEED
         })
         DataSender.send('/speed', {'speed': BASE_SPEED})
+        self.crosswalk_seen = True
