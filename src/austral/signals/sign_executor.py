@@ -20,10 +20,10 @@ class SignExecutor:
         if sign == 'stop':
             self.send_stop_sequence()
 
-        # elif self.just_seen_sign == 'parking' and sign is None:
-        #     self.send_parking_sequence()
-        elif sign == 'parking':
+        elif self.just_seen_sign == 'parking' and sign is None:
             self.send_parking_sequence()
+        # elif sign == 'parking':
+        #     self.send_parking_sequence()
 
         elif sign == "crosswalk":
             self.send_crosswalk_sequence()
@@ -87,7 +87,7 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': -3}
+            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': 2}
         })
         time.sleep(1)
 
