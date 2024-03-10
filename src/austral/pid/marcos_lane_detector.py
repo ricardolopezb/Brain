@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED, THRESHOLD, ROI, KERNEL, \
-    NECESSARY_VOTES, NEW_VOTES_LOGIC_ENABLED, set_new_votes_logic
+    NECESSARY_VOTES, NEW_VOTES_LOGIC_ENABLED, set_new_votes_logic, get_new_votes_logic
 from src.utils.messages.allMessages import SpeedMotor
 
 
@@ -178,7 +178,7 @@ class MarcosLaneDetector:
             return self.get_steering_angle(image, repetition=2)
         self.kernel_value = KERNEL
         self.threshold_value = THRESHOLD
-        if NEW_VOTES_LOGIC_ENABLED:
+        if get_new_votes_logic():
             print("IN NEW VOTES LOGIC")
             if self.first_time_in_votes_logic:
                 self.new_votes_logic_start_time = time.time()

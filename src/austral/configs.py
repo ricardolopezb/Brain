@@ -22,6 +22,9 @@ def set_new_votes_logic(value):
     print("### SETTING NEW VOTES LOGIC TO", value)
     NEW_VOTES_LOGIC_ENABLED = value
 
+def get_new_votes_logic():
+    return NEW_VOTES_LOGIC_ENABLED
+
 # THRESHOLD = 150
 # KERNEL = 11
 # ROI = 35

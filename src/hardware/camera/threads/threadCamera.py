@@ -251,6 +251,7 @@ class threadCamera(ThreadWithStop):
                 if response['found'] == 'none':
                     return request
                 if response['found'] == 'stop':
+                    print("###### FOUND A STOP")
                     DataSender.send('/sign', {'sign': 'Stop'})
                     self.sign_executor.execute('stop')
 
