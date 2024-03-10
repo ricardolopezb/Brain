@@ -179,12 +179,13 @@ class MarcosLaneDetector:
         self.kernel_value = KERNEL
         self.threshold_value = THRESHOLD
         if get_new_votes_logic():
-            print("IN NEW VOTES LOGIC")
             if self.first_time_in_votes_logic:
+                print("SETTING START TIME **********")
                 self.new_votes_logic_start_time = time.time()
                 self.first_time_in_votes_logic = False
 
-            if time.time() - self.new_votes_logic_start_time > 15:
+            if time.time() - self.new_votes_logic_start_time > 100:
+                print("TURING OFF NEW LOGIC **********")
                 set_new_votes_logic(False)
 
             self.necessary_votes = 33
