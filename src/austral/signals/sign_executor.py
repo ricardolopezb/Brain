@@ -23,7 +23,7 @@ class SignExecutor:
         # elif self.just_seen_sign == 'parking' and sign is None:
         #     self.send_parking_sequence()
         elif sign == 'parking':
-            time.sleep(2)
+            time.sleep(3)
             self.send_parking_sequence()
 
         elif sign == "crosswalk":
@@ -57,9 +57,9 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 2, 'Steer': 22.0}
+            "msgValue": {'Speed': -speed, 'Time': 3, 'Steer': 22.0}
         })
-        time.sleep(2)
+        time.sleep(3)
         self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
