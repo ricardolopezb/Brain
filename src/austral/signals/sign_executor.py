@@ -22,6 +22,7 @@ class SignExecutor:
         # elif self.just_seen_sign == 'parking' and sign is None:
         #     self.send_parking_sequence()
         elif sign == 'parking':
+            time.sleep(2)
             self.send_parking_sequence()
 
         elif sign == "crosswalk":
