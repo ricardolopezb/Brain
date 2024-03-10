@@ -1,9 +1,11 @@
+import time
+
 import cv2
 import numpy as np
 import math
 
 from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED, THRESHOLD, ROI, KERNEL, \
-    NECESSARY_VOTES
+    NECESSARY_VOTES, NEW_VOTES_LOGIC_ENABLED, set_new_votes_logic
 from src.utils.messages.allMessages import SpeedMotor
 
 
@@ -65,6 +67,8 @@ class MarcosLaneDetector:
         self.just_seen_two_lines = False
         self.lowered_speed = False
         self.should_decrease_votes = False
+        self.first_time_in_votes_logic = True
+        self.new_votes_logic_start_time = 0
 
     def follow_left_line(self, line):
         x1, y1, x2, y2 = line[0]
@@ -125,7 +129,7 @@ class MarcosLaneDetector:
         })
 
     def get_steering_angle(self, image, repetition=1):
-
+        global NEW_VOTES_LOGIC_ENABLED
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
         if average_left_line is not None and average_right_line is not None:
@@ -177,10 +181,17 @@ class MarcosLaneDetector:
             return self.get_steering_angle(image, repetition=2)
         self.kernel_value = KERNEL
         self.threshold_value = THRESHOLD
-        if self.should_decrease_votes:
-            self.necessary_votes = 33
-            print("DECREASING VOTES TO", self.necessary_votes)
-            self.should_decrease_votes = False
+        if NEW_VOTES_LOGIC_ENABLED:
+            if self.first_time_in_votes_logic:
+                self.new_votes_logic_start_time = time.time()
+            if self.should_decrease_votes:
+                self.necessary_votes = 33
+                print("DECREASING VOTES TO", self.necessary_votes)
+                self.should_decrease_votes = False
+            else:
+                self.necessary_votes = NECESSARY_VOTES
+            if time.time() - self.new_votes_logic_start_time > 15:
+                set_new_votes_logic(False)
         else:
             self.necessary_votes = NECESSARY_VOTES
 

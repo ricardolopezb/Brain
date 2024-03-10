@@ -1,7 +1,8 @@
 import time
 
 from src.austral.api.data_sender import DataSender
-from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED
+from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED, \
+    set_new_votes_logic
 from src.utils.messages.allMessages import SpeedMotor, Control, SteerMotor
 from multiprocessing import Queue
 
@@ -122,6 +123,7 @@ class SignExecutor:
             "msgValue": -22
         })
         DataSender.send('/steer', {'steer': -22})
+        set_new_votes_logic(True)
 
     def send_crosswalk_sequence(self):
         print("############### LOWERING SPEED")

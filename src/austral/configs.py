@@ -15,6 +15,13 @@ KERNEL = 9
 ROI = 30
 NECESSARY_VOTES = 50
 
+NEW_VOTES_LOGIC_ENABLED = False
+
+def set_new_votes_logic(value):
+    global NEW_VOTES_LOGIC_ENABLED
+    print("### SETTING NEW VOTES LOGIC")
+    NEW_VOTES_LOGIC_ENABLED = value
+
 # THRESHOLD = 150
 # KERNEL = 11
 # ROI = 35
