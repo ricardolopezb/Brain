@@ -3,7 +3,7 @@ import time
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED
 from src.utils.messages.allMessages import SpeedMotor, Control, SteerMotor
-
+from multiprocessing import Queue
 
 class SignExecutor:
     def __init__(self, queue_list):
@@ -37,6 +37,14 @@ class SignExecutor:
         #     "msgType": SpeedMotor.msgType.value,
         #     "msgValue": 0
         # })
+
+        self.queue_list = {
+            "Critical": Queue(),
+            "Warning": Queue(),
+            "General": Queue(),
+            "Config": self.queue_list['Config'],
+        }
+
         speed = PARKING_SPEED
         # self.queue_list['Warning'].put({
         #     "Owner": Control.Owner.value,
