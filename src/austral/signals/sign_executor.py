@@ -61,6 +61,8 @@ class SignExecutor:
             "msgType": SpeedMotor.msgType.value,
             "msgValue": 0
         })
+        time.sleep(2)
+
         # self.queue_list['Warning'].put({
         #     "Owner": Control.Owner.value,
         #     "msgID": Control.msgID.value,
