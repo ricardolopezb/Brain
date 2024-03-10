@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import math
 
-from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED, THRESHOLD, ROI, KERNEL
+from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED, THRESHOLD, ROI, KERNEL, \
+    NECESSARY_VOTES
 from src.utils.messages.allMessages import SpeedMotor
 
 
@@ -57,6 +58,7 @@ class MarcosLaneDetector:
         self.threshold_value = THRESHOLD
         self.kernel_value = KERNEL
         self.ROI_value = ROI / 100
+        self.necessary_votes = NECESSARY_VOTES
         self.queue_list = queue_list
         self.consecutive_single_right_lines = 0
         self.consecutive_single_left_lines = 0
@@ -129,7 +131,6 @@ class MarcosLaneDetector:
             if self.lowered_speed and self.just_seen_two_lines:
                 self.increase_speed()
 
-
             if self.just_seen_two_lines:
                 error = self.getting_error(image, average_left_line, average_right_line, height, width)
                 self.just_seen_two_lines = False
@@ -163,13 +164,17 @@ class MarcosLaneDetector:
             if repetition == 2:
                 self.kernel_value = KERNEL
                 self.threshold_value = THRESHOLD
+                self.necessary_votes = NECESSARY_VOTES
                 return self.prev_steering_angle
 
             self.kernel_value = 3
             self.threshold_value = 90
+            self.necessary_votes = 33
             steering_angle = self.prev_steering_angle
             return self.get_steering_angle(image, repetition=2)
         self.kernel_value = KERNEL
+        self.threshold_value = THRESHOLD
+        self.necessary_votes = NECESSARY_VOTES
         self.prev_steering_angle = steering_angle
         return steering_angle
 
@@ -332,8 +337,6 @@ class MarcosLaneDetector:
         # print('### MAPEADO', to_return)
         return to_return
 
-
-
     def conditioning(self, frame, gauss_size, deviation):
         grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         grey[:117, :] = 140
@@ -358,7 +361,7 @@ class MarcosLaneDetector:
         y2 = (height)
 
         roi_vertices = np.array([[(x1, y1), (x2, y1), (x2, y2), (x1, y2)]], dtype=np.int32)
-        #image = self.conditioning(image, 5, 0.9)
+        # image = self.conditioning(image, 5, 0.9)
         mask = np.zeros_like(image)
         cv2.fillPoly(mask, roi_vertices, (255, 255, 255))
         masked_image = cv2.bitwise_and(image, mask)
@@ -368,7 +371,7 @@ class MarcosLaneDetector:
         noiseless_image = cv2.medianBlur(binary_image, self.kernel_value)
         canny_image = cv2.Canny(noiseless_image, 100, 150)
 
-        lines = cv2.HoughLinesP(canny_image, 1, np.pi / 180, 50, minLineLength=50, maxLineGap=150)
+        lines = cv2.HoughLinesP(canny_image, 1, np.pi / 180, self.necessary_votes, minLineLength=50, maxLineGap=150)
 
         left_lines, right_lines = self.lines_classifier(lines)
 
@@ -383,13 +386,12 @@ class MarcosLaneDetector:
         if average_right_line is not None:
             self.line_drawing(image, average_right_line, height=height)
 
-
         return average_left_line, average_right_line, height, width, canny_image
 
     def plan_c(self, canny, width, height):
         slope = 70
-        for y in np.linspace(0, int(height*0.35) - 2, int(height*0.35)-1):
-            for x in np.linspace(0, int(width) - 2, int(width)-1):
+        for y in np.linspace(0, int(height * 0.35) - 2, int(height * 0.35) - 1):
+            for x in np.linspace(0, int(width) - 2, int(width) - 1):
                 x = int(x)
                 y = int(y)
                 value = canny[y][x]
@@ -399,8 +401,8 @@ class MarcosLaneDetector:
                         a = 0.01
 
                     slope = np.abs((x - (width / 2)) / a)
-                    x = width-1
-                    y = height*0.35-1
+                    x = width - 1
+                    y = height * 0.35 - 1
 
         slope = math.degrees(slope)
         steering_angle = self.slope_mapper(slope)
