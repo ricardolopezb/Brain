@@ -145,7 +145,7 @@ class MarcosLaneDetector:
                 self.just_seen_two_lines = True
                 steering_angle = self.prev_steering_angle
         elif average_left_line is not None:
-            if self.consecutive_single_left_lines == 1:
+            if self.consecutive_single_left_lines == 2:
                 if not self.lowered_speed:
                     self.lower_speed()
 
@@ -156,7 +156,7 @@ class MarcosLaneDetector:
                 self.consecutive_single_left_lines = self.consecutive_single_left_lines + 1
         elif average_right_line is not None:
             self.should_decrease_votes = True
-            if self.consecutive_single_right_lines == 1:
+            if self.consecutive_single_right_lines == 2:
                 if not self.lowered_speed:
                     self.lower_speed()
 
