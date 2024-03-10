@@ -155,8 +155,8 @@ class SignExecutor:
         self.stop_seen = True
 
     def send_crosswalk_sequence(self):
-        if not self.stop_seen:
-            return
+        # if not self.stop_seen:
+        #     return
         print("############### LOWERING SPEED")
         self.queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
