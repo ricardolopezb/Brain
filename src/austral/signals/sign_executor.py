@@ -87,7 +87,7 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': 2}
+            "msgValue": {'Speed': speed, 'Time': 1, 'Steer': 10}
         })
         time.sleep(1)
 
