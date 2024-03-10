@@ -19,7 +19,7 @@ NEW_VOTES_LOGIC_ENABLED = False
 
 def set_new_votes_logic(value):
     global NEW_VOTES_LOGIC_ENABLED
-    print("### SETTING NEW VOTES LOGIC")
+    print("### SETTING NEW VOTES LOGIC TO", value)
     NEW_VOTES_LOGIC_ENABLED = value
 
 # THRESHOLD = 150
