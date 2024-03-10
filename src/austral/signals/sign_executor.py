@@ -73,9 +73,9 @@ class SignExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 5, 'Steer': 22.0}
+            "msgValue": {'Speed': -speed, 'Time': 3, 'Steer': 22.0}
         })
-        time.sleep(5)
+        time.sleep(3)
         self.queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
