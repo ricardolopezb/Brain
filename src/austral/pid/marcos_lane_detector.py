@@ -179,6 +179,7 @@ class MarcosLaneDetector:
         self.threshold_value = THRESHOLD
         if self.should_decrease_votes:
             self.necessary_votes = 33
+            print("DECREASING VOTES TO", self.necessary_votes)
             self.should_decrease_votes = False
         else:
             self.necessary_votes = NECESSARY_VOTES
