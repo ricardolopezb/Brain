@@ -23,7 +23,6 @@ class SignExecutor:
         # elif self.just_seen_sign == 'parking' and sign is None:
         #     self.send_parking_sequence()
         elif sign == 'parking':
-            time.sleep(3)
             self.send_parking_sequence()
 
         elif sign == "crosswalk":
@@ -37,6 +36,14 @@ class SignExecutor:
     def send_parking_sequence(self):
         if self.parking_seen:
             return
+
+        self.queue_list = {
+            'Critical': Queue(),
+            'Warning': Queue(),
+            'General': Queue(),
+            'Config': self.queue_list['Config'],
+        }
+        time.sleep(3)
 
         print("SENDING PARKING SEQUENCE")
         # self.queue_list['Critical'].put({
