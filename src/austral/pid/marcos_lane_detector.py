@@ -163,8 +163,8 @@ class MarcosLaneDetector:
                 self.threshold_value = THRESHOLD
                 return self.prev_steering_angle
 
-            self.kernel_value = 9
-            self.threshold_value = 26
+            self.kernel_value = 3
+            self.threshold_value = 90
             steering_angle = self.prev_steering_angle
             return self.get_steering_angle(image, repetition=2)
         self.kernel_value = KERNEL

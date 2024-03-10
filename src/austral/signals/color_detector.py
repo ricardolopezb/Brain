@@ -64,34 +64,3 @@ class ColorDetector:
             color = "ROJO"
         return detected_colors, color
 
-
-# while True:
-#     # Leer el frame de la cámara
-#     _, frame = cap.read()
-#
-#     # Detectar azul en el frame
-#     azul_encontrado, blue_mask = detecta_azul(frame)
-#     rojo_encontrado, red_mask = detecta_rojo(frame)
-#
-#     combined_mask = cv2.bitwise_or(blue_mask, red_mask)
-#     detected_colors = cv2.bitwise_and(frame, frame, mask=combined_mask)
-#
-#     # Mostrar el frame original y el resultado
-#     cv2.imshow('Original', frame)
-#     cv2.imshow('Azul y Rojo Detectados', detected_colors)
-#
-#     # Imprimir en consola si se detectó azul
-#     if azul_encontrado:
-#         print("Azul detectado")
-#
-#     # Imprimir en consola si se detectó rojo
-#     if rojo_encontrado:
-#         print("Rojo detectado")
-#
-#     # Romper el bucle con la tecla 'q'
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-#
-# # Liberar la cámara y cerrar todas las ventanas
-# cap.release()
-# cv2.destroyAllWindows()
