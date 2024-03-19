@@ -1,6 +1,6 @@
 ENABLE_LANE_DETECTION = True
 ENABLE_SIGN_DETECTION = True
-ENABLE_FRONTAL_ULTRASONIC = True
+ENABLE_FRONTAL_ULTRASONIC = False
 
 MODEL_API_URL = "http://192.168.0.102:5000"
 
@@ -19,7 +19,6 @@ NEW_VOTES_LOGIC_ENABLED = False
 
 def set_new_votes_logic(value):
     global NEW_VOTES_LOGIC_ENABLED
-    print("### SETTING NEW VOTES LOGIC TO", value)
     NEW_VOTES_LOGIC_ENABLED = value
 
 def get_new_votes_logic():
