@@ -49,6 +49,7 @@ class udpListener(protocol.DatagramProtocol):
         """
         dat = datagram.decode("utf-8")
         dat = json.loads(dat)
+        print("UDP RECEIVED: ", dat)
 
         if dat["device"] == "semaphore":
             tmp = {"id": dat["id"], "state": dat["state"], "x": dat["x"], "y": dat["y"]}
