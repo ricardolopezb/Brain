@@ -38,8 +38,8 @@ class SignExecutor:
     def send_parking_sequence(self):
         if self.parking_seen:
             return
-        if not self.crosswalk_seen:
-            return
+        # if not self.crosswalk_seen:
+        #     return
 
         # self.queue_list = {
         #     'Critical': Queue(),
