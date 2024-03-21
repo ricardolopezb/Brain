@@ -24,7 +24,7 @@ def set_new_votes_logic(value):
 def get_new_votes_logic():
     return NEW_VOTES_LOGIC_ENABLED
 
-THRESHOLD = 150
+THRESHOLD = 180
 KERNEL = 11
 ROI = 35
 
