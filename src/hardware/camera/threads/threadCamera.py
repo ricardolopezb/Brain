@@ -30,6 +30,7 @@ import threading
 import base64
 import picamera2
 import time
+from PIL import Image
 
 from multiprocessing import Pipe
 
@@ -94,11 +95,13 @@ class threadCamera(ThreadWithStop):
         self.last_epoch_demo = time.time()
         self.last_epoch_lanes = time.time()
         self.last_epoch_signs = time.time()
+        self.last_epoch_image = time.time()
 
         # Cada cuanto quiero que se corra la conditional branch
         self.demo_period = 0.001  # in seconds
         self.lanes_period = 1 / LANES_FPS  # in seconds
         self.signs_period = 1 / SIGNS_FPS  # in seconds
+        self.dataset_image_period = 1  # in seconds
 
         self.frame = None
         self.last_sent_steering_value = -1000
@@ -203,6 +206,7 @@ class threadCamera(ThreadWithStop):
                 if ENABLE_LANE_DETECTION:
                     self.detect_lanes(current_epoch, request)
 
+                self.save_image(current_epoch, request)
                 request2 = self.camera.capture_array(
                     "lores"
                 )  # Will capture an array that can be used by OpenCV library
@@ -237,6 +241,12 @@ class threadCamera(ThreadWithStop):
             self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
             steering_value = self.lane_detector.get_steering_angle(request)
             self.send_steering_value(steering_value)
+
+    def save_image(self, current_epoch, request):
+        if current_epoch - self.last_epoch_image > self.dataset_image_period:
+            print(f"Saving image at {current_epoch}")
+            self.last_epoch_image = self.last_epoch_image + self.dataset_image_period
+            cv2.imwrite(f"dataset_images/{current_epoch}.jpg", request)
 
     def detect_signs(self, current_epoch, request, encoded_img):
         if current_epoch - self.last_epoch_signs > self.signs_period:
