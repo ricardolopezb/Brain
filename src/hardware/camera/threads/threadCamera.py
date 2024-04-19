@@ -35,7 +35,7 @@ from PIL import Image
 from multiprocessing import Pipe
 
 from src.austral.api.data_sender import DataSender
-from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION
+from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION, DATASET_IMAGE_PERIOD
 from src.austral.pid.marcos_lane_detector import MarcosLaneDetector
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
@@ -244,9 +244,9 @@ class threadCamera(ThreadWithStop):
 
     def save_image(self, current_epoch, request):
         if current_epoch - self.last_epoch_image > self.dataset_image_period:
+            cv2.imwrite(f"dataset_images/{current_epoch}.jpg", request)
             print(f"Saving image at {current_epoch}")
             self.last_epoch_image = self.last_epoch_image + self.dataset_image_period
-            cv2.imwrite(f"dataset_images/{current_epoch}.jpg", request)
 
     def detect_signs(self, current_epoch, request, encoded_img):
         if current_epoch - self.last_epoch_signs > self.signs_period:
