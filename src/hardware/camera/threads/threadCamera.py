@@ -101,7 +101,7 @@ class threadCamera(ThreadWithStop):
         self.demo_period = 0.001  # in seconds
         self.lanes_period = 1 / LANES_FPS  # in seconds
         self.signs_period = 1 / SIGNS_FPS  # in seconds
-        self.dataset_image_period = 1  # in seconds
+        self.dataset_image_period = DATASET_IMAGE_PERIOD  # in seconds
 
         self.frame = None
         self.last_sent_steering_value = -1000
