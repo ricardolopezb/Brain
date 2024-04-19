@@ -244,7 +244,7 @@ class threadCamera(ThreadWithStop):
 
     def save_image(self, current_epoch, request):
         if current_epoch - self.last_epoch_image > self.dataset_image_period:
-            cv2.imwrite(f"dataset_images/{current_epoch}.jpg", request)
+            cv2.imwrite(f"~/Brain/dataset_images/{current_epoch}.jpg", request)
             print(f"Saving image at {current_epoch}")
             self.last_epoch_image = self.last_epoch_image + self.dataset_image_period
 
