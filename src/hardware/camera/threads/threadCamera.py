@@ -195,7 +195,8 @@ class threadCamera(ThreadWithStop):
                 # if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
                 request = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
-                self.save_image(current_epoch, request)
+                if ENABLE_IMAGE_CAPTURE:
+                    self.save_image(current_epoch, request)
 
                 # if request is None:
                 #     var = not var
