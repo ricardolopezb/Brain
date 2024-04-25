@@ -35,7 +35,8 @@ from PIL import Image
 from multiprocessing import Pipe
 
 from src.austral.api.data_sender import DataSender
-from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION, DATASET_IMAGE_PERIOD
+from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION, \
+    DATASET_IMAGE_PERIOD, ENABLE_IMAGE_CAPTURE
 from src.austral.pid.marcos_lane_detector import MarcosLaneDetector
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
