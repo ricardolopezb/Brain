@@ -23,7 +23,7 @@ else:
 
 class MobilenetSignDetector:
     def __init__(self):
-        MODEL_NAME = 'custom_model_lite'
+        MODEL_NAME = 'mobilenet_model'
         GRAPH_NAME = 'detect.tflite'
         LABELMAP_NAME = 'labelmap.txt'
         use_TPU = False
