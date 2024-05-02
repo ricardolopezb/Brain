@@ -258,7 +258,11 @@ class threadCamera(ThreadWithStop):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
+            start = time.time()
             objs = self.mobilenet.get_objects(request)
+            end = time.time()
+            print("SIGN DETECTION TIME: ", end-start)
+
             print("OBJSSSS:", objs)
 
         #     # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
