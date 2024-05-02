@@ -41,6 +41,7 @@ from src.austral.pid.marcos_lane_detector import MarcosLaneDetector
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
 from src.austral.signals.color_detector import ColorDetector
+from src.austral.signals.mobilenet import MobilenetSignDetector
 from src.austral.signals.model_detector import ModelDetector
 from src.austral.signals.model_request_sender import ModelRequestSender
 from src.austral.signals.sign_detector import SignDetector
@@ -91,6 +92,7 @@ class threadCamera(ThreadWithStop):
         self.model_service = ModelRequestSender()
         self.sign_executor = SignExecutor(queuesList)
         self.color_detector = ColorDetector()
+        self.mobilenet = MobilenetSignDetector()
 
         # Variables for run() timing
         self.last_epoch_demo = time.time()
@@ -256,39 +258,41 @@ class threadCamera(ThreadWithStop):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
+            objs = self.mobilenet.get_objects(request)
+            print("OBJSSSS:", objs)
 
-            # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
-
-            if found_color == 'AZUL':
-                # self.sign_detector.detect(request, 'stop')
-                response = self.model_service.send(encoded_img, 'stop')
-                if response['found'] == 'none':
-                    return request
-                if response['found'] == 'stop':
-                    print("###### FOUND A STOP")
-                    DataSender.send('/sign', {'sign': 'Stop'})
-                    self.sign_executor.execute('stop')
-
-            elif found_color == 'ROJO':
-                # self.sign_detector.detect(request, 'crosswalk')
-
-                response = self.model_service.send(encoded_img, 'crosswalk')
-                if response['found'] == 'none':
-                    return request
-
-                if response['found'] == 'crosswalk':
-                    print("###### FOUND A CROSSWALK")
-                    DataSender.send('/sign', {'sign': 'Crosswalk'})
-                    self.sign_executor.execute('crosswalk')
-                else:
-                    print("###### FOUND A PARKING")
-                    DataSender.send('/sign', {'sign': 'Parking'})
-                    self.sign_executor.execute('parking')
-            else:
-                DataSender.send('/sign', {'sign': None})
-                self.sign_executor.execute(None)
-            return mask_frame
-        return request
+        #     # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
+        #
+        #     if found_color == 'AZUL':
+        #         # self.sign_detector.detect(request, 'stop')
+        #         response = self.model_service.send(encoded_img, 'stop')
+        #         if response['found'] == 'none':
+        #             return request
+        #         if response['found'] == 'stop':
+        #             print("###### FOUND A STOP")
+        #             DataSender.send('/sign', {'sign': 'Stop'})
+        #             self.sign_executor.execute('stop')
+        #
+        #     elif found_color == 'ROJO':
+        #         # self.sign_detector.detect(request, 'crosswalk')
+        #
+        #         response = self.model_service.send(encoded_img, 'crosswalk')
+        #         if response['found'] == 'none':
+        #             return request
+        #
+        #         if response['found'] == 'crosswalk':
+        #             print("###### FOUND A CROSSWALK")
+        #             DataSender.send('/sign', {'sign': 'Crosswalk'})
+        #             self.sign_executor.execute('crosswalk')
+        #         else:
+        #             print("###### FOUND A PARKING")
+        #             DataSender.send('/sign', {'sign': 'Parking'})
+        #             self.sign_executor.execute('parking')
+        #     else:
+        #         DataSender.send('/sign', {'sign': None})
+        #         self.sign_executor.execute(None)
+        #     return mask_frame
+        # return request
         # found_sign = self.sign_detector.detect_signal(request, threshold=10)
         # print(f"************* Found sign: {found_sign}")
         # self.sign_executor.execute(found_sign)
