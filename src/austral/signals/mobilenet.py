@@ -87,8 +87,36 @@ class MobilenetSignDetector:
         else:  # This is a TF1 model
             self.boxes_idx, self.classes_idx, self.scores_idx = 0, 1, 2
 
-    def get_objects(self, frame):
-        found_objs = []
+    # this function would get all the objects in the frame
+
+    # def get_objects(self, frame):
+    #     found_objs = []
+    #     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #     frame_resized = cv2.resize(frame_rgb, (self.width, self.height))
+    #     input_data = np.expand_dims(frame_resized, axis=0)
+    #     if self.floating_model:
+    #         input_data = (np.float32(input_data) - self.input_mean) / self.input_std
+    #     self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
+    #     self.interpreter.invoke()
+    #
+    #     # Retrieve detection results
+    #     boxes = self.interpreter.get_tensor(self.output_details[self.boxes_idx]['index'])[
+    #         0]  # Bounding box coordinates of detected objects
+    #     classes = self.interpreter.get_tensor(self.output_details[self.classes_idx]['index'])[
+    #         0]  # Class index of detected objects
+    #     scores = self.interpreter.get_tensor(self.output_details[self.scores_idx]['index'])[
+    #         0]  # Confidence of detected objects
+    #
+    #     for i in range(len(scores)):
+    #         if ((scores[i] > self.min_conf_threshold) and (scores[i] <= 1.0)):
+    #             object_name = self.labels[int(classes[i])]  # Look up object name from "labels" array using class index
+    #             found_objs.append(object_name)
+    #
+    #     return found_objs
+
+    def get_sign_with_highest_score(self, frame):
+        max_score = -np.inf
+        max_object_name = None
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_resized = cv2.resize(frame_rgb, (self.width, self.height))
         input_data = np.expand_dims(frame_resized, axis=0)
@@ -97,17 +125,14 @@ class MobilenetSignDetector:
         self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
         self.interpreter.invoke()
 
-        # Retrieve detection results
-        boxes = self.interpreter.get_tensor(self.output_details[self.boxes_idx]['index'])[
-            0]  # Bounding box coordinates of detected objects
-        classes = self.interpreter.get_tensor(self.output_details[self.classes_idx]['index'])[
-            0]  # Class index of detected objects
-        scores = self.interpreter.get_tensor(self.output_details[self.scores_idx]['index'])[
-            0]  # Confidence of detected objects
+        classes = self.interpreter.get_tensor(self.output_details[self.classes_idx]['index'])[0]  # Class index of detected objects
+        scores = self.interpreter.get_tensor(self.output_details[self.scores_idx]['index'])[0]  # Confidence of detected objects
 
         for i in range(len(scores)):
-            if ((scores[i] > self.min_conf_threshold) and (scores[i] <= 1.0)):
+            if self.min_conf_threshold < scores[i] <= 1.0:
                 object_name = self.labels[int(classes[i])]  # Look up object name from "labels" array using class index
-                found_objs.append(object_name)
+                if scores[i] > max_score:
+                    max_score = scores[i]
+                    max_object_name = object_name
 
-        return found_objs
+        return max_object_name

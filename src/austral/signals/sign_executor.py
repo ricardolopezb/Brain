@@ -3,8 +3,14 @@ import time
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED, \
     set_new_votes_logic
+from src.austral.signals.executors.crosswalk_executor import CrosswalkExecutor
+from src.austral.signals.executors.highway_entrance_executor import HighwayEntranceExecutor
+from src.austral.signals.executors.highway_exit_executor import HighwayExitExecutor
+from src.austral.signals.executors.parking_executor import ParkingExecutor
+from src.austral.signals.executors.roundabout_executor import RoundaboutExecutor
+from src.austral.signals.executors.stop_executor import StopExecutor
 from src.utils.messages.allMessages import SpeedMotor, Control, SteerMotor
-from multiprocessing import Queue
+
 
 class SignExecutor:
     def __init__(self, queue_list):
@@ -20,15 +26,18 @@ class SignExecutor:
         # if self.just_seen_sign == 'stop' and sign is None:
         #     self.send_stop_sequence()
         if sign == 'stop':
-            self.send_stop_sequence()
+            StopExecutor.execute(self.queue_list)
 
         elif self.just_seen_sign == 'parking' and sign is None:
-            self.send_parking_sequence()
-        # elif sign == 'parking':
-        #     self.send_parking_sequence()
-
+            ParkingExecutor.execute(self.queue_list)
         elif sign == "crosswalk":
-            self.send_crosswalk_sequence()
+            CrosswalkExecutor.execute(self.queue_list)
+        elif sign == 'highway_entrance':
+            HighwayEntranceExecutor.execute(self.queue_list)
+        elif sign == 'highway_exit':
+            HighwayExitExecutor.execute(self.queue_list)
+        elif sign is 'roundabout':
+            RoundaboutExecutor.execute(self.queue_list)
         elif sign == "yield":
             print("FOUND A YIELD")
 
@@ -126,7 +135,6 @@ class SignExecutor:
             "msgValue": BASE_SPEED
         })
         self.parking_seen = True
-
 
     def send_stop_sequence(self):
         self.queue_list['Critical'].put({
