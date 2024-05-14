@@ -4,6 +4,10 @@ ENABLE_FRONTAL_ULTRASONIC = True
 ENABLE_IMAGE_CAPTURE = False
 ENABLE_V2X = True
 
+IS_BLIND = False
+
+TARGET_COORDINATES = (5.0, 5.0)
+
 MODEL_API_URL = "http://192.168.0.100:5000"
 
 # LANES
@@ -19,19 +23,29 @@ NECESSARY_VOTES = 50
 
 NEW_VOTES_LOGIC_ENABLED = False
 
+IS_ABLE_TO_PARK = False
+
+
+def set_parking_ability(value):
+    global IS_ABLE_TO_PARK
+    IS_ABLE_TO_PARK = value
+
+
 def set_new_votes_logic(value):
     global NEW_VOTES_LOGIC_ENABLED
     NEW_VOTES_LOGIC_ENABLED = value
 
+
 def get_new_votes_logic():
     return NEW_VOTES_LOGIC_ENABLED
+
 
 THRESHOLD = 180
 KERNEL = 11
 ROI = 35
 
 BASE_SPEED = 5
-#LOW_SPEED = BASE_SPEED / 2
+# LOW_SPEED = BASE_SPEED / 2
 LOW_SPEED = 3
 
 # SIGNS
@@ -44,4 +58,3 @@ LANES_FPS = 1
 SIGNS_FPS = 3
 
 DATASET_IMAGE_PERIOD = 2
-

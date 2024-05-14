@@ -26,88 +26,78 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 import threading
+from multiprocessing import Pipe
 
 from src.austral.api.data_sender import DataSender
-from src.austral.configs import BASE_SPEED
+from src.austral.configs import BASE_SPEED, IS_BLIND, TARGET_COORDINATES
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
     BatteryLvl,
     ImuData,
     InstantConsumption,
-    EnableButton, SpeedMotor,
+    EnableButton, SpeedMotor, Location, SteerMotor,
 )
 
 
-class threadFrontalUltrasonic(ThreadWithStop):
-    """This thread read the data that Arduino Ultrasonic send to Raspberry PI.\n
+class threadGPS(ThreadWithStop):
+    """This thread handles the GPS.\n
 
     Args:
-        f_serialCon (serial.Serial): Serial connection between the two boards.
+
         queueList (dictionary of multiprocessing.queues.Queue): Dictionar of queues where the ID is the type of messages.
     """
 
     # ===================================== INIT =========================================
-    def __init__(self, f_serialCon, queueList):
-        super(threadFrontalUltrasonic, self).__init__()
-        self.serialCon = f_serialCon
-        self.buff = ""
-        self.isResponse = False
+    def __init__(self, queueList, direction_provider):
+        super(threadGPS, self).__init__()
         self.queuesList = queueList
-        self.acumulator = 0
         self.Queue_Sending()
-        self.is_braked = False
-        self.should_brake = False
+        self.subscribe()
+        pipeRecvLocation, pipeSendLocation = Pipe(duplex=False)
+        self.pipeRecvLocation = pipeRecvLocation
+        self.pipeSendLocation = pipeSendLocation
+        self.direction_provider = direction_provider
+        self.first_time = True
+
+    def subscribe(self):
+        """Subscribe function. In this function we make all the required subscribe to process gateway"""
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": Location.Owner.value,
+                "msgID": Location.msgID.value,
+                "To": {
+                    "receiver": "threadGPS",
+                    "pipe": self.pipeSendLocation,
+                },
+            }
+        )
 
     # ====================================== RUN ==========================================
     def run(self):
         while self._running:
-            ultrasonics_status = {'front': 1, 'left': 1, 'right': 0}
+            if self.pipeRecvLocation.poll():
+                msg = self.pipeRecvLocation.recv()
+                print("LOCATION MESSAGE RECEIVED:", msg)
+                current_x = msg["x"]
+                current_y = msg["y"]
+                if self.first_time:
+                    self.first_time = False
+                    self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
+                    continue
 
-            read_chr = self.serialCon.read()
-            try:
-                read_chr = read_chr.decode("ascii")
-                self.handle_frontal(read_chr) # this should be something like line['front']
+                angle_to_steer = self.direction_provider.get_direction(current_x, current_y, IS_BLIND)
+                print("ANGLE TO STEER:", angle_to_steer)
+                self.send_steering(angle_to_steer)
 
-
-            except UnicodeDecodeError:
-                pass
+    def send_steering(self, angle_to_steer):
+        self.queue_list['Warning'].put({
+            "Owner": SteerMotor.Owner.value,
+            "msgID": SteerMotor.msgID.value,
+            "msgType": SteerMotor.msgType.value,
+            "msgValue": angle_to_steer
+        })
 
     # ==================================== SENDING =======================================
     def Queue_Sending(self):
         pass
-
-    def handle_frontal(self, read_chr):
-        if read_chr == "0":
-            self.should_brake = False
-        elif read_chr == "1":
-            self.should_brake = True
-        else:
-            return
-
-        if self.should_brake and not self.is_braked:
-            self.brake()
-            self.is_braked = True
-        if not self.should_brake and self.is_braked:
-            self.accelerate()
-            self.is_braked = False
-
-    def brake(self):
-        print("BRAKING")
-        self.queuesList[SpeedMotor.Queue.value].put({
-            "Owner": SpeedMotor.Owner.value,
-            "msgID": SpeedMotor.msgID.value,
-            "msgType": SpeedMotor.msgType.value,
-            "msgValue": 0
-        })
-        #DataSender.send('/brake', {'braking': True})
-
-    def accelerate(self):
-        print("NOTHING IN THE WAY. SPEEDING")
-        self.queuesList[SpeedMotor.Queue.value].put({
-            "Owner": SpeedMotor.Owner.value,
-            "msgID": SpeedMotor.msgID.value,
-            "msgType": SpeedMotor.msgType.value,
-            "msgValue": BASE_SPEED
-        })
-        #DataSender.send('/brake', {'braking': False})
-        #DataSender.send('/speed', {'speed': BASE_SPEED})

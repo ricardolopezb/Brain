@@ -1,6 +1,6 @@
 import time
 
-from src.austral.configs import BASE_SPEED, PARKING_SPEED
+from src.austral.configs import BASE_SPEED, PARKING_SPEED, IS_ABLE_TO_PARK
 from src.utils.messages.allMessages import SpeedMotor, Control
 
 
@@ -8,6 +8,8 @@ class ParkingExecutor:
     @staticmethod
     def execute(queue_list):
         print("### EXECUTING PARKING SEQUENCE ###")
+        if IS_ABLE_TO_PARK:
+            print("### PARKING ###")
 
         time.sleep(3)
         speed = PARKING_SPEED
