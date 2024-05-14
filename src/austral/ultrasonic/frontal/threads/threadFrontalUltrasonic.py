@@ -1,6 +1,6 @@
 # Copyright (c) 2019, Bosch Engineering Center Cluj and BFMC organizers
 # All rights reserved.
-
+import json
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 
@@ -38,6 +38,8 @@ from src.utils.messages.allMessages import (
 )
 
 
+
+
 class threadFrontalUltrasonic(ThreadWithStop):
     """This thread read the data that Arduino Ultrasonic send to Raspberry PI.\n
 
@@ -61,13 +63,9 @@ class threadFrontalUltrasonic(ThreadWithStop):
     # ====================================== RUN ==========================================
     def run(self):
         while self._running:
-            ultrasonics_status = {'front': 1, 'left': 1, 'right': 0}
-
-            read_chr = self.serialCon.read()
+            ultrasonics_status = self.read_ultrasonics_state()
             try:
-                read_chr = read_chr.decode("ascii")
-                self.handle_frontal(read_chr) # this should be something like line['front']
-
+                self.handle_frontal(ultrasonics_status['front'])
 
             except UnicodeDecodeError:
                 pass
@@ -90,6 +88,15 @@ class threadFrontalUltrasonic(ThreadWithStop):
         if not self.should_brake and self.is_braked:
             self.accelerate()
             self.is_braked = False
+
+    def read_ultrasonics_state(self):
+        try:
+            line = self.serialCon.readline().decode('utf-8').strip()
+            if line:
+                return json.loads(line)
+        except Exception as e:
+            print(e)
+            return None
 
     def brake(self):
         print("BRAKING")

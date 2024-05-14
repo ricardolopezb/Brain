@@ -1,5 +1,8 @@
 import math
 
+from src.austral.configs import USE_DEMO_ROUTE
+from src.austral.gps.lib.gps.demo_route_calculator import DemoRouteCalculator
+
 
 class DirectionProvider:
     def __init__(self, map):
@@ -14,7 +17,10 @@ class DirectionProvider:
         print(f"GOING FROM Node-{start_node.id} TO Node-{target_node.id}")
 
         # Maybe change the method params for the coordinates directly
-        path = self.map.get_shortest_path(start_node.id, target_node.id)
+        if USE_DEMO_ROUTE:
+            path = DemoRouteCalculator.calculate_route()
+        else:
+            path = self.map.get_shortest_path(start_node.id, target_node.id)
         self.path = path
         self.previous_node = start_node
 
