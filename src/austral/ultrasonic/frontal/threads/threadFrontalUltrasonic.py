@@ -84,18 +84,17 @@ class threadFrontalUltrasonic(ThreadWithStop):
             return
 
         if self.should_brake and not self.is_braked:
-            print("FRONTAL DETECTED, BRAKING")
+            print("*** FRONTAL DETECTED, BRAKING")
             self.brake()
             self.is_braked = True
         if not self.should_brake and self.is_braked:
-            print("FRONTAL REMOVED, ACCELERATING")
+            print("*** FRONTAL REMOVED, ACCELERATING")
             self.accelerate()
             self.is_braked = False
 
     def read_ultrasonics_state(self):
         try:
             line = self.serialCon.readline().decode('utf-8').strip()
-            print("LINE:", line)
             if line:
                 return json.loads(line)
         except Exception as e:
