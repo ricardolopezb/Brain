@@ -263,8 +263,7 @@ class threadCamera(ThreadWithStop):
             end = time.time()
             print("SIGN DETECTION TIME: ", end-start)
             print(f"************* Found sign: {detected_sign}")
-            if detected_sign is not None:
-                self.sign_executor.execute(detected_sign)
+            self.sign_executor.execute(detected_sign)
 
         #     # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
         #
