@@ -63,7 +63,6 @@ class threadFrontalUltrasonic(ThreadWithStop):
     def run(self):
         while self._running:
             ultrasonics_status = self.read_ultrasonics_state()
-            print("ULTRASONIC STATUS:", ultrasonics_status)
             try:
                 if ultrasonics_status is None:
                     continue
