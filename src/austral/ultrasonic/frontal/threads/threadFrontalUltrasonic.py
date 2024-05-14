@@ -56,7 +56,6 @@ class threadFrontalUltrasonic(ThreadWithStop):
         self.isResponse = False
         self.queuesList = queueList
         self.acumulator = 0
-        self.Queue_Sending()
         self.is_braked = False
         self.should_brake = False
 
