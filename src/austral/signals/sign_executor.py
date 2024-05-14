@@ -36,7 +36,7 @@ class SignExecutor:
             HighwayEntranceExecutor.execute(self.queue_list)
         elif sign == 'highway_exit':
             HighwayExitExecutor.execute(self.queue_list)
-        elif sign is 'roundabout':
+        elif sign == 'roundabout':
             RoundaboutExecutor.execute(self.queue_list)
         elif sign == "yield":
             print("FOUND A YIELD")

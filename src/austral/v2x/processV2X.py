@@ -46,9 +46,8 @@ class processV2X(WorkerProcess):
     """
 
     # ====================================== INIT ==========================================
-    def __init__(self, queueList, logging, debugging=False):
+    def __init__(self, queueList, debugging=False):
         self.queuesList = queueList
-        self.logging = logging
         self.debugging = debugging
         super(processV2X, self).__init__(self.queuesList)
 
