@@ -36,7 +36,7 @@ class threadV2X(ThreadWithStop):
         self.pipeSendSemaphores = pipeSendSemaphores
 
         self.subscribe()
-        self.Queue_Sending()
+
 
     def subscribe(self):
         """Subscribe function. In this function we make all the required subscribe to process gateway"""

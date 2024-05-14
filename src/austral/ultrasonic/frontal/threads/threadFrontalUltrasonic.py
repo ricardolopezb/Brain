@@ -66,14 +66,14 @@ class threadFrontalUltrasonic(ThreadWithStop):
             ultrasonics_status = self.read_ultrasonics_state()
             print("ULTRASONIC STATUS:", ultrasonics_status)
             try:
+                if ultrasonics_status is None:
+                    continue
                 self.handle_frontal(ultrasonics_status['front'])
 
             except UnicodeDecodeError:
                 pass
 
     # ==================================== SENDING =======================================
-    def Queue_Sending(self):
-        pass
 
     def handle_frontal(self, read_chr):
         if read_chr == "0":
@@ -93,6 +93,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
     def read_ultrasonics_state(self):
         try:
             line = self.serialCon.readline().decode('utf-8').strip()
+            print("LINE:", line)
             if line:
                 return json.loads(line)
         except Exception as e:
