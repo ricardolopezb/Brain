@@ -35,9 +35,7 @@ class PIDController:
         else:
             control_signal = self.Kp * proportional + self.Ki * self.integral + self.Kd * derivative
             control_signal = max(min(control_signal, 22), -22)
-        print(proportional)
-        print(self.integral)
-        print(derivative)
+
         return control_signal
 
 
@@ -62,7 +60,7 @@ class LaneDetector:
         dy = y2 - y1
         if dx != 0:
             pendiente = math.degrees(abs(dy / dx))
-            print('PENDIENTE (LEFT)', pendiente)
+
             if pendiente > 60:
                 return -3
                 #steering_angle = round(22 - ((pendiente - 30) * (22 / 60)))
@@ -78,7 +76,7 @@ class LaneDetector:
             dx = 0.01
 
         pendiente = math.degrees(abs(dy / dx))
-        print('PENDIENTE', pendiente)
+
         if pendiente > 60:
             steering_angle = -3
             #steering_angle = round(- (22 - ((pendiente - 30) * (22 / 60))))
@@ -279,12 +277,12 @@ class LaneDetector:
         elif len(left_lines) > 0:
             self.consecutive_frames_without_left_line = 0
             self.consecutive_frames_without_right_line = self.consecutive_frames_without_right_line + 1
-            print("Consecutive frames without right line:", self.consecutive_frames_without_right_line)
+
         # Si solo se detectaron líneas a la derecha
         elif len(right_lines) > 0:
             self.consecutive_frames_without_left_line = self.consecutive_frames_without_left_line + 1
             self.consecutive_frames_without_right_line = 0
-            print("Consecutive frames without left line:", self.consecutive_frames_without_left_line)
+
         # Si no se detectaron líneas en ninguno de los lados
         else:
             self.consecutive_frames_without_left_line = self.consecutive_frames_without_left_line + 1

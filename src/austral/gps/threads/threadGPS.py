@@ -28,15 +28,9 @@
 import threading
 from multiprocessing import Pipe
 
-from src.austral.api.data_sender import DataSender
-from src.austral.configs import BASE_SPEED, IS_BLIND, TARGET_COORDINATES
+from src.austral.configs import IS_BLIND, TARGET_COORDINATES
 from src.templates.threadwithstop import ThreadWithStop
-from src.utils.messages.allMessages import (
-    BatteryLvl,
-    ImuData,
-    InstantConsumption,
-    EnableButton, SpeedMotor, Location, SteerMotor,
-)
+from src.utils.messages.allMessages import (Location, SteerMotor)
 
 
 class threadGPS(ThreadWithStop):
