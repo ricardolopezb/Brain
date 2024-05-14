@@ -40,7 +40,7 @@ class SignExecutor:
             RoundaboutExecutor.execute(self.queue_list)
         elif sign == "yield":
             print("FOUND A YIELD")
-
+        print("ENTERED SIGNALS WITH SIGN:", sign)
         print("SETTING JUST SEEN SIGN TO", sign)
         self.just_seen_sign = sign
 
