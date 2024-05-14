@@ -76,9 +76,9 @@ class threadFrontalUltrasonic(ThreadWithStop):
 
     def handle_frontal(self, read_chr):
         print("ENTERED FRONTAL:", read_chr)
-        if read_chr == "0":
+        if read_chr == 0:
             self.should_brake = False
-        elif read_chr == "1":
+        elif read_chr == 1:
             self.should_brake = True
         else:
             return
