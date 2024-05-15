@@ -74,6 +74,7 @@ class threadV2X(ThreadWithStop):
                     message = self.pipeRecvCars.recv()
                     print(f"Received CARS -> {message}")
 
+
                 if self.pipeRecvSemaphores.poll():
                     message = self.pipeRecvSemaphores.recv()
                     print(f"Received SEMAPHORES -> {message}")
