@@ -13,7 +13,7 @@ allow_ultrasonics_enqueue = False
 
 def set_allow_ultrasonics_enqueue(value):
     global allow_ultrasonics_enqueue
-    print("** changing ultrasonic enq allowance value")
+    print("** changing ultrasonic enq allowance value to", value)
     allow_ultrasonics_enqueue = value
 
 
