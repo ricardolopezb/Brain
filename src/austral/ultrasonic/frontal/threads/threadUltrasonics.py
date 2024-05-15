@@ -60,6 +60,7 @@ class threadUltrasonics(ThreadWithStop):
         self.acumulator = 0
         self.is_braked = False
         self.should_brake = False
+        self.subscribe()
 
     def subscribe(self):
         self.queuesList["Config"].put(
