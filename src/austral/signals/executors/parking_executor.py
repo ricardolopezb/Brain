@@ -27,6 +27,7 @@ class ParkingExecutor:
                     if current_time - self.starting_empty_right_time > self.right_sensor_period:
                         self.send_parking_sequence(queue_list)  # parking derecho
                         break
+
                 if ultrasonics_status['left'] == 0:
                     if current_time - self.starting_empty_left_time > self.left_sensor_period:
                         self.send_parking_sequence(queue_list)  # parking izquierdo
