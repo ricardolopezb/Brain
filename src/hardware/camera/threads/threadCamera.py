@@ -269,10 +269,7 @@ class threadCamera(ThreadWithStop):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
-            start = time.time()
             detected_sign = self.mobilenet.get_sign_with_highest_score(request)
-            end = time.time()
-            print("SIGN DETECTION TIME: ", end-start)
             print(f"************* Found sign: {detected_sign}")
             self.sign_executor.execute(detected_sign, pipeRecvUltrasonics)
 
