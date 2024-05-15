@@ -1,10 +1,7 @@
 import time
 
-from src.austral.configs import BASE_SPEED, PARKING_SPEED, IS_ABLE_TO_PARK, EMPTY_PARKING_PERIOD, \
-    set_allow_ultrasonics_enqueue
+from src.austral.configs import BASE_SPEED, PARKING_SPEED, EMPTY_PARKING_PERIOD
 from src.utils.messages.allMessages import SpeedMotor, Control, UltrasonicStatusEnqueuing
-
-global allow_ultrasonics_enqueue
 
 
 class ParkingExecutor:

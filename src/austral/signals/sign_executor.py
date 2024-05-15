@@ -14,6 +14,7 @@ from src.utils.messages.allMessages import SpeedMotor, Control, SteerMotor
 
 class SignExecutor:
     def __init__(self, queue_list):
+        self.saw_highway_entrance = False
         self.just_seen_sign = None
         self.queue_list = queue_list
         self.parking_seen = False
@@ -32,7 +33,12 @@ class SignExecutor:
         elif sign == "crosswalk":
             CrosswalkExecutor.execute(self.queue_list)
         elif sign == 'highway_entrance':
-            HighwayEntranceExecutor.execute(self.queue_list)
+            if self.saw_highway_entrance:
+                print("EXECUTING HIGHWAY EXIT INSTEAD OF ENTRANCE")
+                HighwayExitExecutor.execute(self.queue_list)
+            else:
+                self.saw_highway_entrance = True
+                HighwayEntranceExecutor.execute(self.queue_list)
         elif sign == 'highway_exit':
             HighwayExitExecutor.execute(self.queue_list)
         elif sign == 'roundabout':
