@@ -46,7 +46,7 @@ class threadV2X(ThreadWithStop):
                 "Owner": Cars.Owner.value,
                 "msgID": Cars.msgID.value,
                 "To": {
-                    "receiver": "threadWrite",
+                    "receiver": "threadV2X",
                     "pipe": self.pipeSendCars,
                 },
             }

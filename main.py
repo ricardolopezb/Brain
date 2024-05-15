@@ -31,7 +31,7 @@ import sys
 
 from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC, ENABLE_V2X
 from src.austral.pid.mock import processMock
-from src.austral.ultrasonic.frontal.processFrontalUltrasonic import processFrontalUltrasonic
+from src.austral.ultrasonic.frontal.processUltrasonics import processUltrasonics
 from src.austral.v2x.processV2X import processV2X
 
 sys.path.append(".")
@@ -80,7 +80,7 @@ process_mock = processMock(queueList)
 allProcesses.append(process_mock)
 
 if ENABLE_FRONTAL_ULTRASONIC:
-    process_frontal_ultrasonic = processFrontalUltrasonic(queueList)
+    process_frontal_ultrasonic = processUltrasonics(queueList)
     allProcesses.append(process_frontal_ultrasonic)
 
 if ENABLE_V2X:

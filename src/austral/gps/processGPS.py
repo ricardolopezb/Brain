@@ -5,7 +5,7 @@ from src.austral.gps.lib.gps.direction_provider import DirectionProvider
 from src.austral.gps.lib.trackmap.track_map import TrackMap
 from src.austral.gps.lib.trackmap.xml_node_map_reader import XmlNodeMapReader
 from src.austral.gps.threads.threadGPS import threadGPS
-from src.austral.ultrasonic.frontal.threads.threadFrontalUltrasonic import threadFrontalUltrasonic
+from src.austral.ultrasonic.frontal.threads.threadUltrasonics import threadUltrasonics
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:

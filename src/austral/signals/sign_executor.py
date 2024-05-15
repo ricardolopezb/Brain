@@ -20,16 +20,15 @@ class SignExecutor:
         self.crosswalk_seen = False
         self.stop_seen = False
 
-    def execute(self, sign):
+    def execute(self, sign, pipeRecieveUltrasonics):
         if sign == self.just_seen_sign:
             return
         # if self.just_seen_sign == 'stop' and sign is None:
         #     self.send_stop_sequence()
         if sign == 'stop':
             StopExecutor.execute(self.queue_list)
-
         elif self.just_seen_sign == 'parking' and sign is None:
-            ParkingExecutor.execute(self.queue_list)
+            ParkingExecutor(pipeRecieveUltrasonics).execute(self.queue_list)
         elif sign == "crosswalk":
             CrosswalkExecutor.execute(self.queue_list)
         elif sign == 'highway_entrance':

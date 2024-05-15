@@ -52,7 +52,7 @@ from src.utils.messages.allMessages import (
     Recording,
     Record,
     Config,
-    SteeringCalculation
+    SteeringCalculation, UltrasonicStatus
 )
 from src.templates.threadwithstop import ThreadWithStop
 
@@ -84,6 +84,9 @@ class threadCamera(ThreadWithStop):
         self.pipeSendRecord = pipeSendRecord
         self.video_writer = ""
         self.subscribe()
+        pipeRecvUltrasonics, pipeSendUltrasonics = Pipe(duplex=False)
+        self.pipeRecvUltrasonics = pipeRecvUltrasonics
+        self.pipeSendUltrasonics = pipeSendUltrasonics
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
@@ -125,6 +128,14 @@ class threadCamera(ThreadWithStop):
                 "Owner": Config.Owner.value,
                 "msgID": Config.msgID.value,
                 "To": {"receiver": "threadCamera", "pipe": self.pipeSendConfig},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": UltrasonicStatus.Owner.value,
+                "msgID": UltrasonicStatus.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendUltrasonics},
             }
         )
 
@@ -207,7 +218,7 @@ class threadCamera(ThreadWithStop):
 
                 if ENABLE_SIGN_DETECTION:
                     _, signs_encoded_img = cv2.imencode(".jpg", request)
-                    self.detect_signs(current_epoch, request, signs_encoded_img)
+                    self.detect_signs(current_epoch, request, signs_encoded_img, self.pipeRecvUltrasonics)
 
                 if ENABLE_LANE_DETECTION:
                     self.detect_lanes(current_epoch, request)
@@ -254,7 +265,7 @@ class threadCamera(ThreadWithStop):
             print(f"Saving image at {current_epoch}, SAVED:", saved)
             self.last_epoch_image = self.last_epoch_image + self.dataset_image_period
 
-    def detect_signs(self, current_epoch, request, encoded_img):
+    def detect_signs(self, current_epoch, request, encoded_img, pipeRecvUltrasonics):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
@@ -263,7 +274,7 @@ class threadCamera(ThreadWithStop):
             end = time.time()
             print("SIGN DETECTION TIME: ", end-start)
             print(f"************* Found sign: {detected_sign}")
-            self.sign_executor.execute(detected_sign)
+            self.sign_executor.execute(detected_sign, pipeRecvUltrasonics)
 
         #     # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
         #

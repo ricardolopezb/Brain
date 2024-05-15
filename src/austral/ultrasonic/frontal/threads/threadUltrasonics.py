@@ -34,13 +34,13 @@ from src.utils.messages.allMessages import (
     BatteryLvl,
     ImuData,
     InstantConsumption,
-    EnableButton, SpeedMotor,
+    EnableButton, SpeedMotor, UltrasonicStatus,
 )
 
 
 
 
-class threadFrontalUltrasonic(ThreadWithStop):
+class threadUltrasonics(ThreadWithStop):
     """This thread read the data that Arduino Ultrasonic send to Raspberry PI.\n
 
     Args:
@@ -50,7 +50,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
 
     # ===================================== INIT =========================================
     def __init__(self, f_serialCon, queueList):
-        super(threadFrontalUltrasonic, self).__init__()
+        super(threadUltrasonics, self).__init__()
         self.serialCon = f_serialCon
         self.buff = ""
         self.isResponse = False
@@ -67,6 +67,7 @@ class threadFrontalUltrasonic(ThreadWithStop):
                 if ultrasonics_status is None:
                     continue
                 self.handle_frontal(ultrasonics_status['front'])
+                self.handle_laterals(ultrasonics_status)
 
             except UnicodeDecodeError:
                 pass
@@ -120,3 +121,11 @@ class threadFrontalUltrasonic(ThreadWithStop):
         })
         #DataSender.send('/brake', {'braking': False})
         #DataSender.send('/speed', {'speed': BASE_SPEED})
+
+    def handle_laterals(self, ultrasonic_status):
+        self.queuesList[UltrasonicStatus.Queue.value].put({
+            "Owner": UltrasonicStatus.Owner.value,
+            "msgID": UltrasonicStatus.msgID.value,
+            "msgType": UltrasonicStatus.msgType.value,
+            "msgValue": ultrasonic_status
+        })

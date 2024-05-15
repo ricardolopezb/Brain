@@ -1,6 +1,6 @@
 # Copyright (c) 2019, Bosch Engineering Center Cluj and BFMC organizers
 # All rights reserved.
-from src.austral.ultrasonic.frontal.threads.threadFrontalUltrasonic import threadFrontalUltrasonic
+from src.austral.ultrasonic.frontal.threads.threadUltrasonics import threadUltrasonics
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -37,7 +37,7 @@ from src.hardware.serialhandler.threads.threadRead import threadRead
 from src.hardware.serialhandler.threads.threadWrite import threadWrite
 
 
-class processFrontalUltrasonic(WorkerProcess):
+class processUltrasonics(WorkerProcess):
     """This process handle connection between Arduino with Ultrasonic and Raspberry PI.\n
     Args:
         queueList (dictionar of multiprocessing.queues.Queue): Dictionar of queues where the ID is the type of messages.
@@ -53,7 +53,7 @@ class processFrontalUltrasonic(WorkerProcess):
         self.serialCom.flushOutput()
 
         self.queuesList = queueList
-        super(processFrontalUltrasonic, self).__init__(self.queuesList)
+        super(processUltrasonics, self).__init__(self.queuesList)
 
     # ===================================== STOP ==========================================
     def stop(self):
@@ -61,16 +61,16 @@ class processFrontalUltrasonic(WorkerProcess):
         for thread in self.threads:
             thread.stop()
             thread.join()
-        super(processFrontalUltrasonic, self).stop()
+        super(processUltrasonics, self).stop()
 
     # ===================================== RUN ==========================================
     def run(self):
         """Apply the initializing methods and start the threads."""
-        super(processFrontalUltrasonic, self).run()
+        super(processUltrasonics, self).run()
         self.historyFile.close()
 
     # ===================================== INIT TH =================================
     def _init_threads(self):
         """Initializes the read and the write thread."""
-        ultrasonicThread = threadFrontalUltrasonic(self.serialCom, self.queuesList)
+        ultrasonicThread = threadUltrasonics(self.serialCom, self.queuesList)
         self.threads.append(ultrasonicThread)

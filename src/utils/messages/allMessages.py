@@ -177,6 +177,12 @@ class Location(Enum):
     msgType = "dictionary"
 
 
+class UltrasonicStatus(Enum):
+    Queue = "Warning"
+    Owner = "threadUltrasonics"
+    msgID = 1
+    msgType = "dictionary"
+
 # {"x": value, "y": value}
 
 
