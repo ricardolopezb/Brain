@@ -59,6 +59,7 @@ class threadUltrasonics(ThreadWithStop):
         self.queuesList = queueList
         self.acumulator = 0
         self.is_braked = False
+        self.should_enqueue = False
         self.should_brake = False
         self.subscribe()
 
@@ -81,9 +82,9 @@ class threadUltrasonics(ThreadWithStop):
                     continue
                 self.handle_frontal(ultrasonics_status['front'])
                 if self.pipeRecvEnqueueEnablement.poll():
-                    should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']
-                    print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", should_enqueue)
-                    if should_enqueue:
+                    self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value'] #xd
+                    print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.should_enqueue)
+                    if self.should_enqueue:
                         self.handle_laterals(ultrasonics_status)
 
             except UnicodeDecodeError:
@@ -140,8 +141,8 @@ class threadUltrasonics(ThreadWithStop):
         # DataSender.send('/speed', {'speed': BASE_SPEED})
 
     def handle_laterals(self, ultrasonic_status):
-        print("ALLOWANCE IN ENQUEUER", allow_ultrasonics_enqueue)
-        if allow_ultrasonics_enqueue:
+        print("SHOULD ENQ?", self.should_enqueue)
+        if self.should_enqueue:
             print("ENQUEUING ULTRASONIC")
             self.queuesList[UltrasonicStatus.Queue.value].put({
                 "Owner": UltrasonicStatus.Owner.value,
