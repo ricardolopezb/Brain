@@ -35,6 +35,9 @@ class threadV2X(ThreadWithStop):
         self.pipeRecvSemaphores = pipeRecvSemaphores
         self.pipeSendSemaphores = pipeSendSemaphores
 
+        self.coordinates_log_file = open(f'{time.time()}.txt', "w")
+
+
         self.subscribe()
 
 
@@ -73,10 +76,9 @@ class threadV2X(ThreadWithStop):
                 if self.pipeRecvCars.poll():
                     message = self.pipeRecvCars.recv()
                     print(f"Received CARS -> {message}")
-                    x = x
-                    y = y
-                    with open(f'{time.time()}.txt', "w") as file:
-                        file.write(f'{x};{y}\n')
+                    # x = x
+                    # y = y
+                    # self.coordinates_log_file.write(f'{x};{y}\n')
 
 
                 if self.pipeRecvSemaphores.poll():
@@ -95,3 +97,4 @@ class threadV2X(ThreadWithStop):
         """This function will close the thread and will stop the car."""
         time.sleep(2)
         super(threadV2X, self).stop()
+        self.coordinates_log_file.close()
