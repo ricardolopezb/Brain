@@ -26,6 +26,7 @@ import json
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 import threading
+from multiprocessing import Pipe
 
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, allow_ultrasonics_enqueue
@@ -34,10 +35,8 @@ from src.utils.messages.allMessages import (
     BatteryLvl,
     ImuData,
     InstantConsumption,
-    EnableButton, SpeedMotor, UltrasonicStatus,
+    EnableButton, SpeedMotor, UltrasonicStatus, UltrasonicStatusEnqueuing,
 )
-
-
 
 
 class threadUltrasonics(ThreadWithStop):
@@ -52,12 +51,25 @@ class threadUltrasonics(ThreadWithStop):
     def __init__(self, f_serialCon, queueList):
         super(threadUltrasonics, self).__init__()
         self.serialCon = f_serialCon
+        pipeRecvEnqueueEnablement, pipeSendEnqueueEnablement = Pipe(duplex=False)
+        self.pipeRecvEnqueueEnablement = pipeRecvEnqueueEnablement
+        self.pipeSendEnqueueEnablement = pipeSendEnqueueEnablement
         self.buff = ""
         self.isResponse = False
         self.queuesList = queueList
         self.acumulator = 0
         self.is_braked = False
         self.should_brake = False
+
+    def subscribe(self):
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": UltrasonicStatusEnqueuing.Owner.value,
+                "msgID": UltrasonicStatusEnqueuing.msgID.value,
+                "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendEnqueueEnablement},
+            }
+        )
 
     # ====================================== RUN ==========================================
     def run(self):
@@ -67,7 +79,10 @@ class threadUltrasonics(ThreadWithStop):
                 if ultrasonics_status is None:
                     continue
                 self.handle_frontal(ultrasonics_status['front'])
-                self.handle_laterals(ultrasonics_status)
+                if self.pipeRecvEnqueueEnablement.poll():
+                    should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']
+                    if should_enqueue:
+                        self.handle_laterals(ultrasonics_status)
 
             except UnicodeDecodeError:
                 pass
@@ -109,7 +124,7 @@ class threadUltrasonics(ThreadWithStop):
             "msgType": SpeedMotor.msgType.value,
             "msgValue": 0
         })
-        #DataSender.send('/brake', {'braking': True})
+        # DataSender.send('/brake', {'braking': True})
 
     def accelerate(self):
         print("NOTHING IN THE WAY. SPEEDING")
@@ -119,8 +134,8 @@ class threadUltrasonics(ThreadWithStop):
             "msgType": SpeedMotor.msgType.value,
             "msgValue": BASE_SPEED
         })
-        #DataSender.send('/brake', {'braking': False})
-        #DataSender.send('/speed', {'speed': BASE_SPEED})
+        # DataSender.send('/brake', {'braking': False})
+        # DataSender.send('/speed', {'speed': BASE_SPEED})
 
     def handle_laterals(self, ultrasonic_status):
         print("ALLOWANCE IN ENQUEUER", allow_ultrasonics_enqueue)

@@ -99,6 +99,7 @@ class SteerMotor(Enum):
     msgID = 3
     msgType = "dictionary"
 
+
 class SteerMotorMockThread(Enum):
     Queue = "General"
     Owner = "threadMock"
@@ -177,11 +178,19 @@ class Location(Enum):
     msgType = "dictionary"
 
 
+class UltrasonicStatusEnqueuing(Enum):
+    Queue = "General"
+    Owner = "ParkingExecutor"
+    msgID = 1
+    msgType = "dictionary"
+
+
 class UltrasonicStatus(Enum):
     Queue = "Warning"
     Owner = "threadUltrasonics"
     msgID = 1
     msgType = "dictionary"
+
 
 # {"x": value, "y": value}
 

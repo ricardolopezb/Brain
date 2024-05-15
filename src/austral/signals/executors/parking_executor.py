@@ -2,7 +2,7 @@ import time
 
 from src.austral.configs import BASE_SPEED, PARKING_SPEED, IS_ABLE_TO_PARK, EMPTY_PARKING_PERIOD, \
     set_allow_ultrasonics_enqueue
-from src.utils.messages.allMessages import SpeedMotor, Control
+from src.utils.messages.allMessages import SpeedMotor, Control, UltrasonicStatusEnqueuing
 
 global allow_ultrasonics_enqueue
 
@@ -19,7 +19,7 @@ class ParkingExecutor:
     def execute(self, queue_list):
         global allow_ultrasonics_enqueue
         print("### EXECUTING PARKING SEQUENCE ###")
-        allow_ultrasonics_enqueue = True
+        self.send_enqueue_enablement(queue_list, True)
         while True:
             if self.pipeRecieveUltrasonics.poll():
                 ultrasonics_status = self.pipeRecieveUltrasonics.recv()
@@ -32,15 +32,15 @@ class ParkingExecutor:
                 if ultrasonics_status['value']['right'] == 0:
                     if current_time - self.starting_empty_right_time > self.right_sensor_period:
                         print("PARKING ON THE RIGHT")
+                        self.send_enqueue_enablement(queue_list, False)
                         self.send_parking_sequence(queue_list)  # parking derecho
-                        allow_ultrasonics_enqueue = False
                         break
 
                 if ultrasonics_status['value']['left'] == 0:
                     if current_time - self.starting_empty_left_time > self.left_sensor_period:
                         print("PARKING ON THE LEFT")
+                        self.send_enqueue_enablement(queue_list, False)
                         self.send_parking_sequence(queue_list)  # parking izquierdo
-                        allow_ultrasonics_enqueue = False
                         break
 
     def send_parking_sequence(self, queue_list):
@@ -100,4 +100,12 @@ class ParkingExecutor:
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
             "msgValue": BASE_SPEED
+        })
+
+    def send_enqueue_enablement(self, queue_list, value):
+        queue_list['Critical'].put({
+            "Owner": UltrasonicStatusEnqueuing.Owner.value,
+            "msgID": UltrasonicStatusEnqueuing.msgID.value,
+            "msgType": UltrasonicStatusEnqueuing.msgType.value,
+            "msgValue": {'value': value}
         })
