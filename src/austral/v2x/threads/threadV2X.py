@@ -1,3 +1,4 @@
+import os
 import threading
 from multiprocessing import Pipe
 from src.hardware.serialhandler.threads.messageconverter import MessageConverter
@@ -35,11 +36,8 @@ class threadV2X(ThreadWithStop):
         self.pipeRecvSemaphores = pipeRecvSemaphores
         self.pipeSendSemaphores = pipeSendSemaphores
 
-        self.coordinates_log_file = open(f'{int(time.time())}.txt', "w")
-
-
+        self.logging_filename = f'{int(time.time())}.txt'
         self.subscribe()
-
 
     def subscribe(self):
         """Subscribe function. In this function we make all the required subscribe to process gateway"""
@@ -75,12 +73,12 @@ class threadV2X(ThreadWithStop):
             try:
                 if self.pipeRecvCars.poll():
                     message = self.pipeRecvCars.recv()
-                    #print(f"Received CARS -> {message}")
+                    # print(f"Received CARS -> {message}")
                     x = message['value']['x']
                     y = message['value']['y']
-                    print("LOGGING:", f'{x};{y}\n')
-                    self.coordinates_log_file.write(f'{x};{y}\n')
-
+                    mode = 'a' if os.path.exists(self.logging_filename) else 'w'
+                    with open(self.logging_filename, mode) as file:
+                        file.write(f'{x};{y}\n')
 
                 if self.pipeRecvSemaphores.poll():
                     message = self.pipeRecvSemaphores.recv()
