@@ -18,18 +18,18 @@ class ParkingExecutor:
             if self.pipeRecieveUltrasonics.poll():
                 ultrasonics_status = self.pipeRecieveUltrasonics.recv()
                 print("MESSAAGE", ultrasonics_status)
-                if ultrasonics_status['right'] == 1:
+                if ultrasonics_status['value']['right'] == 1:
                     self.starting_empty_right_time = time.time()
-                if ultrasonics_status['left'] == 1:
+                if ultrasonics_status['value']['left'] == 1:
                     self.starting_empty_left_time = time.time()
                 current_time = time.time()
-                if ultrasonics_status['right'] == 0:
+                if ultrasonics_status['value']['right'] == 0:
                     if current_time - self.starting_empty_right_time > self.right_sensor_period:
                         print("PARKING ON THE RIGHT")
                         self.send_parking_sequence(queue_list)  # parking derecho
                         break
 
-                if ultrasonics_status['left'] == 0:
+                if ultrasonics_status['value']['left'] == 0:
                     if current_time - self.starting_empty_left_time > self.left_sensor_period:
                         print("PARKING ON THE LEFT")
                         self.send_parking_sequence(queue_list)  # parking izquierdo
