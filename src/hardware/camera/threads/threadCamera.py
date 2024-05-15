@@ -82,11 +82,11 @@ class threadCamera(ThreadWithStop):
         pipeRecvRecord, pipeSendRecord = Pipe(duplex=False)
         self.pipeRecvRecord = pipeRecvRecord
         self.pipeSendRecord = pipeSendRecord
-        self.video_writer = ""
-        self.subscribe()
         pipeRecvUltrasonics, pipeSendUltrasonics = Pipe(duplex=False)
         self.pipeRecvUltrasonics = pipeRecvUltrasonics
         self.pipeSendUltrasonics = pipeSendUltrasonics
+        self.video_writer = ""
+        self.subscribe()
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
