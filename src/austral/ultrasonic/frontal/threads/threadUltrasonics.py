@@ -84,8 +84,8 @@ class threadUltrasonics(ThreadWithStop):
                 if self.pipeRecvEnqueueEnablement.poll():
                     self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value'] #xd
                     print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.should_enqueue)
-                    if self.should_enqueue:
-                        self.handle_laterals(ultrasonics_status)
+                if self.should_enqueue:
+                    self.handle_laterals(ultrasonics_status)
 
             except UnicodeDecodeError:
                 pass
