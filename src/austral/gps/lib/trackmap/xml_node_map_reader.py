@@ -6,6 +6,7 @@ from src.austral.gps.lib.trackmap.graph.node import Node
 class XmlNodeMapReader:
     @staticmethod
     def read(file_path):
+        critical_node_ids = ['69', '72', '66', '166']
         nodes = {}
         # Parse the XML file
         tree = ET.parse(file_path)
@@ -29,6 +30,8 @@ class XmlNodeMapReader:
 
             if x is not None and y is not None:
                 nodes[node_id] = Node(node_id, x, y)
+                if node_id in critical_node_ids:
+                    nodes[node_id].is_critical = True
 
         # Find all edges in the graph and add successors to nodes
         for edge in root.findall('.//graphml:edge', ns):
