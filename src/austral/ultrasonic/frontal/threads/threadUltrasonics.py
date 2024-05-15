@@ -123,6 +123,7 @@ class threadUltrasonics(ThreadWithStop):
         #DataSender.send('/speed', {'speed': BASE_SPEED})
 
     def handle_laterals(self, ultrasonic_status):
+        print("ALLOWANCE IN ENQUEUER", allow_ultrasonics_enqueue)
         if allow_ultrasonics_enqueue:
             print("ENQUEUING ULTRASONIC")
             self.queuesList[UltrasonicStatus.Queue.value].put({
