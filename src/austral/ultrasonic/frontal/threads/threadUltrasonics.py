@@ -63,7 +63,6 @@ class threadUltrasonics(ThreadWithStop):
     def run(self):
         while self._running:
             ultrasonics_status = self.read_ultrasonics_state()
-            print("RECEIVED ULTRASONICS STATUS:", ultrasonics_status)
             try:
                 if ultrasonics_status is None:
                     continue
@@ -125,6 +124,7 @@ class threadUltrasonics(ThreadWithStop):
 
     def handle_laterals(self, ultrasonic_status):
         if allow_ultrasonics_enqueue:
+            print("ENQUEUING ULTRASONIC")
             self.queuesList[UltrasonicStatus.Queue.value].put({
                 "Owner": UltrasonicStatus.Owner.value,
                 "msgID": UltrasonicStatus.msgID.value,
