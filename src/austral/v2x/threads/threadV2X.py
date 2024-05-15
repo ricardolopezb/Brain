@@ -35,7 +35,7 @@ class threadV2X(ThreadWithStop):
         self.pipeRecvSemaphores = pipeRecvSemaphores
         self.pipeSendSemaphores = pipeSendSemaphores
 
-        self.coordinates_log_file = open(f'{time.time()}.txt', "w")
+        self.coordinates_log_file = open(f'{int(time.time())}.txt', "w")
 
 
         self.subscribe()
@@ -96,6 +96,6 @@ class threadV2X(ThreadWithStop):
     # ==================================== STOP ==========================================
     def stop(self):
         """This function will close the thread and will stop the car."""
+        self.coordinates_log_file.close()
         time.sleep(2)
         super(threadV2X, self).stop()
-        self.coordinates_log_file.close()
