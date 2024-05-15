@@ -1,14 +1,14 @@
 import time
 
-from src.austral.configs import BASE_SPEED, PARKING_SPEED, IS_ABLE_TO_PARK
+from src.austral.configs import BASE_SPEED, PARKING_SPEED, IS_ABLE_TO_PARK, EMPTY_PARKING_PERIOD
 from src.utils.messages.allMessages import SpeedMotor, Control
 
 
 class ParkingExecutor:
     def __init__(self, pipeRecieveUltrasonics):
         self.pipeRecieveUltrasonics = pipeRecieveUltrasonics
-        self.right_sensor_period = 3
-        self.left_sensor_period = 3
+        self.right_sensor_period = EMPTY_PARKING_PERIOD
+        self.left_sensor_period = EMPTY_PARKING_PERIOD
         self.starting_empty_right_time = time.time()
         self.starting_empty_left_time = time.time()
 
