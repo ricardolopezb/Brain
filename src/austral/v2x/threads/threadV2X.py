@@ -75,10 +75,11 @@ class threadV2X(ThreadWithStop):
             try:
                 if self.pipeRecvCars.poll():
                     message = self.pipeRecvCars.recv()
-                    print(f"Received CARS -> {message}")
-                    # x = x
-                    # y = y
-                    # self.coordinates_log_file.write(f'{x};{y}\n')
+                    #print(f"Received CARS -> {message}")
+                    x = message['value']['x']
+                    y = message['value']['y']
+                    print("LOGGING:", f'{x};{y}\n')
+                    self.coordinates_log_file.write(f'{x};{y}\n')
 
 
                 if self.pipeRecvSemaphores.poll():
