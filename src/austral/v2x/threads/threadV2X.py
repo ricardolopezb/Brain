@@ -96,6 +96,7 @@ class threadV2X(ThreadWithStop):
     # ==================================== STOP ==========================================
     def stop(self):
         """This function will close the thread and will stop the car."""
+        print("STOPPING THE THREAD ********####*#*#*#*#*#*#*")
         self.coordinates_log_file.close()
         time.sleep(2)
         super(threadV2X, self).stop()
