@@ -1,6 +1,6 @@
 ENABLE_LANE_DETECTION = False
-ENABLE_SIGN_DETECTION = False
-ENABLE_FRONTAL_ULTRASONIC = False
+ENABLE_SIGN_DETECTION = True
+ENABLE_FRONTAL_ULTRASONIC = True
 ENABLE_IMAGE_CAPTURE = False
 ENABLE_V2X = False
 
@@ -13,6 +13,7 @@ allow_ultrasonics_enqueue = False
 
 def set_allow_ultrasonics_enqueue(value):
     global allow_ultrasonics_enqueue
+    print("** changing ultrasonic enq allowance value")
     allow_ultrasonics_enqueue = value
 
 
