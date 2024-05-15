@@ -81,6 +81,7 @@ class threadUltrasonics(ThreadWithStop):
                 self.handle_frontal(ultrasonics_status['front'])
                 if self.pipeRecvEnqueueEnablement.poll():
                     should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']
+                    print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", should_enqueue)
                     if should_enqueue:
                         self.handle_laterals(ultrasonics_status)
 

@@ -103,6 +103,7 @@ class ParkingExecutor:
         })
 
     def send_enqueue_enablement(self, queue_list, value):
+        print("** ENQUEUING ENABLEMENT WITH", value)
         queue_list['Critical'].put({
             "Owner": UltrasonicStatusEnqueuing.Owner.value,
             "msgID": UltrasonicStatusEnqueuing.msgID.value,
