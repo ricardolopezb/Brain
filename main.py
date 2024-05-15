@@ -29,7 +29,7 @@
 # ===================================== GENERAL IMPORTS ==================================
 import sys
 
-from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC, ENABLE_V2X
+from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC, ENABLE_V2X, MY_CAR_ID
 from src.austral.pid.mock import processMock
 from src.austral.ultrasonic.frontal.processUltrasonics import processUltrasonics
 from src.austral.v2x.processV2X import processV2X
@@ -110,7 +110,7 @@ if CarsAndSemaphores:
 
 # Initializing GPS
 if TrafficCommunication:
-    processTrafficCommunication = processTrafficCommunication(queueList, logging, 3)
+    processTrafficCommunication = processTrafficCommunication(queueList, logging, MY_CAR_ID)
     allProcesses.append(processTrafficCommunication)
 
 # Initializing serial connection NUCLEO - > PI
