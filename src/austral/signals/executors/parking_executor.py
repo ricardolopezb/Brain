@@ -1,6 +1,7 @@
 import time
 
-from src.austral.configs import BASE_SPEED, PARKING_SPEED, IS_ABLE_TO_PARK, EMPTY_PARKING_PERIOD
+from src.austral.configs import BASE_SPEED, PARKING_SPEED, IS_ABLE_TO_PARK, EMPTY_PARKING_PERIOD, \
+    set_allow_ultrasonics_enqueue
 from src.utils.messages.allMessages import SpeedMotor, Control
 
 
@@ -14,6 +15,7 @@ class ParkingExecutor:
 
     def execute(self, queue_list):
         print("### EXECUTING PARKING SEQUENCE ###")
+        set_allow_ultrasonics_enqueue(True)
         while True:
             if self.pipeRecieveUltrasonics.poll():
                 ultrasonics_status = self.pipeRecieveUltrasonics.recv()
@@ -27,12 +29,14 @@ class ParkingExecutor:
                     if current_time - self.starting_empty_right_time > self.right_sensor_period:
                         print("PARKING ON THE RIGHT")
                         self.send_parking_sequence(queue_list)  # parking derecho
+                        set_allow_ultrasonics_enqueue(False)
                         break
 
                 if ultrasonics_status['value']['left'] == 0:
                     if current_time - self.starting_empty_left_time > self.left_sensor_period:
                         print("PARKING ON THE LEFT")
                         self.send_parking_sequence(queue_list)  # parking izquierdo
+                        set_allow_ultrasonics_enqueue(False)
                         break
 
 

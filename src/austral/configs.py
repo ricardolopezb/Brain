@@ -8,6 +8,14 @@ IS_BLIND = False
 MY_CAR_ID = 1
 EMPTY_PARKING_PERIOD = 6
 
+allow_ultrasonics_enqueue = False
+
+
+def set_allow_ultrasonics_enqueue(value):
+    global allow_ultrasonics_enqueue
+    allow_ultrasonics_enqueue = value
+
+
 V2X_SEMAPHORE_INFLUENCE_RADIUS = 3
 V2X_SEMAPHORE_COOLDOWN = 6
 

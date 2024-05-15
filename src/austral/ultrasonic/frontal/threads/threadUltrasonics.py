@@ -28,7 +28,7 @@ import json
 import threading
 
 from src.austral.api.data_sender import DataSender
-from src.austral.configs import BASE_SPEED
+from src.austral.configs import BASE_SPEED, allow_ultrasonics_enqueue
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
     BatteryLvl,
@@ -124,9 +124,10 @@ class threadUltrasonics(ThreadWithStop):
         #DataSender.send('/speed', {'speed': BASE_SPEED})
 
     def handle_laterals(self, ultrasonic_status):
-        self.queuesList[UltrasonicStatus.Queue.value].put({
-            "Owner": UltrasonicStatus.Owner.value,
-            "msgID": UltrasonicStatus.msgID.value,
-            "msgType": UltrasonicStatus.msgType.value,
-            "msgValue": ultrasonic_status
-        })
+        if allow_ultrasonics_enqueue:
+            self.queuesList[UltrasonicStatus.Queue.value].put({
+                "Owner": UltrasonicStatus.Owner.value,
+                "msgID": UltrasonicStatus.msgID.value,
+                "msgType": UltrasonicStatus.msgType.value,
+                "msgValue": ultrasonic_status
+            })
