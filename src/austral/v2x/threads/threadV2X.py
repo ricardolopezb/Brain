@@ -73,6 +73,10 @@ class threadV2X(ThreadWithStop):
                 if self.pipeRecvCars.poll():
                     message = self.pipeRecvCars.recv()
                     print(f"Received CARS -> {message}")
+                    x = x
+                    y = y
+                    with open(f'{time.time()}.txt', "w") as file:
+                        file.write(f'{x};{y}\n')
 
 
                 if self.pipeRecvSemaphores.poll():
