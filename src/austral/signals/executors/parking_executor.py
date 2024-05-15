@@ -17,7 +17,7 @@ class ParkingExecutor:
         while True:
             if self.pipeRecieveUltrasonics.poll():
                 ultrasonics_status = self.pipeRecieveUltrasonics.recv()
-
+                print("MESSAAGE", ultrasonics_status)
                 if ultrasonics_status['right'] == 1:
                     self.starting_empty_right_time = time.time()
                 if ultrasonics_status['left'] == 1:
