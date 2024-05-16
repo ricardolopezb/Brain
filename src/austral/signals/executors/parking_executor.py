@@ -65,14 +65,14 @@ class ParkingExecutor:
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': -speed, 'Time': 5, 'Steer': 22.0 * multiplier}
         })
-        time.sleep(3)
+        time.sleep(5)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': -speed, 'Time': 6, 'Steer': -22.0 * multiplier}
         })
-        time.sleep(3)
+        time.sleep(6)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
@@ -93,14 +93,14 @@ class ParkingExecutor:
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': speed, 'Time': 3.5, 'Steer': -22.0 * multiplier}
         })
-        time.sleep(1.5)
+        time.sleep(3.5)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': speed, 'Time': 3.5, 'Steer': 22.0 * multiplier}
         })
-        time.sleep(1.5)
+        time.sleep(3.5)
         queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
