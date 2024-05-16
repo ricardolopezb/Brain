@@ -6,7 +6,7 @@ ENABLE_V2X = False
 
 IS_BLIND = False
 MY_CAR_ID = 1
-EMPTY_PARKING_PERIOD = 6
+EMPTY_PARKING_PERIOD = 8
 
 allow_ultrasonics_enqueue = False
 

@@ -20,7 +20,7 @@ class ParkingExecutor:
             "Owner": SteerMotor.Owner.value,
             "msgID": SteerMotor.msgID.value,
             "msgType": SteerMotor.msgType.value,
-            "msgValue": 0
+            "msgValue": -3
         })
         self.send_enqueue_enablement(queue_list, True)
         while True:
