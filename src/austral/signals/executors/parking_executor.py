@@ -50,7 +50,7 @@ class ParkingExecutor:
         multiplier = 1
         if side == 'left':
             multiplier = -1
-        time.sleep(5)
+        time.sleep(7)
         speed = PARKING_SPEED
         queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
@@ -63,16 +63,16 @@ class ParkingExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 3, 'Steer': 23.0 * multiplier}
+            "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': 23.0 * multiplier}
         })
-        time.sleep(3)
+        time.sleep(4)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 3, 'Steer': -23.0 * multiplier}
+            "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': -23.0 * multiplier}
         })
-        time.sleep(3)
+        time.sleep(4)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
@@ -98,16 +98,16 @@ class ParkingExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 3.5, 'Steer': -22.0 * multiplier}
+            "msgValue": {'Speed': speed, 'Time': 2.5, 'Steer': -22.0 * multiplier}
         })
-        time.sleep(3.5)
+        time.sleep(2.5)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 3.5, 'Steer': 22.0 * multiplier}
+            "msgValue": {'Speed': speed, 'Time': 2.5, 'Steer': 22.0 * multiplier}
         })
-        time.sleep(3.5)
+        time.sleep(2.5)
         queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
