@@ -84,6 +84,7 @@ class threadV2X(ThreadWithStop):
                     x = message['value']['x']
                     y = message['value']['y']
                     if message['value']['id'] == self.my_car_id:
+                        print("RECEIVED MY CAR COORDINATES IN Cars EVENT", message['value'])
                         self.log_my_coordinates(x, y)
                         self.my_previous_coordinates = self.my_current_coordinates
                         self.my_current_coordinates = (x, y)

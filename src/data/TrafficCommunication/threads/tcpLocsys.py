@@ -26,6 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 from twisted.internet import protocol
+
+from src.austral.configs import MY_CAR_ID
 from src.utils.messages.allMessages import Location
 import time
 import json
@@ -75,13 +77,14 @@ class tcpLocsys(protocol.ClientFactory):
         super().stopListening()
 
     def receive_data_from_server(self, message):
-        message["id"] = 3
+        message["id"] = MY_CAR_ID
         message_to_send = {
             "Owner": Location.Owner.value,
             "msgID": Location.msgID.value,
             "msgType": Location.msgType.value,
             "msgValue": message,
         }
+        print("IN LOCSYS, SENDING AS Location EVENT", message_to_send)
         self.sendQueue.put(message_to_send)
 
 
