@@ -55,8 +55,8 @@ def get_new_votes_logic():
     return NEW_VOTES_LOGIC_ENABLED
 
 
-THRESHOLD = 180
-KERNEL = 11
+THRESHOLD = 150
+KERNEL = 3
 ROI = 35
 
 BASE_SPEED = 5
