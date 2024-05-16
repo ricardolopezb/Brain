@@ -29,7 +29,8 @@
 # ===================================== GENERAL IMPORTS ==================================
 import sys
 
-from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC, ENABLE_V2X, MY_CAR_ID
+from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC, ENABLE_V2X, MY_CAR_ID, ENABLE_GPS
+from src.austral.gps.processGPS import processGPS
 from src.austral.pid.mock import processMock
 from src.austral.ultrasonic.frontal.processUltrasonics import processUltrasonics
 from src.austral.v2x.processV2X import processV2X
@@ -87,6 +88,9 @@ if ENABLE_V2X:
     process_v2x = processV2X(queueList)
     allProcesses.append(process_v2x)
 
+if ENABLE_GPS:
+    process_gps = processGPS(queueList)
+    allProcesses.append(process_gps)
 
 # Initializing camera
 if Camera:
