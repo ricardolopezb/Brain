@@ -46,12 +46,12 @@ class threadGPS(ThreadWithStop):
         super(threadGPS, self).__init__()
         self.queuesList = queueList
         self.Queue_Sending()
-        self.subscribe()
         pipeRecvLocation, pipeSendLocation = Pipe(duplex=False)
         self.pipeRecvLocation = pipeRecvLocation
         self.pipeSendLocation = pipeSendLocation
         self.direction_provider = direction_provider
         self.first_time = True
+        self.subscribe()
 
     def subscribe(self):
         """Subscribe function. In this function we make all the required subscribe to process gateway"""
@@ -77,7 +77,7 @@ class threadGPS(ThreadWithStop):
                 current_y = msg["y"]
                 if self.first_time:
                     self.first_time = False
-                    #self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
+                    # self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
                     self.direction_provider.set_route((0.74, 5.73), TARGET_COORDINATES)
                     continue
 
