@@ -64,7 +64,7 @@ class DirectionProvider:
 
         if correction_angle == 0:
             return steering_angle
-        if -30 <= correction_angle <= 30:
+        if -15 <= correction_angle <= 15:
             return steering_angle
 
         if -50 <= correction_angle < 50:
