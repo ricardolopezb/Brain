@@ -70,16 +70,21 @@ class threadGPS(ThreadWithStop):
     # ====================================== RUN ==========================================
     def run(self):
         while self._running:
+            if self.first_time:
+                self.first_time = False
+                # self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
+                self.direction_provider.set_route((0.74, 5.73), TARGET_COORDINATES)
+                continue
             if self.pipeRecvLocation.poll():
                 msg = self.pipeRecvLocation.recv()
                 print("LOCATION MESSAGE RECEIVED:", msg)
                 current_x = msg["x"]
                 current_y = msg["y"]
-                if self.first_time:
-                    self.first_time = False
-                    # self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
-                    self.direction_provider.set_route((0.74, 5.73), TARGET_COORDINATES)
-                    continue
+                # if self.first_time:
+                #     self.first_time = False
+                #     # self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
+                #     self.direction_provider.set_route((0.74, 5.73), TARGET_COORDINATES)
+                #     continue
 
                 angle_to_steer = self.direction_provider.get_direction(current_x, current_y, IS_BLIND)
                 print("ANGLE TO STEER:", angle_to_steer)
