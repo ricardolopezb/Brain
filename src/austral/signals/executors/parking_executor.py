@@ -77,9 +77,9 @@ class ParkingExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 1.5, 'Steer': 10 * multiplier}
+            "msgValue": {'Speed': speed, 'Time': 1.2, 'Steer': 10 * multiplier}
         })
-        time.sleep(1.5)
+        time.sleep(1.2)
         queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
