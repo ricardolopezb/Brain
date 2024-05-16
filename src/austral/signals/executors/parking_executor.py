@@ -50,7 +50,7 @@ class ParkingExecutor:
         multiplier = 1
         if side == 'left':
             multiplier = -1
-        time.sleep(8)
+        time.sleep(5)
         speed = PARKING_SPEED
         queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
@@ -63,14 +63,14 @@ class ParkingExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': 22.0 * multiplier}
+            "msgValue": {'Speed': -speed, 'Time': 5, 'Steer': 22.0 * multiplier}
         })
         time.sleep(3)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': -speed, 'Time': 4, 'Steer': -22.0 * multiplier}
+            "msgValue": {'Speed': -speed, 'Time': 6, 'Steer': -22.0 * multiplier}
         })
         time.sleep(3)
         queue_list['Critical'].put({
@@ -79,7 +79,7 @@ class ParkingExecutor:
             "msgType": Control.msgType.value,
             "msgValue": {'Speed': speed, 'Time': 1, 'Steer': 10 * multiplier}
         })
-        time.sleep(1)
+        time.sleep(8)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
@@ -91,14 +91,14 @@ class ParkingExecutor:
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 2.5, 'Steer': -22.0 * multiplier}
+            "msgValue": {'Speed': speed, 'Time': 3.5, 'Steer': -22.0 * multiplier}
         })
         time.sleep(1.5)
         queue_list['Critical'].put({
             "Owner": Control.Owner.value,
             "msgID": Control.msgID.value,
             "msgType": Control.msgType.value,
-            "msgValue": {'Speed': speed, 'Time': 2.5, 'Steer': 22.0 * multiplier}
+            "msgValue": {'Speed': speed, 'Time': 3.5, 'Steer': 22.0 * multiplier}
         })
         time.sleep(1.5)
         queue_list['Critical'].put({
