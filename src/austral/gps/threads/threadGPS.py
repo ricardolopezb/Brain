@@ -73,7 +73,7 @@ class threadGPS(ThreadWithStop):
             if self.first_time:
                 self.first_time = False
                 # self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
-                self.direction_provider.set_route((0.74, 5.73), TARGET_COORDINATES)
+                self.direction_provider.set_route((0.33, 10.81), TARGET_COORDINATES)
                 continue
             if self.pipeRecvLocation.poll():
                 msg = self.pipeRecvLocation.recv()
