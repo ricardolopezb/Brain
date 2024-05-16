@@ -6,7 +6,7 @@ from src.austral.gps.lib.trackmap.graph.node import Node
 class XmlNodeMapReader:
     @staticmethod
     def read(file_path):
-        critical_node_ids = ['69', '72', '66', '166']
+        critical_node_ids = ['443', '84', '87', '81', '165', '166', '167', '168', '169', '170', '171', '172', '173', '174', '175', '176', '177', '8', '12', '1', '150']
         nodes = {}
         # Parse the XML file
         tree = ET.parse(file_path)
