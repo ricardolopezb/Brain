@@ -22,6 +22,7 @@ class DirectionProvider:
         else:
             path = self.map.get_shortest_path(start_node.id, target_node.id)
         self.path = path
+        print("PATH TO FOLLOW:", path)
         self.previous_node = start_node
 
     def get_direction(self, current_x, current_y, is_blind=False):
