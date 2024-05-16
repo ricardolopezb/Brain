@@ -50,6 +50,12 @@ class ParkingExecutor:
         multiplier = 1
         if side == 'left':
             multiplier = -1
+        queue_list['Critical'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": BASE_SPEED
+        })
         time.sleep(8)
         speed = PARKING_SPEED
         queue_list['Critical'].put({
