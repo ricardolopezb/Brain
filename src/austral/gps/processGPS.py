@@ -49,7 +49,7 @@ class processGPS(WorkerProcess):
 
     # ===================================== INIT =========================================
     def __init__(self, queueList):
-        self.track_mapping = TrackMap(XmlNodeMapReader.read("xml_node_map.xml"))
+        self.track_mapping = TrackMap(XmlNodeMapReader.read("src/austral/gps/resources/xml_node_map.xml"))
         self.direction_provider = DirectionProvider(self.track_mapping)
         self.queuesList = queueList
         super(processGPS, self).__init__(self.queuesList)
