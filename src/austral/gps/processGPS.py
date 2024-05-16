@@ -71,5 +71,5 @@ class processGPS(WorkerProcess):
     # ===================================== INIT TH =================================
     def _init_threads(self):
         """Initializes the read and the write thread."""
-        gpsThread = threadGPS(self.queuesList)
+        gpsThread = threadGPS(self.queuesList, self.direction_provider)
         self.threads.append(gpsThread)
