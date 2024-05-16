@@ -80,7 +80,7 @@ class threadUltrasonics(ThreadWithStop):
             try:
                 if ultrasonics_status is None:
                     continue
-                self.handle_frontal(ultrasonics_status['front'])
+                # self.handle_frontal(ultrasonics_status['front'])
                 if self.pipeRecvEnqueueEnablement.poll():
                     self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value'] #xd
                     print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.should_enqueue)
