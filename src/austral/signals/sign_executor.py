@@ -27,7 +27,8 @@ class SignExecutor:
         # if self.just_seen_sign == 'stop' and sign is None:
         #     self.send_stop_sequence()
         if sign == 'stop':
-            StopExecutor.execute(self.queue_list)
+            print(" %% FOUND A STOP, BUT NOT DOING ANYTHING")
+            #StopExecutor.execute(self.queue_list)
         elif self.just_seen_sign == 'parking' and sign is None:
             ParkingExecutor(pipeRecieveUltrasonics).execute(self.queue_list)
         elif sign == "crosswalk":

@@ -95,13 +95,17 @@ class threadV2X(ThreadWithStop):
                     semaphore_y = message['value']['y']
 
                     if self.is_not_within_semaphore_range(semaphore_x, semaphore_y):
+                        print("## NO SEMAPHORE within range")
                         return
                     if self.is_moving_away_from_semaphore(semaphore_x, semaphore_y):
+                        print("## MOVING AWAY FROM SEMAPHORE")
                         return
                     semaphore_state = message['value']['state']
                     if semaphore_state == 'green':
+                        print("Found GREEN LIGHT, accelerating")
                         self.accelerate()
                     if semaphore_state == 'red':
+                        print("Found RED LIGHT, braking")
                         self.brake()
                     self.last_time_semaphore_action_taken = time.time()
 
@@ -116,7 +120,6 @@ class threadV2X(ThreadWithStop):
         return self.calculate_distance(semaphore_x, semaphore_y, self.my_current_coordinates[0], self.my_current_coordinates[1]) > self.calculate_distance(semaphore_x, semaphore_y, self.my_previous_coordinates[0], self.my_previous_coordinates[1])
 
     def brake(self):
-        print("Found RED LIGHT, braking")
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
@@ -125,7 +128,6 @@ class threadV2X(ThreadWithStop):
         })
 
     def accelerate(self):
-        print("Found GREEN LIGHT, accelerating")
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
