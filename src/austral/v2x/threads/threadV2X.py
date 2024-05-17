@@ -105,10 +105,10 @@ class threadV2X(ThreadWithStop):
 
                     if self.is_not_within_semaphore_range(semaphore_x, semaphore_y):
                         print("## NO SEMAPHORE within range")
-                        return
+                        continue
                     if self.is_moving_away_from_semaphore(semaphore_x, semaphore_y):
                         print("## MOVING AWAY FROM SEMAPHORE")
-                        return
+                        continue
                     semaphore_state = message['value']['state']
                     if semaphore_state == 'green':
                         print("Found GREEN LIGHT, accelerating")
