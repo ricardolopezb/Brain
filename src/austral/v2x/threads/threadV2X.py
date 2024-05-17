@@ -86,7 +86,7 @@ class threadV2X(ThreadWithStop):
                     x = float(message['value']['x'])
                     y = float(message['value']['y'])
                     if message['value']['id'] == self.my_car_id:
-                        print("RECEIVED MY CAR COORDINATES IN Cars EVENT", message['value'])
+                        print("***** MY COORDINATES", message['value'])
                         self.log_my_coordinates(x, y)
                         self.my_previous_coordinates = self.my_current_coordinates
                         self.my_current_coordinates = (x, y)
@@ -96,22 +96,22 @@ class threadV2X(ThreadWithStop):
                     message = self.pipeRecvSemaphores.recv()
                     # if self.saw_semaphore_before and in_semaphore_cooldown:
                     #     continue
-
+                    semaphore_id = message['value']['id']
                     semaphore_x = float(message['value']['x'])
                     semaphore_y = float(message['value']['y'])
 
                     if self.is_not_within_semaphore_range(semaphore_x, semaphore_y):
-                        print("## NO SEMAPHORE within range")
+                        print(f"## SEMAPHORE {semaphore_id} - ({semaphore_x}, {semaphore_y}) - NOT within range")
                         continue
                     if self.is_moving_away_from_semaphore(semaphore_x, semaphore_y):
-                        print("## MOVING AWAY FROM SEMAPHORE")
+                        print(f"## SEMAPHORE {semaphore_id} - ({semaphore_x}, {semaphore_y}) - MOVING AWAY")
                         continue
                     semaphore_state = message['value']['state']
                     if semaphore_state == 'green':
-                        print("Found GREEN LIGHT, accelerating")
+                        print(f"## SEMAPHORE {semaphore_id} - ({semaphore_x}, {semaphore_y}) - GREEN LIGHT FOUND")
                         self.accelerate()
                     if semaphore_state == 'red':
-                        print("Found RED LIGHT, braking")
+                        print(f"## SEMAPHORE {semaphore_id} - ({semaphore_x}, {semaphore_y}) - RED LIGHT FOUND")
                         self.brake()
                     self.last_time_semaphore_action_taken = time.time()
                     self.saw_semaphore_before = True
