@@ -199,6 +199,13 @@ class GeneralUltrasonicEnablement(Enum):
     msgType = "dictionary"
 
 
+class IsInHighway(Enum):
+    Queue = "General"
+    Owner = "SignExecutor"
+    msgID = 2
+    msgType = "dictionary"
+
+
 class UltrasonicStatus(Enum):
     Queue = "Warning"
     Owner = "threadUltrasonics"

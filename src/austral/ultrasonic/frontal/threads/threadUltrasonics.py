@@ -30,13 +30,14 @@ from multiprocessing import Pipe
 
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, allow_ultrasonics_enqueue
+from src.austral.signals.executors.overtake_manouver_executor import OvertakeManouverExecutor
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
     BatteryLvl,
     ImuData,
     InstantConsumption,
     EnableButton, SpeedMotor, UltrasonicStatus, UltrasonicStatusEnqueuing, ShouldHandleFrontUltrasonic,
-    GeneralUltrasonicEnablement,
+    GeneralUltrasonicEnablement, IsInHighway,
 )
 
 
@@ -52,15 +53,23 @@ class threadUltrasonics(ThreadWithStop):
     def __init__(self, f_serialCon, queueList):
         super(threadUltrasonics, self).__init__()
         self.serialCon = f_serialCon
+
         pipeRecvEnqueueEnablement, pipeSendEnqueueEnablement = Pipe(duplex=False)
         self.pipeRecvEnqueueEnablement = pipeRecvEnqueueEnablement
         self.pipeSendEnqueueEnablement = pipeSendEnqueueEnablement
+
         pipeRecvHandleFrontUltrasonic, pipeSendHandleFrontUltrasonic = Pipe(duplex=False)
         self.pipeRecvHandleFrontUltrasonic = pipeRecvHandleFrontUltrasonic
         self.pipeSendHandleFrontUltrasonic = pipeSendHandleFrontUltrasonic
+
         pipeRecvGeneralUltrasonicEnablement, pipeSendGeneralUltrasonicEnablement = Pipe(duplex=False)
         self.pipeRecvGeneralUltrasonicEnablement = pipeRecvGeneralUltrasonicEnablement
         self.pipeSendGeneralUltrasonicEnablement = pipeSendGeneralUltrasonicEnablement
+
+        pipeRecvIsInHighway, pipeSendIsInHighway = Pipe(duplex=False)
+        self.pipeRecvIsInHighway = pipeRecvIsInHighway
+        self.pipeSendIsInHighway = pipeSendIsInHighway
+
         self.buff = ""
         self.isResponse = False
         self.queuesList = queueList
@@ -70,6 +79,7 @@ class threadUltrasonics(ThreadWithStop):
         self.should_brake = False
         self.should_handle_frontal = True
         self.is_ultrasonic_enabled = False
+        self.is_in_highway = False
         self.subscribe()
 
     def subscribe(self):
@@ -97,6 +107,14 @@ class threadUltrasonics(ThreadWithStop):
                 "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendGeneralUltrasonicEnablement},
             }
         )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": IsInHighway.Owner.value,
+                "msgID": IsInHighway.msgID.value,
+                "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendIsInHighway},
+            }
+        )
 
     # ====================================== RUN ==========================================
     def run(self):
@@ -104,6 +122,10 @@ class threadUltrasonics(ThreadWithStop):
             if self.pipeRecvGeneralUltrasonicEnablement.poll():
                 self.is_ultrasonic_enabled = self.pipeRecvGeneralUltrasonicEnablement.recv()['value']['enabled']
                 print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.is_ultrasonic_enabled)
+
+            if self.pipeRecvIsInHighway.poll():
+                self.is_in_highway = self.pipeRecvIsInHighway.recv()['value']['isInHighway']
+                print("RECEIVED HIGHWAY STATUS IN ULTRASONIC WITH VALUE", self.is_in_highway)
 
             if self.is_ultrasonic_enabled:
                 ultrasonics_status = self.read_ultrasonics_state()
@@ -130,6 +152,9 @@ class threadUltrasonics(ThreadWithStop):
     # ==================================== SENDING =======================================
 
     def handle_frontal(self, read_chr):
+        if self.is_in_highway:
+            OvertakeManouverExecutor.execute(self.queuesList)
+            return
         print("ENTERED FRONTAL:", read_chr)
         if read_chr == 0:
             self.should_brake = False
