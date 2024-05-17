@@ -152,10 +152,10 @@ class threadUltrasonics(ThreadWithStop):
     # ==================================== SENDING =======================================
 
     def handle_frontal(self, read_chr):
+        print("ENTERED FRONTAL:", read_chr)
         if self.is_in_highway and read_chr == 0:
             OvertakeManouverExecutor.execute(self.queuesList)
             return
-        print("ENTERED FRONTAL:", read_chr)
         if read_chr == 0:
             self.should_brake = False
         elif read_chr == 1:
