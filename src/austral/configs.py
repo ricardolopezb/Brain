@@ -1,3 +1,5 @@
+import sys
+
 ENABLE_LANE_DETECTION = False
 ENABLE_SIGN_DETECTION = False
 ENABLE_FRONTAL_ULTRASONIC = False
@@ -7,10 +9,14 @@ ENABLE_GPS = True
 
 MODE = "REGULAR"
 
+if len(sys.argv) > 1:
+    mode_arg = sys.argv[1]
+    if mode_arg == "speed" or mode_arg == "SPEED" or mode_arg == "fast" or mode_arg == "FAST":
+        MODE = "SPEED"
 
-def set_mode(mode):
-    global MODE
-    MODE = mode
+
+
+
 
 
 # OLD SPEEDS
