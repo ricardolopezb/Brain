@@ -35,7 +35,7 @@ from src.utils.messages.allMessages import (
     BatteryLvl,
     ImuData,
     InstantConsumption,
-    EnableButton, SpeedMotor, UltrasonicStatus, UltrasonicStatusEnqueuing,
+    EnableButton, SpeedMotor, UltrasonicStatus, UltrasonicStatusEnqueuing, ShouldHandleFrontUltrasonic,
 )
 
 
@@ -54,6 +54,9 @@ class threadUltrasonics(ThreadWithStop):
         pipeRecvEnqueueEnablement, pipeSendEnqueueEnablement = Pipe(duplex=False)
         self.pipeRecvEnqueueEnablement = pipeRecvEnqueueEnablement
         self.pipeSendEnqueueEnablement = pipeSendEnqueueEnablement
+        pipeRecvHandleFrontUltrasonic, pipeSendHandleFrontUltrasonic = Pipe(duplex=False)
+        self.pipeRecvHandleFrontUltrasonic = pipeRecvHandleFrontUltrasonic
+        self.pipeSendHandleFrontUltrasonic = pipeSendHandleFrontUltrasonic
         self.buff = ""
         self.isResponse = False
         self.queuesList = queueList
@@ -61,6 +64,7 @@ class threadUltrasonics(ThreadWithStop):
         self.is_braked = False
         self.should_enqueue = False
         self.should_brake = False
+        self.should_handle_frontal = True
         self.subscribe()
 
     def subscribe(self):
@@ -70,6 +74,12 @@ class threadUltrasonics(ThreadWithStop):
                 "Owner": UltrasonicStatusEnqueuing.Owner.value,
                 "msgID": UltrasonicStatusEnqueuing.msgID.value,
                 "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendEnqueueEnablement},
+            },
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": ShouldHandleFrontUltrasonic.Owner.value,
+                "msgID": ShouldHandleFrontUltrasonic.msgID.value,
+                "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendHandleFrontUltrasonic},
             }
         )
 
@@ -80,10 +90,17 @@ class threadUltrasonics(ThreadWithStop):
             try:
                 if ultrasonics_status is None:
                     continue
-                # self.handle_frontal(ultrasonics_status['front'])
+                if self.pipeRecvHandleFrontUltrasonic.poll():
+                    should = self.pipeRecvHandleFrontUltrasonic.recv()['value']['value']
+                    self.should_handle_frontal = should
+
+                if self.should_handle_frontal:
+                    self.handle_frontal(ultrasonics_status['front'])
+
                 if self.pipeRecvEnqueueEnablement.poll():
                     self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value'] #xd
                     print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.should_enqueue)
+
                 if self.should_enqueue:
                     self.handle_laterals(ultrasonics_status)
 

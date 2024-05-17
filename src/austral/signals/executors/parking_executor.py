@@ -1,7 +1,8 @@
 import time
 
 from src.austral.configs import BASE_SPEED, PARKING_SPEED, EMPTY_PARKING_PERIOD
-from src.utils.messages.allMessages import SpeedMotor, Control, UltrasonicStatusEnqueuing, SteerMotor
+from src.utils.messages.allMessages import SpeedMotor, Control, UltrasonicStatusEnqueuing, SteerMotor, \
+    ShouldHandleFrontUltrasonic
 
 
 class ParkingExecutor:
@@ -22,7 +23,8 @@ class ParkingExecutor:
             "msgType": SteerMotor.msgType.value,
             "msgValue": -3
         })
-        self.send_enqueue_enablement(queue_list, True)
+        self.send_enqueue_enablement(queue_list, 'frontal', False)
+        self.send_enqueue_enablement(queue_list, 'lateral', True)
         while True:
             if self.pipeRecieveUltrasonics.poll():
                 ultrasonics_status = self.pipeRecieveUltrasonics.recv()
@@ -35,14 +37,14 @@ class ParkingExecutor:
                 if ultrasonics_status['value']['right'] == 0:
                     if current_time - self.starting_empty_right_time > self.right_sensor_period:
                         print("PARKING ON THE RIGHT")
-                        self.send_enqueue_enablement(queue_list, False)
+                        self.send_enqueue_enablement(queue_list, 'lateral', False)
                         self.send_parking_sequence(queue_list, 'right')  # parking derecho
                         break
 
                 if ultrasonics_status['value']['left'] == 0:
                     if current_time - self.starting_empty_left_time > self.left_sensor_period:
                         print("PARKING ON THE LEFT")
-                        self.send_enqueue_enablement(queue_list, False)
+                        self.send_enqueue_enablement(queue_list, 'lateral', False)
                         self.send_parking_sequence(queue_list, 'left')  # parking izquierdo
                         break
 
@@ -120,12 +122,23 @@ class ParkingExecutor:
             "msgType": SpeedMotor.msgType.value,
             "msgValue": BASE_SPEED
         })
+        self.send_enqueue_enablement(queue_list, 'frontal', True)
 
-    def send_enqueue_enablement(self, queue_list, value):
-        print("** ENQUEUING ENABLEMENT WITH", value)
-        queue_list['Critical'].put({
-            "Owner": UltrasonicStatusEnqueuing.Owner.value,
-            "msgID": UltrasonicStatusEnqueuing.msgID.value,
-            "msgType": UltrasonicStatusEnqueuing.msgType.value,
-            "msgValue": {'value': value}
-        })
+    def send_enqueue_enablement(self, queue_list, position, value):
+        print(f"** ENQUEUING {position} ENABLEMENT WITH", value)
+        if position == 'lateral':
+            queue_list['Critical'].put({
+                "Owner": UltrasonicStatusEnqueuing.Owner.value,
+                "msgID": UltrasonicStatusEnqueuing.msgID.value,
+                "msgType": UltrasonicStatusEnqueuing.msgType.value,
+                "msgValue": {'value': value}
+            })
+        if position == 'frontal':
+            queue_list['Critical'].put({
+                "Owner": ShouldHandleFrontUltrasonic.Owner.value,
+                "msgID": ShouldHandleFrontUltrasonic.msgID.value,
+                "msgType": ShouldHandleFrontUltrasonic.msgType.value,
+                "msgValue": {'value': value}
+            })
+
+

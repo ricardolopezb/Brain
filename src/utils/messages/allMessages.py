@@ -184,6 +184,11 @@ class UltrasonicStatusEnqueuing(Enum):
     msgID = 1
     msgType = "dictionary"
 
+class ShouldHandleFrontUltrasonic(Enum):
+    Queue = "General"
+    Owner = "ParkingExecutor"
+    msgID = 2
+    msgType = "dictionary"
 
 class UltrasonicStatus(Enum):
     Queue = "Warning"
