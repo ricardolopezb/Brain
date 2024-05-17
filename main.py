@@ -54,11 +54,12 @@ from src.data.CarsAndSemaphores.processCarsAndSemaphores import processCarsAndSe
 from src.data.TrafficCommunication.processTrafficCommunication import (
     processTrafficCommunication,
 )
+from src.austral.configs import set_mode
 
 # ======================================== SETTING UP ====================================
 mode = sys.argv[1]
 if mode == "speed" or mode == "SPEED" or mode == "fast" or mode == "FAST":
-    MODE = "SPEED"
+    set_mode("SPEED")
 
 allProcesses = list()
 queueList = {
