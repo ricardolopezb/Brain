@@ -15,7 +15,7 @@ LOW_SPEED = 3
 HIGH_SPEED = 30
 
 IS_BLIND = False
-MY_CAR_ID = 1
+MY_CAR_ID = 0
 EMPTY_PARKING_PERIOD = 8
 
 allow_ultrasonics_enqueue = False
