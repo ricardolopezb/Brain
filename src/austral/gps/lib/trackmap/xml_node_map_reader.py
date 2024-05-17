@@ -36,7 +36,7 @@ class XmlNodeMapReader:
                 if critical is not None:
                     nodes[node_id].is_critical = True
                 else:
-                    nodes[node_id].is_critical = False
+                    nodes[node_id].is_critical = True # change to False
 
         # Find all edges in the graph and add successors to nodes
         for edge in root.findall('.//graphml:edge', ns):

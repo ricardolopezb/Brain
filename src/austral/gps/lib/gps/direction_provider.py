@@ -30,6 +30,9 @@ class DirectionProvider:
         if not current_node.is_critical and not is_blind:
             self.previous_node = current_node # should remove this, we are not saving the previous node anymore
             return {'status': 'unmodified', 'steer': 0} # should not send anything
+        if current_node.id not in self.path:
+            print(f"NODE {current_node.id} not found in path")
+            return {'status': 'not found', 'steer': 0}
         current_node_index = self.path.index(current_node.id)
         if current_node_index + 1 == len(self.path):
             return {'status': 'reached destination', 'steer': 0}
