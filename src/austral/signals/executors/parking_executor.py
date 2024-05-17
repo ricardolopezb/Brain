@@ -23,6 +23,12 @@ class ParkingExecutor:
             "msgType": SteerMotor.msgType.value,
             "msgValue": -3
         })
+        queue_list['Critical'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": 5
+        })
         self.send_enqueue_enablement(queue_list, 'frontal', False)
         self.send_enqueue_enablement(queue_list, 'lateral', True)
         while True:
