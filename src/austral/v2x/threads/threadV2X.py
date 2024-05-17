@@ -103,6 +103,7 @@ class threadV2X(ThreadWithStop):
                     if self.is_not_within_semaphore_range(semaphore_x, semaphore_y):
                         print(f"## SEMAPHORE {semaphore_id} - ({semaphore_x}, {semaphore_y}) - NOT within range")
                         continue
+
                     if self.is_moving_away_from_semaphore(semaphore_x, semaphore_y):
                         print(f"## SEMAPHORE {semaphore_id} - ({semaphore_x}, {semaphore_y}) - MOVING AWAY")
                         continue
