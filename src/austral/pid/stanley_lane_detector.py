@@ -136,7 +136,7 @@ class StanleyLaneDetector:
 
         if average_left_line is not None and average_right_line is not None:
             self.increase_speed()
-            point_A, point_B, point_C = self.getting_error(average_left_line, average_right_line, height, width)
+            point_A, point_B, point_C = self.getting_error(image, average_left_line, average_right_line, height, width)
             vector = self.prop_constant * (point_C - point_A) + (point_A - point_B)
             if abs(vector) > self.tolerancia:
                 if vector > 0:
