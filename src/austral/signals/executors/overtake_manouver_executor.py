@@ -11,16 +11,16 @@ class OvertakeManouverExecutor:
             "Owner": SteerMotor.Owner.value,
             "msgID": SteerMotor.msgID.value,
             "msgType": SteerMotor.msgType.value,
-            "msgValue": -11
+            "msgValue": 11
         })
-        time.sleep(1.5)
+        time.sleep(4)
         queue_list['Critical'].put({
             "Owner": SteerMotor.Owner.value,
             "msgID": SteerMotor.msgID.value,
             "msgType": SteerMotor.msgType.value,
-            "msgValue": 11
+            "msgValue": -11
         })
-        time.sleep(0.75)
+        time.sleep(2)
         queue_list['Critical'].put({
             "Owner": SteerMotor.Owner.value,
             "msgID": SteerMotor.msgID.value,
@@ -32,9 +32,9 @@ class OvertakeManouverExecutor:
             "Owner": SteerMotor.Owner.value,
             "msgID": SteerMotor.msgID.value,
             "msgType": SteerMotor.msgType.value,
-            "msgValue": 11
+            "msgValue": -11
         })
-        time.sleep(1)
+        time.sleep(4)
         queue_list['Critical'].put({
             "Owner": SteerMotor.Owner.value,
             "msgID": SteerMotor.msgID.value,
