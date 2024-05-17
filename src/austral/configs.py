@@ -14,6 +14,11 @@ if len(sys.argv) > 1:
     if mode_arg == "speed" or mode_arg == "SPEED" or mode_arg == "fast" or mode_arg == "FAST":
         MODE = "SPEED"
 
+if MODE == "SPEED":
+    ENABLE_FRONTAL_ULTRASONIC = False
+    ENABLE_V2X = False
+    ENABLE_GPS = False  # To be defined
+
 
 
 

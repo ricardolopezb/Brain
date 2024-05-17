@@ -36,6 +36,7 @@ from src.utils.messages.allMessages import (
     ImuData,
     InstantConsumption,
     EnableButton, SpeedMotor, UltrasonicStatus, UltrasonicStatusEnqueuing, ShouldHandleFrontUltrasonic,
+    GeneralUltrasonicEnablement,
 )
 
 
@@ -57,6 +58,9 @@ class threadUltrasonics(ThreadWithStop):
         pipeRecvHandleFrontUltrasonic, pipeSendHandleFrontUltrasonic = Pipe(duplex=False)
         self.pipeRecvHandleFrontUltrasonic = pipeRecvHandleFrontUltrasonic
         self.pipeSendHandleFrontUltrasonic = pipeSendHandleFrontUltrasonic
+        pipeRecvGeneralUltrasonicEnablement, pipeSendGeneralUltrasonicEnablement = Pipe(duplex=False)
+        self.pipeRecvGeneralUltrasonicEnablement = pipeRecvGeneralUltrasonicEnablement
+        self.pipeSendGeneralUltrasonicEnablement = pipeSendGeneralUltrasonicEnablement
         self.buff = ""
         self.isResponse = False
         self.queuesList = queueList
@@ -65,6 +69,7 @@ class threadUltrasonics(ThreadWithStop):
         self.should_enqueue = False
         self.should_brake = False
         self.should_handle_frontal = True
+        self.is_ultrasonic_enabled = False
         self.subscribe()
 
     def subscribe(self):
@@ -84,30 +89,43 @@ class threadUltrasonics(ThreadWithStop):
                 "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendHandleFrontUltrasonic},
             }
         )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": GeneralUltrasonicEnablement.Owner.value,
+                "msgID": GeneralUltrasonicEnablement.msgID.value,
+                "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendGeneralUltrasonicEnablement},
+            }
+        )
 
     # ====================================== RUN ==========================================
     def run(self):
         while self._running:
-            ultrasonics_status = self.read_ultrasonics_state()
-            try:
-                if ultrasonics_status is None:
-                    continue
-                if self.pipeRecvHandleFrontUltrasonic.poll():
-                    should = self.pipeRecvHandleFrontUltrasonic.recv()['value']['value']
-                    self.should_handle_frontal = should
+            if self.pipeRecvGeneralUltrasonicEnablement.poll():
+                self.is_ultrasonic_enabled = self.pipeRecvGeneralUltrasonicEnablement.recv()['value']['enabled']
+                print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.is_ultrasonic_enabled)
 
-                if self.should_handle_frontal:
-                    self.handle_frontal(ultrasonics_status['front'])
+            if self.is_ultrasonic_enabled:
+                ultrasonics_status = self.read_ultrasonics_state()
+                try:
+                    if ultrasonics_status is None:
+                        continue
+                    if self.pipeRecvHandleFrontUltrasonic.poll():
+                        should = self.pipeRecvHandleFrontUltrasonic.recv()['value']['value']
+                        self.should_handle_frontal = should
 
-                if self.pipeRecvEnqueueEnablement.poll():
-                    self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value']  # xd
-                    print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.should_enqueue)
+                    if self.should_handle_frontal:
+                        self.handle_frontal(ultrasonics_status['front'])
 
-                if self.should_enqueue:
-                    self.handle_laterals(ultrasonics_status)
+                    if self.pipeRecvEnqueueEnablement.poll():
+                        self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value']  # xd
+                        print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.should_enqueue)
 
-            except UnicodeDecodeError:
-                pass
+                    if self.should_enqueue:
+                        self.handle_laterals(ultrasonics_status)
+
+                except UnicodeDecodeError:
+                    pass
 
     # ==================================== SENDING =======================================
 

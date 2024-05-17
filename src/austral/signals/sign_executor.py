@@ -9,7 +9,7 @@ from src.austral.signals.executors.highway_exit_executor import HighwayExitExecu
 from src.austral.signals.executors.parking_executor import ParkingExecutor
 from src.austral.signals.executors.roundabout_executor import RoundaboutExecutor
 from src.austral.signals.executors.stop_executor import StopExecutor
-from src.utils.messages.allMessages import SpeedMotor, Control, SteerMotor
+from src.utils.messages.allMessages import SpeedMotor, Control, SteerMotor, GeneralUltrasonicEnablement
 
 
 class SignExecutor:
@@ -32,29 +32,51 @@ class SignExecutor:
                 print(" %% FOUND A STOP, BUT NOT DOING ANYTHING")
             else:
                 StopExecutor.execute(self.queue_list)
-                self.should_handle_stop = False # To be defined, there may be other stop signs
+                self.should_handle_stop = False  # To be defined, there may be other stop signs
+
         elif self.just_seen_sign == 'parking' and sign is None:
+            self.send_ultrasonic_enablement(True)
             ParkingExecutor(pipeRecieveUltrasonics).execute(self.queue_list)
+            self.send_ultrasonic_enablement(False)
+
         elif sign == "crosswalk":
+            self.send_ultrasonic_enablement(True)
             CrosswalkExecutor.execute(self.queue_list)
+            self.send_ultrasonic_enablement(False)
+
         elif sign == 'highway_entrance':
             if self.saw_highway_entrance:
                 print("EXECUTING HIGHWAY EXIT INSTEAD OF ENTRANCE")
                 HighwayExitExecutor.execute(self.queue_list)
+                self.send_ultrasonic_enablement(False)
                 self.should_handle_stop = True
             else:
                 self.saw_highway_entrance = True
+                self.send_ultrasonic_enablement(True)
                 HighwayEntranceExecutor.execute(self.queue_list)
+
         elif sign == 'highway_exit':
             HighwayExitExecutor.execute(self.queue_list)
+            self.send_ultrasonic_enablement(False)
             self.should_handle_stop = True
+
         elif sign == 'roundabout':
             RoundaboutExecutor.execute(self.queue_list)
+
         elif sign == "yield":
             print("FOUND A YIELD")
+
         print("ENTERED SIGNALS WITH SIGN:", sign)
         print("SETTING JUST SEEN SIGN TO", sign)
         self.just_seen_sign = sign
+
+    def send_ultrasonic_enablement(self, enable):
+        self.queue_list['Critical'].put({
+            "Owner": GeneralUltrasonicEnablement.Owner.value,
+            "msgID": GeneralUltrasonicEnablement.msgID.value,
+            "msgType": GeneralUltrasonicEnablement.msgType.value,
+            "msgValue": {'enabled': enable}
+        })
 
     def send_parking_sequence(self):
         if self.parking_seen:
