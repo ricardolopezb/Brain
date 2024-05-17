@@ -22,15 +22,18 @@ class XmlNodeMapReader:
             # Find x and y coordinates of the node
             x = None
             y = None
+            critical = None
             for data in node.findall('.//graphml:data', ns):
                 if data.attrib['key'] == 'd0':
                     x = float(data.text)
                 elif data.attrib['key'] == 'd1':
                     y = float(data.text)
+                elif data.attrib['key'] == 'd3':
+                    critical = data.text
 
             if x is not None and y is not None:
                 nodes[node_id] = Node(node_id, x, y)
-                if node_id in critical_node_ids:
+                if critical is not None:
                     nodes[node_id].is_critical = True
 
         # Find all edges in the graph and add successors to nodes
