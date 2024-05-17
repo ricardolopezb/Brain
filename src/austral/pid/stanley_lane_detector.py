@@ -5,7 +5,7 @@ import numpy as np
 import math
 
 from src.austral.configs import PID_TOLERANCE, PID_KP, PID_KI, PID_KD, LOW_SPEED, BASE_SPEED, THRESHOLD, ROI, KERNEL, \
-    NECESSARY_VOTES, NEW_VOTES_LOGIC_ENABLED, set_new_votes_logic, get_new_votes_logic, PROP_CONSTANT
+    NECESSARY_VOTES, NEW_VOTES_LOGIC_ENABLED, set_new_votes_logic, get_new_votes_logic, PROP_CONSTANT, HIGH_SPEED
 from src.utils.messages.allMessages import SpeedMotor
 
 
@@ -70,6 +70,7 @@ class StanleyLaneDetector:
         self.should_decrease_votes = False
         self.first_time_in_votes_logic = True
         self.new_votes_logic_start_time = 0
+        self.last_three_steering_angles = []
 
     def follow_left_line(self, line):
         x1, y1, x2, y2 = line[0]
@@ -120,7 +121,7 @@ class StanleyLaneDetector:
             "msgValue": LOW_SPEED
         })
 
-    def increase_speed(self):
+    def normalize_speed(self):
         self.lowered_speed = False
         self.queue_list['Warning'].put({
             "Owner": SpeedMotor.Owner.value,
@@ -129,13 +130,19 @@ class StanleyLaneDetector:
             "msgValue": BASE_SPEED
         })
 
+    def increase_speed(self):
+        self.queue_list['Warning'].put({
+            "Owner": SpeedMotor.Owner.value,
+            "msgID": SpeedMotor.msgID.value,
+            "msgType": SpeedMotor.msgType.value,
+            "msgValue": HIGH_SPEED
+        })
 
     def get_steering_angle(self, image):
-
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
-
-        if average_left_line is not None and average_right_line is not None:
-            self.increase_speed()
+        both_lines_are_present = average_left_line is not None and average_right_line is not None
+        if both_lines_are_present:
+            # self.normalize_speed()
             point_A, point_B, point_C = self.getting_error(image, average_left_line, average_right_line, height, width)
             vector = self.prop_constant * (point_C - point_A) + (point_A - point_B)
             if abs(vector) > self.tolerancia:
@@ -151,7 +158,7 @@ class StanleyLaneDetector:
             # cv2.circle(image, (point_C, height), 5, (0, 0, 255), -1)
 
         elif average_left_line is not None:
-            self.lower_speed()
+            # self.lower_speed()
             x1_left, y1_left, x2_left, y2_left = average_left_line[0]
             point_A = int(x1_left + (height - y1_left) * (x2_left - x1_left) / (y2_left - y1_left))
             point_B = width / 2
@@ -165,7 +172,7 @@ class StanleyLaneDetector:
             # cv2.circle(image, (point_C, height), 5, (0, 0, 255), -1)
 
         elif average_right_line is not None:
-            self.lower_speed()
+            # self.lower_speed()
             x1_right, y1_right, x2_right, y2_right = average_right_line[0]
             point_A = int(x1_right + (height - y1_right) * (x2_right - x1_right) / (y2_right - y1_right))
             point_B = width / 2
@@ -195,8 +202,24 @@ class StanleyLaneDetector:
         else:
             steering_angle = 22
         self.prev_steering_angle = steering_angle
+        self.check_last_three_steering_angles(steering_angle, average_right_line, average_left_line)
         return steering_angle
 
+    def check_last_three_steering_angles(self, steering_angle, average_right_line, average_left_line):
+        if len(self.last_three_steering_angles) < 3:
+            self.last_three_steering_angles.append(steering_angle)
+            return
+        else:
+            if average_right_line is None or average_left_line is None:
+                self.lower_speed()
+            elif steering_angle != -3:
+                self.normalize_speed()
+            elif steering_angle == -3 and all(
+                    last_angle == steering_angle for last_angle in self.last_three_steering_angles):
+                self.increase_speed()
+
+            self.last_three_steering_angles.pop(0)
+            self.last_three_steering_angles.append(steering_angle)
 
     def is_detecting_both_lines(self, average_left_line, average_right_line):
         return average_left_line is not None and average_right_line is not None
@@ -321,8 +344,6 @@ class StanleyLaneDetector:
 
         return point_A, point_B, point_C
 
-
-
     # OLD
     # def getting_error(self, image, average_left_line, average_right_line, height, width):
     #     x1_left, y1_left, x2_left, y2_left = average_left_line[0]
@@ -434,7 +455,8 @@ class StanleyLaneDetector:
         y3 = 230
         x4 = 145
 
-        roi_vertices = np.array([[(x1, y1), (x2, y1), (x2, y2), (x3, y2), (x3, y3), (x4, y3), (x4, y2), (x1, y2)]], dtype=np.int32)
+        roi_vertices = np.array([[(x1, y1), (x2, y1), (x2, y2), (x3, y2), (x3, y3), (x4, y3), (x4, y2), (x1, y2)]],
+                                dtype=np.int32)
         # image = self.conditioning(image, 5, 0.9)
         mask = np.zeros_like(image)
         cv2.fillPoly(mask, roi_vertices, (255, 255, 255))
