@@ -74,7 +74,9 @@ class threadUltrasonics(ThreadWithStop):
                 "Owner": UltrasonicStatusEnqueuing.Owner.value,
                 "msgID": UltrasonicStatusEnqueuing.msgID.value,
                 "To": {"receiver": "threadUltrasonic", "pipe": self.pipeSendEnqueueEnablement},
-            },
+            }
+        )
+        self.queuesList["Config"].put(
             {
                 "Subscribe/Unsubscribe": "subscribe",
                 "Owner": ShouldHandleFrontUltrasonic.Owner.value,
@@ -98,7 +100,7 @@ class threadUltrasonics(ThreadWithStop):
                     self.handle_frontal(ultrasonics_status['front'])
 
                 if self.pipeRecvEnqueueEnablement.poll():
-                    self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value'] #xd
+                    self.should_enqueue = self.pipeRecvEnqueueEnablement.recv()['value']['value']  # xd
                     print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.should_enqueue)
 
                 if self.should_enqueue:
