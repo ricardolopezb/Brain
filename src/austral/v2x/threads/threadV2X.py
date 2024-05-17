@@ -42,6 +42,8 @@ class threadV2X(ThreadWithStop):
         self.my_previous_coordinates = (0, 0)
         self.my_current_coordinates = (0, 0)
 
+        self.saw_semaphore_before = False
+
         self.last_time_semaphore_action_taken = time.time()
 
         self.logging_filename = f'{int(time.time())}.txt'
@@ -89,11 +91,14 @@ class threadV2X(ThreadWithStop):
                         self.my_previous_coordinates = self.my_current_coordinates
                         self.my_current_coordinates = (x, y)
 
-                within_semaphore_cooldown = time.time() - self.last_time_semaphore_action_taken >= V2X_SEMAPHORE_COOLDOWN
+                in_semaphore_cooldown = time.time() - self.last_time_semaphore_action_taken <= V2X_SEMAPHORE_COOLDOWN
                 print('SEMAPHORE POLL', self.pipeRecvSemaphores.poll())
-                print('SEMAPHORE COOLDOWN', within_semaphore_cooldown)
-                if self.pipeRecvSemaphores.poll() and within_semaphore_cooldown:
+                print('SEMAPHORE COOLDOWN', in_semaphore_cooldown)
+                if self.pipeRecvSemaphores.poll():
                     message = self.pipeRecvSemaphores.recv()
+                    if self.saw_semaphore_before and in_semaphore_cooldown:
+                        return
+
                     print(f"Received SEMAPHORES -> {message}")
                     semaphore_x = float(message['value']['x'])
                     semaphore_y = float(message['value']['y'])
@@ -112,7 +117,7 @@ class threadV2X(ThreadWithStop):
                         print("Found RED LIGHT, braking")
                         self.brake()
                     self.last_time_semaphore_action_taken = time.time()
-
+                    self.saw_semaphore_before = True
             except Exception as e:
                 print(e)
 
