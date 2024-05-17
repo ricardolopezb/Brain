@@ -56,9 +56,15 @@ class SignExecutor:
                 HighwayEntranceExecutor.execute(self.queue_list)
 
         elif sign == 'highway_exit':
-            HighwayExitExecutor.execute(self.queue_list)
-            self.send_ultrasonic_enablement(False)
-            self.should_handle_stop = True
+            if not self.saw_highway_entrance:
+                print("EXECUTING HIGHWAY ENTRANCE INSTEAD OF EXIT")
+                self.saw_highway_entrance = True
+                self.send_ultrasonic_enablement(True)
+                HighwayEntranceExecutor.execute(self.queue_list)
+            else:
+                HighwayExitExecutor.execute(self.queue_list)
+                self.send_ultrasonic_enablement(False)
+                self.should_handle_stop = True
 
         elif sign == 'roundabout':
             RoundaboutExecutor.execute(self.queue_list)
