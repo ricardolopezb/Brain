@@ -13,7 +13,7 @@ BASE_SPEED = 10
 LOW_SPEED = 6
 
 IS_BLIND = False
-MY_CAR_ID = 5
+MY_CAR_ID = 1
 EMPTY_PARKING_PERIOD = 8
 
 allow_ultrasonics_enqueue = False
