@@ -89,7 +89,10 @@ class threadV2X(ThreadWithStop):
                         self.my_previous_coordinates = self.my_current_coordinates
                         self.my_current_coordinates = (x, y)
 
-                if self.pipeRecvSemaphores.poll() and time.time() - self.last_time_semaphore_action_taken >= V2X_SEMAPHORE_COOLDOWN:
+                within_semaphore_cooldown = time.time() - self.last_time_semaphore_action_taken >= V2X_SEMAPHORE_COOLDOWN
+                print('SEMAPHORE POLL', self.pipeRecvSemaphores.poll())
+                print('SEMAPHORE COOLDOWN', within_semaphore_cooldown)
+                if self.pipeRecvSemaphores.poll() and within_semaphore_cooldown:
                     message = self.pipeRecvSemaphores.recv()
                     print(f"Received SEMAPHORES -> {message}")
                     semaphore_x = float(message['value']['x'])
