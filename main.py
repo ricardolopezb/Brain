@@ -56,6 +56,10 @@ from src.data.TrafficCommunication.processTrafficCommunication import (
 )
 
 # ======================================== SETTING UP ====================================
+mode = sys.argv[1]
+if mode == "speed" or mode == "SPEED" or mode == "fast" or mode == "FAST":
+    MODE = "SPEED"
+
 allProcesses = list()
 queueList = {
     "Critical": Queue(),

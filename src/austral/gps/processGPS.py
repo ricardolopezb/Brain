@@ -1,6 +1,6 @@
 # Copyright (c) 2019, Bosch Engineering Center Cluj and BFMC organizers
 # All rights reserved.
-from src.austral.configs import TARGET_COORDINATES
+from src.austral.configs import TARGET_COORDINATES, MODE
 from src.austral.gps.lib.gps.direction_provider import DirectionProvider
 from src.austral.gps.lib.trackmap.track_map import TrackMap
 from src.austral.gps.lib.trackmap.xml_node_map_reader import XmlNodeMapReader
@@ -52,6 +52,7 @@ class processGPS(WorkerProcess):
         self.track_mapping = TrackMap(XmlNodeMapReader.read("src/austral/gps/resources/xml_node_map.xml"))
         self.direction_provider = DirectionProvider(self.track_mapping)
         self.queuesList = queueList
+        print("MODE FROM GPS", MODE)
         super(processGPS, self).__init__(self.queuesList)
 
     # ===================================== STOP ==========================================
