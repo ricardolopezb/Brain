@@ -81,8 +81,8 @@ class threadV2X(ThreadWithStop):
                 if self.pipeRecvCars.poll():
                     message = self.pipeRecvCars.recv()
                     # print(f"Received CARS -> {message}")
-                    x = message['value']['x']
-                    y = message['value']['y']
+                    x = float(message['value']['x'])
+                    y = float(message['value']['y'])
                     if message['value']['id'] == self.my_car_id:
                         print("RECEIVED MY CAR COORDINATES IN Cars EVENT", message['value'])
                         self.log_my_coordinates(x, y)
@@ -92,8 +92,8 @@ class threadV2X(ThreadWithStop):
                 if self.pipeRecvSemaphores.poll() and time.time() - self.last_time_semaphore_action_taken >= V2X_SEMAPHORE_COOLDOWN:
                     message = self.pipeRecvSemaphores.recv()
                     print(f"Received SEMAPHORES -> {message}")
-                    semaphore_x = message['value']['x']
-                    semaphore_y = message['value']['y']
+                    semaphore_x = float(message['value']['x'])
+                    semaphore_y = float(message['value']['y'])
 
                     if self.is_not_within_semaphore_range(semaphore_x, semaphore_y):
                         print("## NO SEMAPHORE within range")
@@ -137,7 +137,7 @@ class threadV2X(ThreadWithStop):
         })
 
     def calculate_distance(self, target_x, target_y, base_x, base_y):
-        return ((target_x - base_x) ** 2 + (target_y - base_y) ** 2) ** 0.5
+        return ((float(target_x) - float(base_x)) ** 2 + (float(target_y) - float(base_y)) ** 2) ** 0.5
 
     def log_my_coordinates(self, x, y):
         mode = 'a' if os.path.exists(self.logging_filename) else 'w'

@@ -140,8 +140,8 @@ class StanleyLaneDetector:
 
     def get_steering_angle(self, image):
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
-        both_lines_are_present = average_left_line is not None and average_right_line is not None
-        if both_lines_are_present:
+
+        if average_left_line is not None and average_right_line is not None:
             # self.normalize_speed()
             point_A, point_B, point_C = self.getting_error(image, average_left_line, average_right_line, height, width)
             vector = self.prop_constant * (point_C - point_A) + (point_A - point_B)
@@ -214,8 +214,7 @@ class StanleyLaneDetector:
                 self.lower_speed()
             elif steering_angle != -3:
                 self.normalize_speed()
-            elif steering_angle == -3 and all(
-                    last_angle == steering_angle for last_angle in self.last_three_steering_angles):
+            elif steering_angle == -3 and all(last_angle == steering_angle for last_angle in self.last_three_steering_angles):
                 self.increase_speed()
 
             self.last_three_steering_angles.pop(0)
