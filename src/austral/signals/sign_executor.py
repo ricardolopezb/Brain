@@ -2,7 +2,7 @@ import time
 
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import BASE_SPEED, LOW_SPEED, CROSSWALK_EXECUTION_DURATION, STOP_DURATION, PARKING_SPEED, \
-    set_new_votes_logic
+    set_new_votes_logic, MODE
 from src.austral.signals.executors.crosswalk_executor import CrosswalkExecutor
 from src.austral.signals.executors.highway_entrance_executor import HighwayEntranceExecutor
 from src.austral.signals.executors.highway_exit_executor import HighwayExitExecutor
@@ -56,7 +56,7 @@ class SignExecutor:
                 HighwayEntranceExecutor.execute(self.queue_list)
 
         elif sign == 'highway_exit':
-            if not self.saw_highway_entrance:
+            if not self.saw_highway_entrance and MODE != 'SPEED':
                 print("EXECUTING HIGHWAY ENTRANCE INSTEAD OF EXIT")
                 self.saw_highway_entrance = True
                 self.send_ultrasonic_enablement(True)
