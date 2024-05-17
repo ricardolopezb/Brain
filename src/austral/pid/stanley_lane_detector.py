@@ -130,7 +130,7 @@ class StanleyLaneDetector:
         })
 
 
-    def get_steering_angle(self, image, prev_steering_angle):
+    def get_steering_angle(self, image):
 
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
@@ -179,7 +179,7 @@ class StanleyLaneDetector:
             # cv2.circle(image, (point_C, height), 5, (0, 0, 255), -1)
 
         else:
-            steering_angle = prev_steering_angle
+            steering_angle = self.prev_steering_angle
 
         if steering_angle < 14:
             if steering_angle < 7:
@@ -194,7 +194,7 @@ class StanleyLaneDetector:
                 steering_angle = 11
         else:
             steering_angle = 22
-
+        self.prev_steering_angle = steering_angle
         return steering_angle
 
 
