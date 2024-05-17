@@ -20,6 +20,7 @@ class SignExecutor:
         self.parking_seen = False
         self.crosswalk_seen = False
         self.stop_seen = False
+        self.should_handle_stop = False
 
     def execute(self, sign, pipeRecieveUltrasonics):
         if sign == self.just_seen_sign:
@@ -27,8 +28,11 @@ class SignExecutor:
         # if self.just_seen_sign == 'stop' and sign is None:
         #     self.send_stop_sequence()
         if sign == 'stop':
-            print(" %% FOUND A STOP, BUT NOT DOING ANYTHING")
-            #StopExecutor.execute(self.queue_list)
+            if not self.should_handle_stop:
+                print(" %% FOUND A STOP, BUT NOT DOING ANYTHING")
+            else:
+                StopExecutor.execute(self.queue_list)
+                self.should_handle_stop = False # To be defined, there may be other stop signs
         elif self.just_seen_sign == 'parking' and sign is None:
             ParkingExecutor(pipeRecieveUltrasonics).execute(self.queue_list)
         elif sign == "crosswalk":
@@ -37,11 +41,13 @@ class SignExecutor:
             if self.saw_highway_entrance:
                 print("EXECUTING HIGHWAY EXIT INSTEAD OF ENTRANCE")
                 HighwayExitExecutor.execute(self.queue_list)
+                self.should_handle_stop = True
             else:
                 self.saw_highway_entrance = True
                 HighwayEntranceExecutor.execute(self.queue_list)
         elif sign == 'highway_exit':
             HighwayExitExecutor.execute(self.queue_list)
+            self.should_handle_stop = True
         elif sign == 'roundabout':
             RoundaboutExecutor.execute(self.queue_list)
         elif sign == "yield":
