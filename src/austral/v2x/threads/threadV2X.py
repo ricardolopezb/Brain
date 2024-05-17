@@ -97,7 +97,7 @@ class threadV2X(ThreadWithStop):
                 if self.pipeRecvSemaphores.poll():
                     message = self.pipeRecvSemaphores.recv()
                     if self.saw_semaphore_before and in_semaphore_cooldown:
-                        return
+                        continue
 
                     print(f"Received SEMAPHORES -> {message}")
                     semaphore_x = float(message['value']['x'])
