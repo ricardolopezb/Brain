@@ -40,6 +40,7 @@ from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENA
 from src.austral.pid.marcos_lane_detector import MarcosLaneDetector
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
+from src.austral.pid.stanley_lane_detector import StanleyLaneDetector
 from src.austral.signals.color_detector import ColorDetector
 from src.austral.signals.mobilenet import MobilenetSignDetector
 from src.austral.signals.model_detector import ModelDetector
@@ -90,7 +91,8 @@ class threadCamera(ThreadWithStop):
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
-        self.lane_detector = MarcosLaneDetector(queuesList)
+        #self.lane_detector = MarcosLaneDetector(queuesList)
+        self.lane_detector = StanleyLaneDetector(queuesList)
         # self.sign_detector = ModelDetector()
         self.model_service = ModelRequestSender()
         self.sign_executor = SignExecutor(queuesList)
