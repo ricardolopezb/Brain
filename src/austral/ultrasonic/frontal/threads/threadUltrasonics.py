@@ -78,7 +78,7 @@ class threadUltrasonics(ThreadWithStop):
         self.should_enqueue = False
         self.should_brake = False
         self.should_handle_frontal = True
-        self.is_ultrasonic_enabled = False
+        self.is_ultrasonic_enabled = True
         self.is_in_highway = False
         self.subscribe()
 
@@ -120,8 +120,9 @@ class threadUltrasonics(ThreadWithStop):
     def run(self):
         while self._running:
             if self.pipeRecvGeneralUltrasonicEnablement.poll():
-                self.is_ultrasonic_enabled = self.pipeRecvGeneralUltrasonicEnablement.recv()['value']['enabled']
-                print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.is_ultrasonic_enabled)
+                pass
+                #self.is_ultrasonic_enabled = self.pipeRecvGeneralUltrasonicEnablement.recv()['value']['enabled']
+                #print("RECEIVED ENABLEMENT IN ULTRASONIC WITH VALUE", self.is_ultrasonic_enabled)
 
             if self.pipeRecvIsInHighway.poll():
                 self.is_in_highway = self.pipeRecvIsInHighway.recv()['value']['isInHighway']
@@ -134,7 +135,7 @@ class threadUltrasonics(ThreadWithStop):
                         continue
                     if self.pipeRecvHandleFrontUltrasonic.poll():
                         should = self.pipeRecvHandleFrontUltrasonic.recv()['value']['value']
-                        self.should_handle_frontal = should
+                        self.should_handle_frontal = True  # it's supposed to be always on
 
                     if self.should_handle_frontal:
                         self.handle_frontal(ultrasonics_status['front'])

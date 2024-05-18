@@ -126,10 +126,10 @@ class threadCamera(ThreadWithStop):
         self.signs_period = 1 / SIGNS_FPS  # in seconds
         self.dataset_image_period = DATASET_IMAGE_PERIOD  # in seconds
 
-        self.lanes_enabled = True
-        self.signs_enabled = True
+        self.lanes_enabled = ENABLE_LANE_DETECTION
+        self.signs_enabled = ENABLE_SIGN_DETECTION
         self.semaphores_enabled = False
-
+        self.possible_signs_in_quadrant = []
         self.frame = None
         self.last_sent_steering_value = -1000
 
@@ -247,7 +247,8 @@ class threadCamera(ThreadWithStop):
                 #print(f"Lanes enabled: {self.lanes_enabled}")
 
             if self.pipeRecvEnableSignDetection.poll():
-                self.signs_enabled = self.pipeRecvEnableSignDetection.recv()["value"]
+                self.signs_enabled = self.pipeRecvEnableSignDetection.recv()["value"]['enable']
+                self.possible_signs_in_quadrant = self.pipeRecvEnableSignDetection.recv()["value"]['possible_signs']
                 #print(f"Signs enabled: {self.signs_enabled}")
 
             if self.pipeRecvEnableSemaphoreDetection.poll():
@@ -276,7 +277,7 @@ class threadCamera(ThreadWithStop):
 
                 if self.signs_enabled:
                     _, signs_encoded_img = cv2.imencode(".jpg", request)
-                    self.detect_signs(current_epoch, request, signs_encoded_img, self.pipeRecvUltrasonics)
+                    self.detect_signs(current_epoch, request, signs_encoded_img, self.pipeRecvUltrasonics, self.possible_signs_in_quadrant)
 
                 if self.lanes_enabled:
                     self.detect_lanes(current_epoch, request)
@@ -326,11 +327,13 @@ class threadCamera(ThreadWithStop):
             print(f"Saving image at {current_epoch}, SAVED:", saved)
             self.last_epoch_image = self.last_epoch_image + self.dataset_image_period
 
-    def detect_signs(self, current_epoch, request, encoded_img, pipeRecvUltrasonics):
+    def detect_signs(self, current_epoch, request, encoded_img, pipeRecvUltrasonics, possible_signs):
         if current_epoch - self.last_epoch_signs > self.signs_period:
             self.last_epoch_signs = self.last_epoch_signs + self.signs_period
             mask_frame, found_color = self.color_detector.detect_color(request)
             detected_sign = self.mobilenet.get_sign_with_highest_score(request)
+            if detected_sign not in possible_signs:
+                return
             print(f"************* Found sign: {detected_sign}")
             self.sign_executor.execute(detected_sign, pipeRecvUltrasonics)
 

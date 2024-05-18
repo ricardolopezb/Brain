@@ -250,7 +250,7 @@ class EnableSignDetection(Enum):
     Queue = "General"
     Owner = "globalExecutor"
     msgID = 2
-    msgType = "Boolean"
+    msgType = "dictionary"
 
 
 class EnableSemaphoreDetection(Enum):

@@ -13,12 +13,6 @@ class HighwayExitExecutor:
             "msgValue": {"isInHighway": False}
         })
         queue_list['Critical'].put({
-            "Owner": ShouldHandleFrontUltrasonic.Owner.value,
-            "msgID": ShouldHandleFrontUltrasonic.msgID.value,
-            "msgType": ShouldHandleFrontUltrasonic.msgType.value,
-            "msgValue": {'value': False}
-        })
-        queue_list['Critical'].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
