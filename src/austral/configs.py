@@ -29,12 +29,6 @@ if MODE == "SPEED":
     LOW_SPEED = 6
     HIGH_SPEED = 30
 
-
-
-
-
-
-
 IS_BLIND = False
 MY_CAR_ID = 0
 EMPTY_PARKING_PERIOD = 8
