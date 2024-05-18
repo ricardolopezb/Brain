@@ -138,6 +138,24 @@ class StanleyLaneDetector:
             "msgValue": HIGH_SPEED
         })
 
+    def missing_markings(self, p0, p1):
+        avg_line = [[0, 270], [0, 80.5]]
+        slope = (p0[1] - p1[1]) / (p0[0] - p1[0])
+        if slope == 0:
+            slope = 0.001
+        root = p0[0] - (p0[1] - 270) / slope
+        key = p0[0] - (p0[1] - 80.5) / slope
+        if slope < 0:
+            avg_line[0][0] = (512 - root) / 2
+        else:
+            avg_line[0][0] = root / 2
+        avg_line[1][0] = key - (root - avg_line[0][0]) / 6.28
+
+        avg_line[0][0] = int(avg_line[0][0])
+        avg_line[1][0] = int(avg_line[1][0])
+
+        return avg_line
+
     def get_steering_angle(self, image):
         average_left_line, average_right_line, height, width, canny_image = self.image_processing(image)
 
@@ -160,29 +178,67 @@ class StanleyLaneDetector:
         elif average_left_line is not None:
             # self.lower_speed()
             x1_left, y1_left, x2_left, y2_left = average_left_line[0]
-            point_A = int(x1_left + (height - y1_left) * (x2_left - x1_left) / (y2_left - y1_left))
+            p0 = [x1_left, y1_left]
+            p1 = [x2_left, y2_left]
+
+            A = self.missing_markings(p0, p1)
+            point_A = A[0][0]
             point_B = width / 2
-            point_C = int(x1_left + (0 - y1_left) * (x2_left - x1_left) / (y2_left - y1_left))
+            point_C = A[0][0] + (-A[0][1]) * (A[1][0] - A[0][0]) / (A[1][1] - A[0][1])
             if point_C > point_B and abs(point_C - point_A) > self.tolerancia:
                 steering_angle = self.kp * abs(point_C - point_A)
             else:
                 steering_angle = -3
 
-                # cv2.circle(image, (point_B, height), 5, (0, 255, 0), -1)
+            print("Pixeles", abs(point_C - point_A))
+            print(A)
+            print(point_C)
+            Sigma = [[A[0][0], A[0][1], A[1][0], A[1][1]]]
+            self.line_drawing(image, Sigma, height=height)
+
+            # parte de Bata
+            # point_A = int(x1_left + (height - y1_left) * (x2_left - x1_left) / (y2_left - y1_left))
+            # point_B = width / 2
+            # point_C = int(x1_left + (0 - y1_left) * (x2_left - x1_left) / (y2_left - y1_left))
+            # if point_C > point_B and abs(point_C - point_A) > self.tolerancia:
+            #     steering_angle = self.kp * abs(point_C - point_A)
+            # else:
+            #     steering_angle = -3
+
+            # cv2.circle(image, (point_B, height), 5, (0, 255, 0), -1)
             # cv2.circle(image, (point_C, height), 5, (0, 0, 255), -1)
 
         elif average_right_line is not None:
             # self.lower_speed()
             x1_right, y1_right, x2_right, y2_right = average_right_line[0]
-            point_A = int(x1_right + (height - y1_right) * (x2_right - x1_right) / (y2_right - y1_right))
+
+            p0 = [x1_right, y1_right]
+            p1 = [x2_right, y2_right]
+            A = self.missing_markings(p0, p1)
+            point_A = A[0][0]
             point_B = width / 2
-            point_C = int(x1_right + (0 - y1_right) * (x2_right - x1_right) / (y2_right - y1_right))
+            point_C = A[1][0] + (-A[1][1]) * (A[1][0] - A[0][0]) / (A[1][1] - A[0][1])
             if point_C < point_B and abs(point_C - point_A) > self.tolerancia:
                 steering_angle = (-1) * self.kp * abs(point_C - point_A)
             else:
                 steering_angle = -3
 
-                # cv2.circle(image, (point_B, height), 5, (0, 255, 0), -1)
+            print("Pixeles", abs(point_C - point_A))
+            print(A)
+            print(point_C)
+            Sigma = [[A[0][0], A[0][1], A[1][0], A[1][1]]]
+            self.line_drawing(image, Sigma, height=height)
+
+            # Parte de Bata
+            # point_A = int(x1_right + (height - y1_right) * (x2_right - x1_right) / (y2_right - y1_right))
+            # point_B = width / 2
+            # point_C = int(x1_right + (0 - y1_right) * (x2_right - x1_right) / (y2_right - y1_right))
+            # if point_C < point_B and abs(point_C - point_A) > self.tolerancia:
+            #     steering_angle = (-1) * self.kp * abs(point_C - point_A)
+            # else:
+            #     steering_angle = -3
+
+            # cv2.circle(image, (point_B, height), 5, (0, 255, 0), -1)
             # cv2.circle(image, (point_C, height), 5, (0, 0, 255), -1)
 
         else:
@@ -214,7 +270,8 @@ class StanleyLaneDetector:
                 self.lower_speed()
             elif steering_angle != -3:
                 self.normalize_speed()
-            elif steering_angle == -3 and all(last_angle == steering_angle for last_angle in self.last_three_steering_angles):
+            elif steering_angle == -3 and all(
+                    last_angle == steering_angle for last_angle in self.last_three_steering_angles):
                 self.increase_speed()
 
             self.last_three_steering_angles.pop(0)
