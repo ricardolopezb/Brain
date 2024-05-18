@@ -53,7 +53,7 @@ from src.utils.messages.allMessages import (
     Recording,
     Record,
     Config,
-    SteeringCalculation, UltrasonicStatus
+    SteeringCalculation, UltrasonicStatus, EnableLaneDetection, EnableSemaphoreDetection, EnableSignDetection
 )
 from src.templates.threadwithstop import ThreadWithStop
 
@@ -80,12 +80,27 @@ class threadCamera(ThreadWithStop):
         self.debugger = debugger
         self.frame_rate = 5
         self.recording = False
+
         pipeRecvRecord, pipeSendRecord = Pipe(duplex=False)
         self.pipeRecvRecord = pipeRecvRecord
         self.pipeSendRecord = pipeSendRecord
+
         pipeRecvUltrasonics, pipeSendUltrasonics = Pipe(duplex=False)
         self.pipeRecvUltrasonics = pipeRecvUltrasonics
         self.pipeSendUltrasonics = pipeSendUltrasonics
+
+        pipeRecvEnableLaneDetection, pipeSendEnableLaneDetection = Pipe(duplex=False)
+        self.pipeRecvEnableLaneDetection = pipeRecvEnableLaneDetection
+        self.pipeSendEnableLaneDetection = pipeSendEnableLaneDetection
+
+        pipeRecvEnableSignDetection, pipeSendEnableSignDetection = Pipe(duplex=False)
+        self.pipeRecvEnableSignDetection = pipeRecvEnableSignDetection
+        self.pipeSendEnableSignDetection = pipeSendEnableSignDetection
+
+        pipeRecvEnableSemaphoreDetection, pipeSendEnableSemaphoreDetection = Pipe(duplex=False)
+        self.pipeRecvEnableSemaphoreDetection = pipeRecvEnableSemaphoreDetection
+        self.pipeSendEnableSemaphoreDetection = pipeSendEnableSemaphoreDetection
+
         self.video_writer = ""
         self.subscribe()
         self._init_camera()
@@ -110,6 +125,10 @@ class threadCamera(ThreadWithStop):
         self.lanes_period = 1 / LANES_FPS  # in seconds
         self.signs_period = 1 / SIGNS_FPS  # in seconds
         self.dataset_image_period = DATASET_IMAGE_PERIOD  # in seconds
+
+        self.lanes_enabled = True
+        self.signs_enabled = True
+        self.semaphores_enabled = True
 
         self.frame = None
         self.last_sent_steering_value = -1000
@@ -138,6 +157,30 @@ class threadCamera(ThreadWithStop):
                 "Owner": UltrasonicStatus.Owner.value,
                 "msgID": UltrasonicStatus.msgID.value,
                 "To": {"receiver": "threadCamera", "pipe": self.pipeSendUltrasonics},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": EnableLaneDetection.Owner.value,
+                "msgID": EnableLaneDetection.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendEnableLaneDetection},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": EnableSignDetection.Owner.value,
+                "msgID": EnableSignDetection.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendEnableSignDetection},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": EnableSemaphoreDetection.Owner.value,
+                "msgID": EnableSemaphoreDetection.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendEnableSemaphoreDetection},
             }
         )
 
@@ -198,6 +241,19 @@ class threadCamera(ThreadWithStop):
                         )
             except Exception as e:
                 print(e)
+
+            if self.pipeRecvEnableLaneDetection.poll():
+                self.lanes_enabled = self.pipeRecvEnableLaneDetection.recv()["value"]
+                #print(f"Lanes enabled: {self.lanes_enabled}")
+
+            if self.pipeRecvEnableSignDetection.poll():
+                self.signs_enabled = self.pipeRecvEnableSignDetection.recv()["value"]
+                #print(f"Signs enabled: {self.signs_enabled}")
+
+            if self.pipeRecvEnableSemaphoreDetection.poll():
+                self.semaphores_enabled = self.pipeRecvEnableSemaphoreDetection.recv()["value"]
+                #print(f"Semaphores enabled: {self.semaphores_enabled}")
+
             if self.debugger == True:
                 self.logger.warning("getting image")
             request = self.camera.capture_array("main")
@@ -218,12 +274,15 @@ class threadCamera(ThreadWithStop):
                 #     var = not var
                 #     continue
 
-                if ENABLE_SIGN_DETECTION:
+                if self.signs_enabled:
                     _, signs_encoded_img = cv2.imencode(".jpg", request)
                     self.detect_signs(current_epoch, request, signs_encoded_img, self.pipeRecvUltrasonics)
 
-                if ENABLE_LANE_DETECTION:
+                if self.lanes_enabled:
                     self.detect_lanes(current_epoch, request)
+
+                if self.semaphores_enabled:
+                    pass
 
                 request2 = self.camera.capture_array(
                     "lores"

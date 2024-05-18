@@ -237,3 +237,24 @@ class SteeringCalculation(Enum):
     Owner = "threadCamera"
     msgID = 1
     msgType = "dictionary"
+
+
+class EnableLaneDetection(Enum):
+    Queue = "General"
+    Owner = "globalExecutor"
+    msgID = 1
+    msgType = "Boolean"
+
+
+class EnableSignDetection(Enum):
+    Queue = "General"
+    Owner = "globalExecutor"
+    msgID = 2
+    msgType = "Boolean"
+
+
+class EnableSemaphoreDetection(Enum):
+    Queue = "General"
+    Owner = "globalExecutor"
+    msgID = 3
+    msgType = "Boolean"
