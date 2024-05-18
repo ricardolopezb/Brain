@@ -73,7 +73,7 @@ class threadGPS(ThreadWithStop):
             if self.first_time:
                 self.first_time = False
                 # self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
-                self.direction_provider.set_route((0.33, 10.81), TARGET_COORDINATES) # Starting in node 443
+                #self.direction_provider.set_route((0.33, 10.81), TARGET_COORDINATES) # Starting in node 443
                 #self.direction_provider.set_route((3.79, 6.88), TARGET_COORDINATES) # Starting in node 150
                 continue
             if self.pipeRecvLocation.poll():
@@ -87,9 +87,9 @@ class threadGPS(ThreadWithStop):
                 #     self.direction_provider.set_route((0.74, 5.73), TARGET_COORDINATES)
                 #     continue
 
-                angle_to_steer = self.direction_provider.get_direction(current_x, current_y, IS_BLIND)
-                print("ANGLE TO STEER:", angle_to_steer)
-                self.send_steering(angle_to_steer['steer'])
+                #angle_to_steer = self.direction_provider.get_direction(current_x, current_y, IS_BLIND)
+                #print("ANGLE TO STEER:", angle_to_steer)
+                #self.send_steering(angle_to_steer['steer'])
 
     def send_steering(self, angle_to_steer):
         self.queuesList['Warning'].put({

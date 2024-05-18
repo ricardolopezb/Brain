@@ -30,6 +30,7 @@
 import sys
 
 from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC, ENABLE_V2X, MY_CAR_ID, ENABLE_GPS
+from src.austral.controller.processGlobalController import processGlobalController
 from src.austral.gps.processGPS import processGPS
 from src.austral.pid.mock import processMock
 from src.austral.ultrasonic.frontal.processUltrasonics import processUltrasonics
@@ -80,6 +81,9 @@ allProcesses.append(processGateway)
 
 process_mock = processMock(queueList)
 allProcesses.append(process_mock)
+
+process_global_controller = processGlobalController(queueList)
+allProcesses.append(process_global_controller)
 
 if ENABLE_FRONTAL_ULTRASONIC:
     process_frontal_ultrasonic = processUltrasonics(queueList)

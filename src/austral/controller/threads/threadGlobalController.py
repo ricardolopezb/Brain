@@ -52,6 +52,7 @@ class threadGlobalController(ThreadWithStop):
         pipeRecvLocation, pipeSendLocation = Pipe(duplex=False)
         self.pipeRecvLocation = pipeRecvLocation
         self.pipeSendLocation = pipeSendLocation
+        self.previous_action = None
 
         self.subscribe()
 
@@ -78,15 +79,24 @@ class threadGlobalController(ThreadWithStop):
                 current_x = msg['value']["x"]
                 current_y = msg['value']["Y"]
                 action = self.quadrant_map.get_value_by_coordinate(current_x, current_y)
-                print("ACTION:", action)
+
+                if action['name'] == self.previous_action:
+                    continue
+
+                if action is None:
+                    action = {
+                        'name': "Apaga Signs y prende lanes y apagar semaforo",
+                        'data': {
+                            'possible_signs': []
+                        }
+                    }
                 self.global_executor.execute(action)
+                self.previous_action = action['name']
                 # if self.first_time:
                 #     self.first_time = False
                 #     # self.direction_provider.set_route((current_x, current_y), TARGET_COORDINATES)
                 #     self.direction_provider.set_route((0.74, 5.73), TARGET_COORDINATES)
                 #     continue
-
-
 
     def send_steering(self, angle_to_steer):
         self.queuesList['Warning'].put({
