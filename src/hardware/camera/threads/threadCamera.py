@@ -36,7 +36,7 @@ from multiprocessing import Pipe
 
 from src.austral.api.data_sender import DataSender
 from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION, \
-    DATASET_IMAGE_PERIOD, ENABLE_IMAGE_CAPTURE
+    DATASET_IMAGE_PERIOD, ENABLE_IMAGE_CAPTURE, BASE_SPEED
 from src.austral.pid.marcos_lane_detector import MarcosLaneDetector
 from src.austral.pid.obj_test import LaneDetector
 from src.austral.pid.old_lanes_algoritm import OldLaneDetector
@@ -47,13 +47,15 @@ from src.austral.signals.model_detector import ModelDetector
 from src.austral.signals.model_request_sender import ModelRequestSender
 from src.austral.signals.sign_detector import SignDetector
 from src.austral.signals.sign_executor import SignExecutor
+from src.austral.v2x.semaphore_detector import SemaphoreDetector
 from src.utils.messages.allMessages import (
     mainCamera,
     serialCamera,
     Recording,
     Record,
     Config,
-    SteeringCalculation, UltrasonicStatus, EnableLaneDetection, EnableSemaphoreDetection, EnableSignDetection
+    SteeringCalculation, UltrasonicStatus, EnableLaneDetection, EnableSemaphoreDetection, EnableSignDetection,
+    SpeedMotor
 )
 from src.templates.threadwithstop import ThreadWithStop
 
@@ -113,19 +115,22 @@ class threadCamera(ThreadWithStop):
         self.sign_executor = SignExecutor(queuesList)
         self.color_detector = ColorDetector()
         self.mobilenet = MobilenetSignDetector()
+        self.semaphore_detector = SemaphoreDetector()
 
         # Variables for run() timing
         self.last_epoch_demo = time.time()
         self.last_epoch_lanes = time.time()
         self.last_epoch_signs = time.time()
+        self.last_epoch_semaphores = time.time()
         self.last_epoch_image = time.time()
 
         # Cada cuanto quiero que se corra la conditional branch
         self.demo_period = 0.001  # in seconds
         self.lanes_period = 1 / LANES_FPS  # in seconds
         self.signs_period = 1 / SIGNS_FPS  # in seconds
+        self.semaphores_period = 1  # in seconds
         self.dataset_image_period = DATASET_IMAGE_PERIOD  # in seconds
-
+        self.prev_semaphore_color = ""
         self.lanes_enabled = ENABLE_LANE_DETECTION
         self.signs_enabled = ENABLE_SIGN_DETECTION
         self.semaphores_enabled = False
@@ -283,7 +288,7 @@ class threadCamera(ThreadWithStop):
                     self.detect_lanes(current_epoch, request)
 
                 if self.semaphores_enabled:
-                    pass
+                    self.semaphore_detector.detect(request)
 
                 request2 = self.camera.capture_array(
                     "lores"
@@ -319,6 +324,14 @@ class threadCamera(ThreadWithStop):
             self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
             steering_value = self.lane_detector.get_steering_angle(request)
             self.send_steering_value(steering_value)
+
+    def detect_semaphores(self, current_epoch, request):
+        if current_epoch - self.last_epoch_semaphores > self.semaphores_period:
+            self.last_epoch_semaphores = self.last_epoch_semaphores + self.semaphores_period
+            color = self.semaphore_detector.detect(request)
+            if color == self.prev_semaphore_color:
+                return
+            self.send_semaphore_color_action(color)
 
     def save_image(self, current_epoch, request):
         if current_epoch - self.last_epoch_image > self.dataset_image_period:
@@ -404,3 +417,21 @@ class threadCamera(ThreadWithStop):
             }
         )
         self.last_sent_steering_value = steering_value
+
+    def send_semaphore_color_action(self, color):
+        if color == "GREEN":
+            self.queuesList['Critical'].put({
+                "Owner": SpeedMotor.Owner.value,
+                "msgID": SpeedMotor.msgID.value,
+                "msgType": SpeedMotor.msgType.value,
+                "msgValue": BASE_SPEED
+            })
+        elif color == "RED":
+            self.queuesList['Critical'].put({
+                "Owner": SpeedMotor.Owner.value,
+                "msgID": SpeedMotor.msgID.value,
+                "msgType": SpeedMotor.msgType.value,
+                "msgValue": 0
+            })
+
+
