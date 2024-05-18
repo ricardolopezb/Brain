@@ -62,7 +62,7 @@ class threadMock(ThreadWithStop):
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": 40,
+            "msgValue": 0,
         })
         # DataSender.send('/speed', {'speed': BASE_SPEED})
         self.last_steering_sent = 0
