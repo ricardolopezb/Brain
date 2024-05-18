@@ -34,15 +34,161 @@ class QuadrantMap:
 
     @staticmethod
     def for_regular_mode():
+        # Xmin, Xmax, Ymin, Ymax
         quadrant_map = QuadrantMap()
-        quadrant_map.add_quadrant(0, 100, 0, 100, "Quadrant 1")
-        quadrant_map.add_quadrant(100, 200, 0, 100, "Quadrant 2")
-        quadrant_map.add_quadrant(0, 100, 100, 200, "Quadrant 3")
-        quadrant_map.add_quadrant(100, 200, 100, 200, "Quadrant 4")
+        quadrant_map.add_quadrant(16.7, 17.46, 1.39, 2.53,
+                                  {
+                                      'name': "Curva 1",
+                                      'data': {
+                                          'possible_signs': ['crosswalk']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(16.25, 17.46, 3.3, 4.38,
+                                  {
+                                      'name': "Cruce BUS-MINIAUTOPISTA",
+                                      'data': {
+                                          'possible_signs': ['stop']
+                                      }
+                                  })
+        quadrant_map.add_quadrant(15.86, 16.62, 8.64, 9.4,
+                                  {
+                                      'name': "Entrada Rotonda",
+                                      'data': {
+                                          'possible_signs': ['roundabout']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(15.52, 16.28, 11.63, 12.39,
+                                  {
+                                      'name': "Reentrada Rotonda",
+                                      'data': {
+                                          'possible_signs': ['roundabout']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(14.32, 15.08, 10.39, 11.15,
+                                  {
+                                      'name': "Entrada Autopista",
+                                      'data': {
+                                          'possible_signs': ['highway_entrance', 'highway_exit']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(6.7, 7.92, 11.98, 12.97,
+                                  {
+                                      'name': "Salida Autopista",
+                                      'data': {
+                                          'possible_signs': ['highway_entrance', 'highway_exit']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(0, 0.72, 10.57, 11.19,
+                                  {
+                                      'name': "Primer Stop",
+                                      'data': {
+                                          'possible_signs': ['stop']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(0, 1.29, 9.25, 10.57,
+                                  {
+                                      'name': "Entrada SpeedCurve",
+                                      'data': {
+                                          'possible_signs': ['crosswalk']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(4.26, 5.14, 8.04, 8.78,
+                                  {
+                                      'name': "Salida SpeedCurve",
+                                      'data': {
+                                          'possible_signs': ['crosswalk']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(3.47, 5.14, 6.51, 7.48,
+                                  {
+                                      'name': "Speed Challenge End",
+                                      'data': {
+                                          'possible_signs': ['stop']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(2.14, 2.9, 4.61, 5.17,
+                                  {
+                                      'name': "Only Semaphore",
+                                      'data': {
+                                          'possible_signs': []
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(2.14, 2.9, 1.3, 1.93,
+                                  {
+                                      'name': "City Center Exit",
+                                      'data': {
+                                          'possible_signs': ['stop']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(7.41, 8.92, 0.52, 1.28,
+                                  {
+                                      'name': "Parking Start",
+                                      'data': {
+                                          'possible_signs': ['parking', 'crosswalk']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(11.27, 12.15, 1.3, 2.8,
+                                  {
+                                      'name': "Start Position",
+                                      'data': {
+                                          'possible_signs': []
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(7.47, 8.23, 3.63, 4.39,
+                                  {
+                                      'name': "Bus Lane Exit",
+                                      'data': {
+                                          'possible_signs': []
+                                      }
+                                  })
+
         return quadrant_map
 
     @staticmethod
     def for_speed_mode():
         quadrant_map = QuadrantMap()
-        quadrant_map.add_quadrant(0, 200, 0, 200, "Quadrant A")
+        quadrant_map.add_quadrant(11.27, 12.15, 1.3, 2.8,
+                                  {
+                                      'name': "Start Position",
+                                      'data': {
+                                          'possible_signs': []
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(16.25, 17.46, 3.3, 4.38,
+                                  {
+                                      'name': "Cruce BUS-MINIAUTOPISTA",
+                                      'data': {
+                                          'possible_signs': ['stop']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(0, 0.72, 10.57, 11.19,
+                                  {
+                                      'name': "Primer Stop",
+                                      'data': {
+                                          'possible_signs': ['stop']
+                                      }
+                                  })
+
+        quadrant_map.add_quadrant(3.47, 5.14, 6.51, 7.48,
+                                  {
+                                      'name': "Speed Challenge End",
+                                      'data': {
+                                          'possible_signs': ['stop']
+                                      }
+                                  })
         return quadrant_map
