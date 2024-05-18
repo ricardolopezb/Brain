@@ -128,7 +128,7 @@ class threadCamera(ThreadWithStop):
 
         self.lanes_enabled = True
         self.signs_enabled = True
-        self.semaphores_enabled = True
+        self.semaphores_enabled = False
 
         self.frame = None
         self.last_sent_steering_value = -1000
