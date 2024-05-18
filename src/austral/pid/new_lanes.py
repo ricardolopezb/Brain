@@ -27,7 +27,10 @@ def lines_classifier(lines):
             if x2 - x1 == 0:  # Evitar división por cero
                 slope = np.pi / 2  # Línea vertical, pendiente infinita
             else:
-                slope = np.arctan((y2 - y1) / (x2 - x1))
+                denom = x2 - x1
+                if denom == 0:
+                    denom = 0.0001
+                slope = np.arctan((y2 - y1) / denom)
 
             # Convertir la pendiente a grados
             angle_degrees = np.degrees(abs(slope))
@@ -62,7 +65,10 @@ def average_lines(lines):
 
 def get_intersection_point(line, y):
     x1, y1, x2, y2 = line[0]
-    slope = (y2 - y1) / (x2 - x1)
+    denom = x2 - x1
+    if denom == 0:
+        denom = 0.0001
+    slope = (y2 - y1) / denom
     if slope == 0:
         return x1, y
     else:
@@ -113,18 +119,34 @@ def getting_error(average_left_line, average_right_line, height, width):
     x1_right, y1_right, x2_right, y2_right = average_right_line[0]
 
     # Calcular los puntos donde las líneas promedio izquierda y derecha intersectan el borde inferior de la imagen
-    bottom_left_x = int(x1_left + (height - y1_left) * (x2_left - x1_left) / (y2_left - y1_left))
-    bottom_right_x = int(x1_right + (height - y1_right) * (x2_right - x1_right) / (y2_right - y1_right))
+    denom1 = y2_left - y1_left
+    if denom1 == 0:
+        denom1 = 0.0001
+    denom2 = y2_right - y1_right
+    if denom2 == 0:
+        denom2 = 0.0001
+    bottom_left_x = int(x1_left + (height - y1_left) * (x2_left - x1_left) / denom1)
+    bottom_right_x = int(x1_right + (height - y1_right) * (x2_right - x1_right) / denom2)
 
     # Calcular el punto medio entre estos puntos
     midpoint_x = (bottom_left_x + bottom_right_x) // 2
     midpoint_y = height
 
     # Calcular la intersección de las líneas promedio izquierda y derecha
-    slope_left = (y2_left - y1_left) / (x2_left - x1_left)
-    slope_right = (y2_right - y1_right) / (x2_right - x1_right)
+    denom3 = x2_left - x1_left
+    if denom3 == 0:
+        denom3 = 0.0001
+    denom4 = x2_right - x1_right
+    if denom4 == 0:
+        denom4 = 0.0001
+    slope_left = (y2_left - y1_left) / denom3
+    slope_right = (y2_right - y1_right) / denom4
+
+    denom5 = slope_left - slope_right
+    if denom5 == 0:
+        denom5 = 0.0001
     intersection_x = int(
-        (y1_right - y1_left + slope_left * x1_left - slope_right * x1_right) / (slope_left - slope_right))
+        (y1_right - y1_left + slope_left * x1_left - slope_right * x1_right) / denom5)
     intersection_y = int(slope_left * (intersection_x - x1_left) + y1_left)
 
     cv2.circle(image, (intersection_x, intersection_y), 5, (255, 0, 255), -1)
