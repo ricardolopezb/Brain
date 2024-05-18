@@ -48,7 +48,7 @@ class threadGlobalController(ThreadWithStop):
         super(threadGlobalController, self).__init__()
         self.queuesList = queueList
         self.quadrant_map = QuadrantMap.for_mode(MODE)
-        self.global_executor = GlobalExecutor(self.queuesList)
+        self.global_executor = GlobalExecutor()
         pipeRecvLocation, pipeSendLocation = Pipe(duplex=False)
         self.pipeRecvLocation = pipeRecvLocation
         self.pipeSendLocation = pipeSendLocation
@@ -90,7 +90,7 @@ class threadGlobalController(ThreadWithStop):
                             'possible_signs': []
                         }
                     }
-                self.global_executor.execute(action)
+                self.global_executor.execute(self.queuesList, action)
                 self.previous_action = action['name']
                 # if self.first_time:
                 #     self.first_time = False

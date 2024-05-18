@@ -24,13 +24,13 @@ HIGHWAY_ADDITIONAL_SPEED = 5
 if MODE == "SPEED":
     ENABLE_FRONTAL_ULTRASONIC = False
     ENABLE_V2X = False
-    ENABLE_GPS = False  # To be defined
+    ENABLE_GPS = True
     BASE_SPEED = 18
     LOW_SPEED = 6
     HIGH_SPEED = 30
 
 IS_BLIND = False
-MY_CAR_ID = 0
+MY_CAR_ID = 2
 EMPTY_PARKING_PERIOD = 8
 
 allow_ultrasonics_enqueue = False
