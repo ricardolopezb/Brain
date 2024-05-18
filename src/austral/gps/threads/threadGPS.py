@@ -89,10 +89,10 @@ class threadGPS(ThreadWithStop):
 
                 angle_to_steer = self.direction_provider.get_direction(current_x, current_y, IS_BLIND)
                 print("ANGLE TO STEER:", angle_to_steer)
-                self.send_steering(angle_to_steer)
+                self.send_steering(angle_to_steer['steer'])
 
     def send_steering(self, angle_to_steer):
-        self.queue_list['Warning'].put({
+        self.queuesList['Warning'].put({
             "Owner": SteerMotor.Owner.value,
             "msgID": SteerMotor.msgID.value,
             "msgType": SteerMotor.msgType.value,

@@ -124,7 +124,13 @@ class threadV2X(ThreadWithStop):
                                        self.my_current_coordinates[1]) > V2X_SEMAPHORE_INFLUENCE_RADIUS
 
     def is_moving_away_from_semaphore(self, semaphore_x, semaphore_y):
-        return self.calculate_distance(semaphore_x, semaphore_y, self.my_current_coordinates[0], self.my_current_coordinates[1]) > self.calculate_distance(semaphore_x, semaphore_y, self.my_previous_coordinates[0], self.my_previous_coordinates[1])
+        return self.calculate_distance(semaphore_x, semaphore_y, self.my_current_coordinates[0],
+                                       self.my_current_coordinates[1]) > self.calculate_distance(semaphore_x,
+                                                                                                 semaphore_y,
+                                                                                                 self.my_previous_coordinates[
+                                                                                                     0],
+                                                                                                 self.my_previous_coordinates[
+                                                                                                     1])
 
     def brake(self):
         self.queuesList[SpeedMotor.Queue.value].put({
