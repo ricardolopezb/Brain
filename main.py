@@ -29,7 +29,12 @@
 # ===================================== GENERAL IMPORTS ==================================
 import sys
 
+from src.austral.configs import ENABLE_FRONTAL_ULTRASONIC, ENABLE_V2X, MY_CAR_ID, ENABLE_GPS
+from src.austral.controller.processGlobalController import processGlobalController
+from src.austral.gps.processGPS import processGPS
 from src.austral.pid.mock import processMock
+from src.austral.ultrasonic.frontal.processUltrasonics import processUltrasonics
+from src.austral.v2x.processV2X import processV2X
 
 sys.path.append(".")
 from multiprocessing import Queue, Event
@@ -52,6 +57,7 @@ from src.data.TrafficCommunication.processTrafficCommunication import (
 )
 
 # ======================================== SETTING UP ====================================
+
 allProcesses = list()
 queueList = {
     "Critical": Queue(),
@@ -76,6 +82,20 @@ allProcesses.append(processGateway)
 process_mock = processMock(queueList)
 allProcesses.append(process_mock)
 
+process_global_controller = processGlobalController(queueList)
+allProcesses.append(process_global_controller)
+
+if ENABLE_FRONTAL_ULTRASONIC:
+    process_frontal_ultrasonic = processUltrasonics(queueList)
+    allProcesses.append(process_frontal_ultrasonic)
+
+if ENABLE_V2X:
+    process_v2x = processV2X(queueList)
+    allProcesses.append(process_v2x)
+
+if ENABLE_GPS:
+    process_gps = processGPS(queueList)
+    allProcesses.append(process_gps)
 
 # Initializing camera
 if Camera:
@@ -99,7 +119,7 @@ if CarsAndSemaphores:
 
 # Initializing GPS
 if TrafficCommunication:
-    processTrafficCommunication = processTrafficCommunication(queueList, logging, 3)
+    processTrafficCommunication = processTrafficCommunication(queueList, logging, MY_CAR_ID)
     allProcesses.append(processTrafficCommunication)
 
 # Initializing serial connection NUCLEO - > PI

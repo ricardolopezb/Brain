@@ -28,6 +28,9 @@
 import threading
 import time
 from multiprocessing import Pipe
+
+from src.austral.api.data_sender import DataSender
+from src.austral.configs import BASE_SPEED
 from src.templates.threadwithstop import ThreadWithStop
 from src.utils.messages.allMessages import (
     SteerMotorMockThread, EnableButton, EngineRun, SteeringCalculation, Control, SpeedMotor, SteerMotor
@@ -54,14 +57,14 @@ class threadMock(ThreadWithStop):
         self.pipeRecvSteeringCalculation = pipeRecvSteeringCalculation
         self.pipeSendSteeringCalculation = pipeSendSteeringCalculation
         self.subscribe()
-        speed = 5
         time.sleep(1)
         self.queuesList[SpeedMotor.Queue.value].put({
             "Owner": SpeedMotor.Owner.value,
             "msgID": SpeedMotor.msgID.value,
             "msgType": SpeedMotor.msgType.value,
-            "msgValue": speed
+            "msgValue": 0,
         })
+        # DataSender.send('/speed', {'speed': BASE_SPEED})
         self.last_steering_sent = 0
 
     # ====================================== RUN ==========================================
@@ -79,12 +82,17 @@ class threadMock(ThreadWithStop):
                 value = float(message)
                 if value == self.last_steering_sent:
                     continue
-                self.queuesList[SteerMotor.Queue.value].put({
+                queue_to_send = 'Warning'
+                if abs(value) > 15:
+                    queue_to_send = 'Warning'
+
+                self.queuesList[queue_to_send].put({
                     "Owner": SteerMotor.Owner.value,
                     "msgID": SteerMotor.msgID.value,
                     "msgType": SteerMotor.msgType.value,
                     "msgValue": value
                 })
+                DataSender.send('/steer', {'steer': value})
                 self.last_steering_sent = value
 
                 print("SENT CONTROL:", value)

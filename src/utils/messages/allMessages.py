@@ -99,6 +99,7 @@ class SteerMotor(Enum):
     msgID = 3
     msgType = "dictionary"
 
+
 class SteerMotorMockThread(Enum):
     Queue = "General"
     Owner = "threadMock"
@@ -177,6 +178,41 @@ class Location(Enum):
     msgType = "dictionary"
 
 
+class UltrasonicStatusEnqueuing(Enum):
+    Queue = "General"
+    Owner = "ParkingExecutor"
+    msgID = 1
+    msgType = "dictionary"
+
+
+class ShouldHandleFrontUltrasonic(Enum):
+    Queue = "General"
+    Owner = "ParkingExecutor"
+    msgID = 2
+    msgType = "dictionary"
+
+
+class GeneralUltrasonicEnablement(Enum):
+    Queue = "General"
+    Owner = "SignExecutor"
+    msgID = 1
+    msgType = "dictionary"
+
+
+class IsInHighway(Enum):
+    Queue = "General"
+    Owner = "SignExecutor"
+    msgID = 2
+    msgType = "dictionary"
+
+
+class UltrasonicStatus(Enum):
+    Queue = "Warning"
+    Owner = "threadUltrasonics"
+    msgID = 1
+    msgType = "dictionary"
+
+
 # {"x": value, "y": value}
 
 
@@ -197,7 +233,28 @@ class SignalRunning(Enum):
 
 ######################    Lane Detection  ###########################
 class SteeringCalculation(Enum):
-    Queue = "Critical"
+    Queue = "Warning"
     Owner = "threadCamera"
     msgID = 1
     msgType = "dictionary"
+
+
+class EnableLaneDetection(Enum):
+    Queue = "General"
+    Owner = "globalExecutor"
+    msgID = 1
+    msgType = "Boolean"
+
+
+class EnableSignDetection(Enum):
+    Queue = "General"
+    Owner = "globalExecutor"
+    msgID = 2
+    msgType = "dictionary"
+
+
+class EnableSemaphoreDetection(Enum):
+    Queue = "General"
+    Owner = "globalExecutor"
+    msgID = 3
+    msgType = "Boolean"

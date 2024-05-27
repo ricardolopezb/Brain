@@ -1,0 +1,45 @@
+item {
+  id: 1
+  name: 'stop'
+}
+
+item {
+  id: 2
+  name: 'parking'
+}
+
+item {
+  id: 3
+  name: 'priority'
+}
+
+item {
+  id: 4
+  name: 'crosswalk'
+}
+
+item {
+  id: 5
+  name: 'highway_entrance'
+}
+
+item {
+  id: 6
+  name: 'highway_exit'
+}
+
+item {
+  id: 7
+  name: 'roundabout'
+}
+
+item {
+  id: 8
+  name: 'one_way'
+}
+
+item {
+  id: 9
+  name: 'no_entry'
+}
+

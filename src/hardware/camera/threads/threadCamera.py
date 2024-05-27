@@ -30,23 +30,38 @@ import threading
 import base64
 import picamera2
 import time
+from PIL import Image
 
 from multiprocessing import Pipe
 
+from src.austral.api.data_sender import DataSender
+from src.austral.configs import LANES_FPS, SIGNS_FPS, ENABLE_SIGN_DETECTION, ENABLE_LANE_DETECTION, \
+    DATASET_IMAGE_PERIOD, ENABLE_IMAGE_CAPTURE, BASE_SPEED
+from src.austral.pid.marcos_lane_detector import MarcosLaneDetector
 from src.austral.pid.obj_test import LaneDetector
+from src.austral.pid.old_lanes_algoritm import OldLaneDetector
+from src.austral.pid.stanley_lane_detector import StanleyLaneDetector
+from src.austral.signals.color_detector import ColorDetector
+from src.austral.signals.mobilenet import MobilenetSignDetector
+from src.austral.signals.model_detector import ModelDetector
+from src.austral.signals.model_request_sender import ModelRequestSender
 from src.austral.signals.sign_detector import SignDetector
 from src.austral.signals.sign_executor import SignExecutor
+from src.austral.v2x.semaphore_detector import SemaphoreDetector
 from src.utils.messages.allMessages import (
     mainCamera,
     serialCamera,
     Recording,
     Record,
     Config,
-    SteeringCalculation
+    SteeringCalculation, UltrasonicStatus, EnableLaneDetection, EnableSemaphoreDetection, EnableSignDetection,
+    SpeedMotor
 )
 from src.templates.threadwithstop import ThreadWithStop
 
 camera_resolution = (512, 270)
+
+
 class threadCamera(ThreadWithStop):
     """Thread which will handle camera functionalities.\n
     Args:
@@ -67,28 +82,59 @@ class threadCamera(ThreadWithStop):
         self.debugger = debugger
         self.frame_rate = 5
         self.recording = False
+
         pipeRecvRecord, pipeSendRecord = Pipe(duplex=False)
         self.pipeRecvRecord = pipeRecvRecord
         self.pipeSendRecord = pipeSendRecord
+
+        pipeRecvUltrasonics, pipeSendUltrasonics = Pipe(duplex=False)
+        self.pipeRecvUltrasonics = pipeRecvUltrasonics
+        self.pipeSendUltrasonics = pipeSendUltrasonics
+
+        pipeRecvEnableLaneDetection, pipeSendEnableLaneDetection = Pipe(duplex=False)
+        self.pipeRecvEnableLaneDetection = pipeRecvEnableLaneDetection
+        self.pipeSendEnableLaneDetection = pipeSendEnableLaneDetection
+
+        pipeRecvEnableSignDetection, pipeSendEnableSignDetection = Pipe(duplex=False)
+        self.pipeRecvEnableSignDetection = pipeRecvEnableSignDetection
+        self.pipeSendEnableSignDetection = pipeSendEnableSignDetection
+
+        pipeRecvEnableSemaphoreDetection, pipeSendEnableSemaphoreDetection = Pipe(duplex=False)
+        self.pipeRecvEnableSemaphoreDetection = pipeRecvEnableSemaphoreDetection
+        self.pipeSendEnableSemaphoreDetection = pipeSendEnableSemaphoreDetection
+
         self.video_writer = ""
         self.subscribe()
         self._init_camera()
         self.Queue_Sending()
         self.Configs()
-        self.lane_detector = LaneDetector()
-        self.sign_detector = SignDetector()
+        #self.lane_detector = MarcosLaneDetector(queuesList)
+        self.lane_detector = StanleyLaneDetector(queuesList)
+        # self.sign_detector = ModelDetector()
+        self.model_service = ModelRequestSender()
         self.sign_executor = SignExecutor(queuesList)
+        self.color_detector = ColorDetector()
+        self.mobilenet = MobilenetSignDetector()
+        self.semaphore_detector = SemaphoreDetector()
 
         # Variables for run() timing
         self.last_epoch_demo = time.time()
         self.last_epoch_lanes = time.time()
         self.last_epoch_signs = time.time()
+        self.last_epoch_semaphores = time.time()
+        self.last_epoch_image = time.time()
 
         # Cada cuanto quiero que se corra la conditional branch
         self.demo_period = 0.001  # in seconds
-        self.lanes_period = 0.5  # in seconds
-        self.signs_period = 5  # in seconds
-
+        self.lanes_period = 1 / LANES_FPS  # in seconds
+        self.signs_period = 1 / SIGNS_FPS  # in seconds
+        self.semaphores_period = 1  # in seconds
+        self.dataset_image_period = DATASET_IMAGE_PERIOD  # in seconds
+        self.prev_semaphore_color = ""
+        self.lanes_enabled = ENABLE_LANE_DETECTION
+        self.signs_enabled = ENABLE_SIGN_DETECTION
+        self.semaphores_enabled = False
+        self.possible_signs_in_quadrant = []
         self.frame = None
         self.last_sent_steering_value = -1000
 
@@ -108,6 +154,38 @@ class threadCamera(ThreadWithStop):
                 "Owner": Config.Owner.value,
                 "msgID": Config.msgID.value,
                 "To": {"receiver": "threadCamera", "pipe": self.pipeSendConfig},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": UltrasonicStatus.Owner.value,
+                "msgID": UltrasonicStatus.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendUltrasonics},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": EnableLaneDetection.Owner.value,
+                "msgID": EnableLaneDetection.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendEnableLaneDetection},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": EnableSignDetection.Owner.value,
+                "msgID": EnableSignDetection.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendEnableSignDetection},
+            }
+        )
+        self.queuesList["Config"].put(
+            {
+                "Subscribe/Unsubscribe": "subscribe",
+                "Owner": EnableSemaphoreDetection.Owner.value,
+                "msgID": EnableSemaphoreDetection.msgID.value,
+                "To": {"receiver": "threadCamera", "pipe": self.pipeSendEnableSemaphoreDetection},
             }
         )
 
@@ -168,29 +246,49 @@ class threadCamera(ThreadWithStop):
                         )
             except Exception as e:
                 print(e)
+
+            if self.pipeRecvEnableLaneDetection.poll():
+                self.lanes_enabled = self.pipeRecvEnableLaneDetection.recv()["value"]
+                #print(f"Lanes enabled: {self.lanes_enabled}")
+
+            if self.pipeRecvEnableSignDetection.poll():
+                self.signs_enabled = self.pipeRecvEnableSignDetection.recv()["value"]['enable']
+                self.possible_signs_in_quadrant = self.pipeRecvEnableSignDetection.recv()["value"]['possible_signs']
+                #print(f"Signs enabled: {self.signs_enabled}")
+
+            if self.pipeRecvEnableSemaphoreDetection.poll():
+                self.semaphores_enabled = self.pipeRecvEnableSemaphoreDetection.recv()["value"]
+                #print(f"Semaphores enabled: {self.semaphores_enabled}")
+
             if self.debugger == True:
                 self.logger.warning("getting image")
             request = self.camera.capture_array("main")
+            # request = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
             if var:
                 if self.recording == True:
                     cv2_image = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
                     self.video_writer.write(cv2_image)
 
                 current_epoch = int(time.time())
-                #if current_epoch - self.last_epoch_demo > self.demo_period:
+                # if current_epoch - self.last_epoch_demo > self.demo_period:
                 self.last_epoch_demo = self.last_epoch_demo + self.demo_period
+                request = cv2.cvtColor(request, cv2.COLOR_RGB2BGR)
+                if ENABLE_IMAGE_CAPTURE:
+                    self.save_image(current_epoch, request)
 
-                # if current_epoch - self.last_epoch_lanes > self.lanes_period:
-                #     self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
-                #     steering_value = self.lane_detector.get_steering_angle(request)
-                #
-                #     self.send_steering_value(steering_value)
+                # if request is None:
+                #     var = not var
+                #     continue
 
-                if current_epoch - self.last_epoch_signs > self.signs_period:
-                    self.last_epoch_signs = self.last_epoch_signs + self.signs_period
-                    found_sign = self.sign_detector.detect_signal(request, threshold=10)
-                    print(f"************* Found sign: {found_sign}")
-                    self.sign_executor.execute(found_sign)
+                if self.signs_enabled:
+                    _, signs_encoded_img = cv2.imencode(".jpg", request)
+                    self.detect_signs(current_epoch, request, signs_encoded_img, self.pipeRecvUltrasonics, self.possible_signs_in_quadrant)
+
+                if self.lanes_enabled:
+                    self.detect_lanes(current_epoch, request)
+
+                if self.semaphores_enabled:
+                    self.semaphore_detector.detect(request)
 
                 request2 = self.camera.capture_array(
                     "lores"
@@ -201,6 +299,7 @@ class threadCamera(ThreadWithStop):
                 _, encoded_big_img = cv2.imencode(".jpg", request)
                 image_data_encoded = base64.b64encode(encoded_img).decode("utf-8")
                 image_data_encoded2 = base64.b64encode(encoded_big_img).decode("utf-8")
+
                 self.queuesList[mainCamera.Queue.value].put(
                     {
                         "Owner": mainCamera.Owner.value,
@@ -217,7 +316,75 @@ class threadCamera(ThreadWithStop):
                         "msgValue": image_data_encoded,
                     }
                 )
+
             var = not var
+
+    def detect_lanes(self, current_epoch, request):
+        if current_epoch - self.last_epoch_lanes > self.lanes_period:
+            self.last_epoch_lanes = self.last_epoch_lanes + self.lanes_period
+            steering_value = self.lane_detector.get_steering_angle(request)
+            self.send_steering_value(steering_value)
+
+    def detect_semaphores(self, current_epoch, request):
+        if current_epoch - self.last_epoch_semaphores > self.semaphores_period:
+            self.last_epoch_semaphores = self.last_epoch_semaphores + self.semaphores_period
+            color = self.semaphore_detector.detect(request)
+            if color == self.prev_semaphore_color:
+                return
+            self.send_semaphore_color_action(color)
+
+    def save_image(self, current_epoch, request):
+        if current_epoch - self.last_epoch_image > self.dataset_image_period:
+            print(type(request))
+            saved = cv2.imwrite(f"{current_epoch}.jpg", request)
+            print(f"Saving image at {current_epoch}, SAVED:", saved)
+            self.last_epoch_image = self.last_epoch_image + self.dataset_image_period
+
+    def detect_signs(self, current_epoch, request, encoded_img, pipeRecvUltrasonics, possible_signs):
+        if current_epoch - self.last_epoch_signs > self.signs_period:
+            self.last_epoch_signs = self.last_epoch_signs + self.signs_period
+            mask_frame, found_color = self.color_detector.detect_color(request)
+            detected_sign = self.mobilenet.get_sign_with_highest_score(request)
+            if detected_sign not in possible_signs:
+                return
+            print(f"************* Found sign: {detected_sign}")
+            self.sign_executor.execute(detected_sign, pipeRecvUltrasonics)
+
+        #     # LO VOY A HACER AL REVES, DESPUES VEO. CAMBIO LOS COLORES EN EL IF
+        #
+        #     if found_color == 'AZUL':
+        #         # self.sign_detector.detect(request, 'stop')
+        #         response = self.model_service.send(encoded_img, 'stop')
+        #         if response['found'] == 'none':
+        #             return request
+        #         if response['found'] == 'stop':
+        #             print("###### FOUND A STOP")
+        #             DataSender.send('/sign', {'sign': 'Stop'})
+        #             self.sign_executor.execute('stop')
+        #
+        #     elif found_color == 'ROJO':
+        #         # self.sign_detector.detect(request, 'crosswalk')
+        #
+        #         response = self.model_service.send(encoded_img, 'crosswalk')
+        #         if response['found'] == 'none':
+        #             return request
+        #
+        #         if response['found'] == 'crosswalk':
+        #             print("###### FOUND A CROSSWALK")
+        #             DataSender.send('/sign', {'sign': 'Crosswalk'})
+        #             self.sign_executor.execute('crosswalk')
+        #         else:
+        #             print("###### FOUND A PARKING")
+        #             DataSender.send('/sign', {'sign': 'Parking'})
+        #             self.sign_executor.execute('parking')
+        #     else:
+        #         DataSender.send('/sign', {'sign': None})
+        #         self.sign_executor.execute(None)
+        #     return mask_frame
+        # return request
+        # found_sign = self.sign_detector.detect_signal(request, threshold=10)
+        # print(f"************* Found sign: {found_sign}")
+        # self.sign_executor.execute(found_sign)
 
     # =============================== START ===============================================
     def start(self):
@@ -250,3 +417,21 @@ class threadCamera(ThreadWithStop):
             }
         )
         self.last_sent_steering_value = steering_value
+
+    def send_semaphore_color_action(self, color):
+        if color == "GREEN":
+            self.queuesList['Critical'].put({
+                "Owner": SpeedMotor.Owner.value,
+                "msgID": SpeedMotor.msgID.value,
+                "msgType": SpeedMotor.msgType.value,
+                "msgValue": BASE_SPEED
+            })
+        elif color == "RED":
+            self.queuesList['Critical'].put({
+                "Owner": SpeedMotor.Owner.value,
+                "msgID": SpeedMotor.msgID.value,
+                "msgType": SpeedMotor.msgType.value,
+                "msgValue": 0
+            })
+
+
